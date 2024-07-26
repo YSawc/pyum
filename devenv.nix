@@ -3,6 +3,7 @@
 {
   # https://devenv.sh/basics/
   env.GREET = "devenv";
+  env.DATABASE_URL = "localhost:3306";
 
   # https://devenv.sh/packages/
   packages = [ pkgs.git pkgs.mysql pkgs.diesel-cli ];

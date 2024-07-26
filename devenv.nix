@@ -41,4 +41,19 @@
   processes = {
     ping.exec = "ping localhost";
   };
+
+  # https://devenv.sh/services/
+  services.mysql = {
+    enable = true;
+    initialDatabases = [{ name = "pyum"; }];
+    ensureUsers = [
+      {
+        name = "root";
+        password = "";
+        ensurePermissions = {
+          "*" = "ALL PRIVILEGES";
+        };
+      }
+    ];
+  };
 }

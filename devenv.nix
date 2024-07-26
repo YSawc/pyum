@@ -5,7 +5,7 @@
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.diesel-cli ];
+  packages = [ pkgs.git pkgs.mysql pkgs.diesel-cli ];
 
   # https://devenv.sh/languages/
   # languages.rust.enable = true;

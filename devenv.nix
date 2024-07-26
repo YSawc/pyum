@@ -36,4 +36,8 @@
   # pre-commit.hooks.shellcheck.enable = true;
 
   # See full reference at https://devenv.sh/reference/options/
+
+  processes = {
+    ping.exec = "ping localhost";
+  };
 }

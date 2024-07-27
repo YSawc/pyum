@@ -6,7 +6,7 @@
   env.DATABASE_URL = "localhost:3306";
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.mysql pkgs.diesel-cli ];
+  packages = [ pkgs.git pkgs.mysql pkgs.diesel-cli pkgs.libmysqlclient ];
 
   # https://devenv.sh/languages/
   # languages.rust.enable = true;

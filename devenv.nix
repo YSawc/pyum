@@ -4,6 +4,7 @@
   # https://devenv.sh/basics/
   env.GREET = "devenv";
   env.DATABASE_URL = "localhost:3306";
+  env.LD_LIBRARY_PATH = ".devenv/profile/lib/";
 
   # https://devenv.sh/packages/
   packages = [ pkgs.git pkgs.mysql pkgs.diesel-cli pkgs.libmysqlclient ];

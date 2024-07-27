@@ -3,6 +3,7 @@
 diesel::table! {
     devices (id) {
         id -> Integer,
-        name -> Text,
+        #[max_length = 64]
+        name -> Char,
     }
 }

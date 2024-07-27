@@ -1,0 +1,5 @@
+-- Your SQL goes here
+CREATE TABLE devices (
+  id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  name CHAR(64) NOT NULL
+)

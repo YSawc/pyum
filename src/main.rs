@@ -1,7 +1,7 @@
 use axum::{
     extract::State,
     http::StatusCode,
-    response::{Html, IntoResponse, Json},
+    response::{IntoResponse, Json},
     routing::{get, post},
     Router,
 };
@@ -49,6 +49,7 @@ async fn main() {
     let app = Router::new()
         .route("/api/health_check", get(health_check_handler))
         .route("/device/list", get(list_devices))
+        .route("/device/list", post(create_device))
         .with_state(pool);
 
     // run it with hyper

@@ -9,7 +9,7 @@
   dotenv.enable = true;
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.mysql pkgs.diesel-cli pkgs.libmysqlclient ];
+  packages = [ pkgs.git pkgs.mysql pkgs.libmysqlclient ];
 
   # https://devenv.sh/languages/
   languages.rust = {

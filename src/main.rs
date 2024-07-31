@@ -10,6 +10,17 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 
+#[derive(Clone)]
+struct AppState {
+    conn: DatabaseConnection,
+}
+
+impl AppState {
+    fn new(conn: DatabaseConnection) -> Self {
+        Self { conn }
+    }
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::registry()
@@ -21,16 +32,16 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-    Database::connect(db_url)
+    let conn = Database::connect(db_url)
         .await
         .expect("database connection failed.");
 
+    let state = AppState::new(conn);
     let app = Router::new()
         .route("/api/health_check", get(health_check_handler))
         // .route("/device/list", get(list_devices))
         // .route("/device/list", post(create_device))
-        // .with_state(pool);
-        ;
+        .with_state(state);
 
     // run it with hyper
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));

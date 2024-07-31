@@ -1,14 +1,19 @@
 use axum::{
-    extract::State,
+    extract::{Query, State},
     http::StatusCode,
-    response::{IntoResponse, Json},
+    response::{Html, IntoResponse, Json},
     routing::{get, post},
     Router,
 };
+use devices::{device, device::Entity as Device};
+use pyum::flash::flash::{get_flash_cookie, post_response, PostResponse};
+use pyum::{model_entity::devices, service::query::DeviceQuery};
 use std::net::SocketAddr;
+use tower_cookies::Cookies;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
 struct AppState {
@@ -19,6 +24,18 @@ impl AppState {
     fn new(conn: DatabaseConnection) -> Self {
         Self { conn }
     }
+}
+
+#[derive(Deserialize)]
+struct Params {
+    page: Option<u64>,
+    devices_per_page: Option<u64>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+struct FlashData {
+    kind: String,
+    message: String,
 }
 
 #[tokio::main]
@@ -39,7 +56,7 @@ async fn main() -> anyhow::Result<()> {
     let state = AppState::new(conn);
     let app = Router::new()
         .route("/api/health_check", get(health_check_handler))
-        // .route("/device/list", get(list_devices))
+        .route("/device/list", get(list_devices))
         // .route("/device/list", post(create_device))
         .with_state(state);
 
@@ -77,6 +94,41 @@ pub async fn health_check_handler() -> impl IntoResponse {
 //     Ok(Json(res))
 // }
 //
+async fn list_devices(
+    state: State<AppState>,
+    Query(params): Query<Params>,
+    cookies: Cookies,
+) -> Result<Html<String>, (StatusCode, &'static str)> {
+    let page = params.page.unwrap_or(1);
+    let devices_per_page = params.devices_per_page.unwrap_or(5);
+
+    let (devices, num_pages) =
+        DeviceQuery::find_devices_in_page(&state.conn, page, devices_per_page)
+            .await
+            .expect("Cannot find devices in page");
+
+    // let (posts, num_pages) = QueryCore::find_posts_in_page(&state.conn, page, posts_per_page)
+    //     .await
+    //     .expect("Cannot find posts in page");
+
+    // let mut ctx = tera::Context::new();
+    // ctx.insert("posts", &posts); ctx.insert("page", &page);
+    // ctx.insert("posts_per_page", &posts_per_page);
+    // ctx.insert("num_pages", &num_pages);
+
+    if let Some(value) = get_flash_cookie::<FlashData>(&cookies) {
+        // ctx.insert("flash", &value);
+    }
+
+    // let body = state
+    //     .templates
+    //     .render("index.html.tera", &ctx)
+    //     .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
+
+    Ok(Html("hello".to_string()))
+    // Ok(Html(body))
+}
+
 // async fn create_device(
 //     State(pool): State<deadpool_diesel::mysql::Pool>,
 //     Json(new_devise): Json<NewDevice>,

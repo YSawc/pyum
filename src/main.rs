@@ -9,7 +9,8 @@ use devices::{device, device::Entity as Device};
 use pyum::flash::flash::{get_flash_cookie, post_response, PostResponse};
 use pyum::{model_entity::devices, service::query::DeviceQuery};
 use std::net::SocketAddr;
-use tower_cookies::Cookies;
+use tera::Tera;
+use tower_cookies::{CookieManagerLayer, Cookies};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
@@ -17,12 +18,15 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
 struct AppState {
+    templates: Tera,
     conn: DatabaseConnection,
 }
 
 impl AppState {
     fn new(conn: DatabaseConnection) -> Self {
-        Self { conn }
+        let templates = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"))
+            .expect("Tera initialization failed");
+        Self { templates, conn }
     }
 }
 
@@ -56,8 +60,9 @@ async fn main() -> anyhow::Result<()> {
     let state = AppState::new(conn);
     let app = Router::new()
         .route("/api/health_check", get(health_check_handler))
-        .route("/device/list", get(list_devices))
+        .route("/devices/list", get(list_devices))
         // .route("/device/list", post(create_device))
+        .layer(CookieManagerLayer::new())
         .with_state(state);
 
     // run it with hyper
@@ -82,18 +87,6 @@ pub async fn health_check_handler() -> impl IntoResponse {
     Json(json_response)
 }
 
-// async fn list_devices(
-//     State(pool): State<deadpool_diesel::mysql::Pool>,
-// ) -> Result<Json<Vec<Device>>, (StatusCode, String)> {
-//     let conn = pool.get().await.map_err(internal_error)?;
-//     let res = conn
-//         .interact(|conn| devices::table.select(Device::as_select()).load(conn))
-//         .await
-//         .map_err(internal_error)?
-//         .map_err(internal_error)?;
-//     Ok(Json(res))
-// }
-//
 async fn list_devices(
     state: State<AppState>,
     Query(params): Query<Params>,
@@ -105,28 +98,24 @@ async fn list_devices(
     let (devices, num_pages) =
         DeviceQuery::find_devices_in_page(&state.conn, page, devices_per_page)
             .await
-            .expect("Cannot find devices in page");
+            .map_err(|_| (StatusCode::OK, "Cannot find devices in page"))?;
 
-    // let (posts, num_pages) = QueryCore::find_posts_in_page(&state.conn, page, posts_per_page)
-    //     .await
-    //     .expect("Cannot find posts in page");
-
-    // let mut ctx = tera::Context::new();
-    // ctx.insert("posts", &posts); ctx.insert("page", &page);
-    // ctx.insert("posts_per_page", &posts_per_page);
-    // ctx.insert("num_pages", &num_pages);
+    let mut ctx = tera::Context::new();
+    ctx.insert("devices", &devices);
+    ctx.insert("page", &page);
+    ctx.insert("devices_per_page", &devices_per_page);
+    ctx.insert("num_pages", &num_pages);
 
     if let Some(value) = get_flash_cookie::<FlashData>(&cookies) {
-        // ctx.insert("flash", &value);
+        ctx.insert("flash", &value);
     }
 
-    // let body = state
-    //     .templates
-    //     .render("index.html.tera", &ctx)
-    //     .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
+    let body = state
+        .templates
+        .render("index.html.tera", &ctx)
+        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
 
-    Ok(Html("hello".to_string()))
-    // Ok(Html(body))
+    Ok(Html(body))
 }
 
 // async fn create_device(

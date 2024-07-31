@@ -5,15 +5,10 @@ use axum::{
     routing::{get, post},
     Router,
 };
-// use diesel::prelude::*;
-// use diesel::SelectableHelper;
-// use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-// this embeds the migrations into the application binary
-// the migration path is relative to the `CARGO_MANIFEST_DIR`
-// pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations/");
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -26,21 +21,9 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-
-    // set up connection pool
-    // let manager = deadpool_diesel::mysql::Manager::new(db_url, deadpool_diesel::Runtime::Tokio1);
-    // let pool = deadpool_diesel::mysql::Pool::builder(manager)
-    //     .build()
-    //     .expect();
-
-    // run the migrations on server startup
-    // {
-    //     let conn = pool.get().await.unwrap();
-    //     // conn.interact(|conn| conn.run_pending_migrations(MIGRATIONS).map(|_| ()))
-    //     //     .await
-    //     //     .unwrap()
-    //     //     .unwrap();
-    // }
+    Database::connect(db_url)
+        .await
+        .expect("database connection failed.");
 
     let app = Router::new()
         .route("/api/health_check", get(health_check_handler))

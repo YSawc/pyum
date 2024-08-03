@@ -6,7 +6,10 @@ use axum::{
     Router,
 };
 use devices::{device, device::Entity as Device};
-use pyum::flash::flash::{get_flash_cookie, post_response, PostResponse};
+use pyum::{
+    flash::{get_flash_cookie, post_response, PostResponse},
+    middleware::AppState,
+};
 use pyum::{model_entity::devices, service::query::DeviceQuery};
 use std::net::SocketAddr;
 use tera::Tera;
@@ -15,20 +18,6 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use serde::{Deserialize, Serialize};
-
-#[derive(Clone)]
-struct AppState {
-    templates: Tera,
-    conn: DatabaseConnection,
-}
-
-impl AppState {
-    fn new(conn: DatabaseConnection) -> Self {
-        let templates = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"))
-            .expect("Tera initialization failed");
-        Self { templates, conn }
-    }
-}
 
 #[derive(Deserialize)]
 struct Params {
@@ -60,9 +49,14 @@ async fn main() -> anyhow::Result<()> {
     let state = AppState::new(conn);
     let app = Router::new()
         .route("/api/health_check", get(health_check_handler))
+        .route("/hello", get(hello))
         .route("/devices/list", get(list_devices))
         // .route("/device/list", post(create_device))
         .layer(CookieManagerLayer::new())
+        // .layer(axum::middleware::from_fn_with_state(
+        //     state.clone(),
+        //     handle_error,
+        // ))
         .with_state(state);
 
     // run it with hyper
@@ -85,6 +79,20 @@ pub async fn health_check_handler() -> impl IntoResponse {
     });
 
     Json(json_response)
+}
+
+async fn hello(state: State<AppState>) -> Result<Html<String>, (StatusCode, &'static str)> {
+    const MESSAGE: &str = "Hello from tera";
+
+    let mut ctx = tera::Context::new();
+    // let body = state.templates.render("index.html.tera", &ctx);
+
+    let body = state
+        .templates
+        .render("pages/hello.html", &ctx)
+        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
+
+    Ok(Html(body))
 }
 
 async fn list_devices(
@@ -112,7 +120,7 @@ async fn list_devices(
 
     let body = state
         .templates
-        .render("index.html.tera", &ctx)
+        .render("index.html", &ctx)
         .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
 
     Ok(Html(body))

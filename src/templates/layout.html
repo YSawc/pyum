@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Axum Example</title>
+    <meta name="description" content="Axum - SeaOrm integration example" />
+    <meta name="author" content="Yoshiera Huang" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      href="//fonts.googleapis.com/css?family=Raleway:400,300,600"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="/static/css/normalize.css" />
+    <link rel="stylesheet" href="/static/css/skeleton.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="icon" type="image/png" href="/static/images/favicon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <header class="fixed top-0 left-0 z-20 w-full p-4 bg-blue-300 border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+          Pyum
+        </span>
+    </header>
+
+    <div class="container">
+      <p><!--Nothing to see here --></p>
+      {% block content %}{% endblock content %}
+    </div>
+
+    <footer class="fixed bottom-0 left-0 z-20 w-full p-4 bg-blue-300 border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+          Pyum
+        </span>
+    </footer>
+  </body>
+</html>

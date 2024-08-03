@@ -18,20 +18,33 @@
     <link rel="icon" type="image/png" href="/static/images/favicon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <header class="fixed top-0 left-0 z-20 w-full p-4 bg-blue-300 border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
-        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+  <body class="flex flex-col min-h-dvh">
+    <header class="bg-blue-300 md:flex md:items-center md:justify-between md:p-6">
+        <span class="text-sm font-semibold text-gray-500 sm:text-center ">
           Pyum
         </span>
+        <div class="ml-4 block flex-grow lg:flex lg:items-center lg:w-auto">
+          <div class="text-sm lg:flex-grow text-gray-500">
+            <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4">
+              Devices
+            </a>
+            <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 hover:text-white">
+              Devices
+            </a>
+          </div>
+        </div>
+    <div>
+      <a href="#" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Login</a>
+    </div>
     </header>
 
-    <div class="container">
+    <div class="container my-4 mx-4 flex-1">
       <p><!--Nothing to see here --></p>
       {% block content %}{% endblock content %}
     </div>
 
-    <footer class="fixed bottom-0 left-0 z-20 w-full p-4 bg-blue-300 border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
-        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+    <footer class="bg-blue-300 md:flex md:items-center md:justify-between md:p-6">
+        <span class="text-sm font-semibold text-gray-500 sm:text-center">
           Pyum
         </span>
     </footer>

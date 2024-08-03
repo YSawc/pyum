@@ -25,8 +25,19 @@ impl MigrationTrait for Migration {
                             .string()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(AdminUser::CreatedAt).date_time().not_null())
-                    .col(ColumnDef::new(AdminUser::UpdatedAt).date_time().not_null())
+                    .col(
+                        ColumnDef::new(AdminUser::CreatedAt)
+                            .timestamp()
+                            .default(Expr::current_timestamp())
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(AdminUser::UpdatedAt)
+                            .timestamp()
+                            .default(Expr::current_timestamp())
+                            .extra("ON UPDATE CURRENT_TIMESTAMP")
+                            .not_null(),
+                    )
                     .to_owned(),
             )
             .await

@@ -2,6 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20240801_000001_create_devices_table;
 mod m20240803_063030_create_admin_users_table;
+mod m20240803_090516_add_created_at_and_updated_at_column_to_devices;
 
 pub struct Migrator;
 
@@ -11,6 +12,7 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20240801_000001_create_devices_table::Migration),
             Box::new(m20240803_063030_create_admin_users_table::Migration),
+            Box::new(m20240803_090516_add_created_at_and_updated_at_column_to_devices::Migration),
         ]
     }
 }

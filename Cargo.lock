@@ -1682,6 +1682,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tera",
+ "thiserror",
  "tokio",
  "tower-cookies",
  "tower-http",

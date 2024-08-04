@@ -1,4 +1,4 @@
-use crate::model_entity::devices::device::{self, Entity as Device};
+use crate::model_entity::device::{model as device, model::Entity as Device};
 use sea_orm::*;
 
 pub struct DeviceQuery;

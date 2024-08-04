@@ -14,15 +14,13 @@ impl MigrationTrait for Migration {
                     .add_column(
                         ColumnDef::new(Device::CreatedAt)
                             .timestamp()
-                            .default(Expr::current_timestamp())
-                            .not_null(),
+                            .default(Expr::current_timestamp()),
                     )
                     .add_column(
                         ColumnDef::new(Device::UpdatedAt)
                             .timestamp()
                             .default(Expr::current_timestamp())
-                            .extra("ON UPDATE CURRENT_TIMESTAMP")
-                            .not_null(),
+                            .extra("ON UPDATE CURRENT_TIMESTAMP"),
                     )
                     .to_owned(),
             )

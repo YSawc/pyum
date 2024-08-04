@@ -5,12 +5,12 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use devices::{device, device::Entity as Device};
+use device::model::Entity as Device;
 use pyum::{
     flash::{get_flash_cookie, post_response, PostResponse},
     middleware::AppState,
 };
-use pyum::{model_entity::devices, service::query::DeviceQuery};
+use pyum::{model_entity::device, service::query::DeviceQuery};
 use std::net::SocketAddr;
 use tera::Tera;
 use tower_cookies::{CookieManagerLayer, Cookies};
@@ -50,7 +50,7 @@ async fn main() -> anyhow::Result<()> {
     let app = Router::new()
         .route("/api/health_check", get(health_check_handler))
         .route("/hello", get(hello))
-        .route("/devices/list", get(list_devices))
+        // .route("/devices/list", get(list_devices))
         // .route("/device/list", post(create_device))
         .layer(CookieManagerLayer::new())
         // .layer(axum::middleware::from_fn_with_state(
@@ -95,36 +95,35 @@ async fn hello(state: State<AppState>) -> Result<Html<String>, (StatusCode, &'st
     Ok(Html(body))
 }
 
-async fn list_devices(
-    state: State<AppState>,
-    Query(params): Query<Params>,
-    cookies: Cookies,
-) -> Result<Html<String>, (StatusCode, &'static str)> {
-    let page = params.page.unwrap_or(1);
-    let devices_per_page = params.devices_per_page.unwrap_or(5);
-
-    let (devices, num_pages) =
-        DeviceQuery::find_devices_in_page(&state.conn, page, devices_per_page)
-            .await
-            .map_err(|_| (StatusCode::OK, "Cannot find devices in page"))?;
-
-    let mut ctx = tera::Context::new();
-    ctx.insert("devices", &devices);
-    ctx.insert("page", &page);
-    ctx.insert("devices_per_page", &devices_per_page);
-    ctx.insert("num_pages", &num_pages);
-
-    if let Some(value) = get_flash_cookie::<FlashData>(&cookies) {
-        ctx.insert("flash", &value);
-    }
-
-    let body = state
-        .templates
-        .render("index.html", &ctx)
-        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
-
-    Ok(Html(body))
-}
+// async fn list_devices(
+//     state: State<AppState>,
+//     Query(params): Query<Params>,
+//     cookies: Cookies,
+// ) -> Result<Html<String>, (StatusCode, &'static str)> {
+//     let page = params.page.unwrap_or(1);
+//     let devices_per_page = params.devices_per_page.unwrap_or(5);
+//
+//     let (devices, num_pages) = DeviceQuery::find_device_by_id(&state.conn, page, devices_per_page)
+//         .await
+//         .map_err(|_| (StatusCode::OK, "Cannot find devices in page"))?;
+//
+//     let mut ctx = tera::Context::new();
+//     ctx.insert("devices", &devices);
+//     ctx.insert("page", &page);
+//     ctx.insert("devices_per_page", &devices_per_page);
+//     ctx.insert("num_pages", &num_pages);
+//
+//     if let Some(value) = get_flash_cookie::<FlashData>(&cookies) {
+//         ctx.insert("flash", &value);
+//     }
+//
+//     let body = state
+//         .templates
+//         .render("index.html", &ctx)
+//         .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
+//
+//     Ok(Html(body))
+// }
 
 // async fn create_device(
 //     State(pool): State<deadpool_diesel::mysql::Pool>,

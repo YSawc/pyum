@@ -32,6 +32,7 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(Oauth2ClientSecret::IsDeleted)
                             .tiny_integer()
+                            .default(0)
                             .not_null(),
                     )
                     .to_owned(),

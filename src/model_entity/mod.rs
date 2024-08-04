@@ -1,3 +1,3 @@
-pub mod admin_users;
-pub mod devices;
+pub mod admin_user;
+pub mod device;
 pub mod oauth2_client_secret;

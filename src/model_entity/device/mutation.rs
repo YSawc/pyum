@@ -1,12 +1,12 @@
 use sea_orm::*;
 
-use super::{device, device::Entity as Device};
+use super::{model, model::Entity as Device};
 
 pub async fn create_device(
     db: &DbConn,
-    form_data: device::Model,
-) -> Result<device::ActiveModel, DbErr> {
-    device::ActiveModel {
+    form_data: model::Model,
+) -> Result<model::ActiveModel, DbErr> {
+    model::ActiveModel {
         name: Set(form_data.name.to_owned()),
         ..Default::default()
     }
@@ -17,15 +17,15 @@ pub async fn create_device(
 pub async fn update_device_by_id(
     db: &DbConn,
     id: i32,
-    form_data: device::Model,
-) -> Result<device::Model, DbErr> {
-    let device: device::ActiveModel = Device::find_by_id(id)
+    form_data: model::Model,
+) -> Result<model::Model, DbErr> {
+    let device: model::ActiveModel = Device::find_by_id(id)
         .one(db)
         .await?
         .ok_or(DbErr::Custom("Cannot find device.".to_owned()))
         .map(Into::into)?;
 
-    device::ActiveModel {
+    model::ActiveModel {
         id: device.id,
         name: Set(form_data.name.to_owned()),
     }
@@ -34,7 +34,7 @@ pub async fn update_device_by_id(
 }
 
 pub async fn delete_device(db: &DbConn, id: i32) -> Result<DeleteResult, DbErr> {
-    let device: device::ActiveModel = Device::find_by_id(id)
+    let device: model::ActiveModel = Device::find_by_id(id)
         .one(db)
         .await?
         .ok_or(DbErr::Custom("Cannot find device.".to_owned()))

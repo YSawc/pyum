@@ -5,12 +5,11 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use device::model::Entity as Device;
+use model_entity::{device, device::model::Entity as Device, device::query::DeviceQuery};
 use pyum::{
     flash::{get_flash_cookie, post_response, PostResponse},
     middleware::AppState,
 };
-use pyum::{model_entity::device, service::query::DeviceQuery};
 use std::net::SocketAddr;
 use tera::Tera;
 use tower_cookies::{CookieManagerLayer, Cookies};

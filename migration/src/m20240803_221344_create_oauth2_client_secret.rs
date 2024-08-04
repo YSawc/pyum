@@ -13,16 +13,11 @@ impl MigrationTrait for Migration {
                     .table(Oauth2ClientSecret::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Oauth2ClientSecret::Id)
+                        ColumnDef::new(Oauth2ClientSecret::ClientId)
                             .integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
-                    )
-                    .col(
-                        ColumnDef::new(Oauth2ClientSecret::ClientId)
-                            .integer()
-                            .not_null(),
                     )
                     .col(
                         ColumnDef::new(Oauth2ClientSecret::ClientSecret)
@@ -51,7 +46,6 @@ impl MigrationTrait for Migration {
 #[derive(DeriveIden)]
 enum Oauth2ClientSecret {
     Table,
-    Id,
     ClientId,
     ClientSecret,
     IsDeleted,

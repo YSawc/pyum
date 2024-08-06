@@ -8,7 +8,8 @@ pub struct Model {
     #[serde(skip_deserializing)]
     pub client_id: i32,
     pub client_secret: String,
-    pub is_deleted: bool,
+    #[sea_orm(nullable)]
+    pub is_deleted_at: Option<DateTime>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

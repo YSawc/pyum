@@ -24,12 +24,7 @@ impl MigrationTrait for Migration {
                             .string()
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(Oauth2ClientSecret::IsDeleted)
-                            .tiny_integer()
-                            .default(0)
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Oauth2ClientSecret::IsDeletedAt).date_time())
                     .to_owned(),
             )
             .await
@@ -48,5 +43,5 @@ enum Oauth2ClientSecret {
     Table,
     ClientId,
     ClientSecret,
-    IsDeleted,
+    IsDeletedAt,
 }

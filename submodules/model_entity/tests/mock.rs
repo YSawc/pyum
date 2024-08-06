@@ -1,14 +1,31 @@
 pub mod prepare;
-use model_entity::oauth2_client_secret::query::Query;
+use model_entity::oauth2_client_secret::{
+    model::{Entity, Model},
+    query::Query,
+};
+use sea_orm::{prelude::Expr, EntityOrSelect, EntityTrait, QueryFilter, QueryTrait};
 
-#[tokio::test]
+// cargo test --features mock
 #[cfg(feature = "mock")]
+#[tokio::test]
 async fn main() {
-    let db = &prepare::prepare_mock_db();
+    use model_entity::{admin_user::model::Model, oauth2_client_secret::model::Entity};
+    use sea_orm::DatabaseBackend;
 
     {
-        let oauth2_client_recret = Query::find_by_id(db, 1).await.unwrap().unwrap();
+        let db = &prepare::prepare_mock_db();
+        let oauth2_client_secret = Query::find_by_id(db, 1).await.unwrap().unwrap();
 
-        assert_eq!(oauth2_client_recret.client_id, 1);
+        assert_eq!(oauth2_client_secret.client_id, 1);
     }
+    // {
+    //     let db = &prepare::prepare_mock_db();
+    //     let oauth2_client_secrets = Query::is_not_deleted(db).await.unwrap();
+    //     let client_ids: Vec<i32> = oauth2_client_secrets
+    //         .into_iter()
+    //         .map(|e| e.client_id)
+    //         .collect();
+
+    //     assert_eq!(client_ids, [1, 3, 4]);
+    // }
 }

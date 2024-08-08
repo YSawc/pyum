@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}Devices{% endblock title %}
+{% block content %}
+
+<div class="container">
+  <p><!--Nothing to see here --></p>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <a href="/device/new">
+      add device
+    </a>
+  </button>
+
+  <table class="table-fixed">
+    <tbody>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Image</th>
+        </tr>
+      </thead>
+      {% for device in devices %}
+      <tr class="post" onclick="window.location='/{{ device.id }}';">
+        <td class="px-2">{{ device.name }}</td>
+        <td><img src="https://www.switch-science.com/cdn/shop/files/a765c843-530d-466a-aa11-4b9616435c26_1200x1200.jpg?v=1720761398" width="128" height="128"></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+    <tfoot>
+      <tr>
+        <td></td>
+        <td>
+          {% if page == 1 %} Previous {% else %}
+          <a href="/?page={{ page - 1 }}&devices_per_page={{ devices_per_page }}"
+            >Previous</a
+          >
+          {% endif %} | {% if page == num_pages %} Next {% else %}
+          <a href="/?page={{ page + 1 }}&devices_per_page ={{ devices_per_page }}"
+            >Next</a
+          >
+          {% endif %}
+        </td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+{% endblock content %}

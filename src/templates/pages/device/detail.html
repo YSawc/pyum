@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}Device detail{% endblock title %}
+{% block content %}
+
+<div class="container">
+  <p><!--Nothing to see here --></p>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <a href="/device/new">
+      add device
+    </a>
+  </button>
+  <table class="table-fixed">
+    <tbody>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Image</th>
+        </tr>
+      </thead>
+      <tr class="post" onclick="window.location='/device/{{ device.id }}/edit';">
+        <td class="px-2">{{ device.name }}</td>
+        <td><img src="{{ device.image}}" width="128" height="128"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

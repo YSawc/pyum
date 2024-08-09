@@ -20,7 +20,7 @@
         </tr>
       </thead>
       {% for device in devices %}
-      <tr class="post" onclick="window.location='/{{ device.id }}';">
+      <tr class="post" onclick="window.location='/device/{{ device.id }}';">
         <td class="px-2">{{ device.name }}</td>
         <td><img src="{{ device.image}}" width="128" height="128"></td>
       </tr>

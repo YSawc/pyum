@@ -15,6 +15,10 @@ pub async fn create_device(
     .await
 }
 
+pub async fn get_by_id(db: &DbConn, id: i32) -> Result<Option<model::Model>, DbErr> {
+    Device::find_by_id(id).one(db).await
+}
+
 pub async fn update_device_by_id(
     db: &DbConn,
     id: i32,

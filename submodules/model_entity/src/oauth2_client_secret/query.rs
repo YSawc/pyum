@@ -1,5 +1,4 @@
 use super::model::{self, Entity, Model};
-use prelude::Expr;
 use sea_orm::*;
 
 pub struct Query;

@@ -1,21 +1,17 @@
 use axum::{
-    extract::{Query, State},
+    extract::{Path, Query, State},
     http::StatusCode,
     response::{Html, IntoResponse, Json, Redirect},
     routing::{get, post},
     Form, Router,
 };
-use model_entity::{device, device::model::Entity as Device, device::query::DeviceQuery};
-use pyum::{
-    flash::{get_flash_cookie, post_response, PostResponse},
-    middleware::AppState,
-};
+use model_entity::{device, device::query::DeviceQuery};
+use pyum::{flash::get_flash_cookie, middleware::AppState};
 use std::net::SocketAddr;
-use tera::Tera;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use sea_orm::Database;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
@@ -89,11 +85,7 @@ pub async fn health_check_handler() -> impl IntoResponse {
 }
 
 async fn hello(state: State<AppState>) -> Result<Html<String>, (StatusCode, &'static str)> {
-    const MESSAGE: &str = "Hello from tera";
-
-    let mut ctx = tera::Context::new();
-    // let body = state.templates.render("index.html.tera", &ctx);
-
+    let ctx = tera::Context::new();
     let body = state
         .templates
         .render("pages/hello.html", &ctx)
@@ -161,8 +153,6 @@ async fn new_device(
 
 async fn create_device(
     state: State<AppState>,
-    Query(params): Query<Params>,
-    cookies: Cookies,
     Form(new_device): Form<device::model::Model>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
     device::mutation::create_device(&state.conn, new_device)

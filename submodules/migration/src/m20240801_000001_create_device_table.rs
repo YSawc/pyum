@@ -20,6 +20,7 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Device::Name).string().not_null())
+                    .col(ColumnDef::new(Device::Image).string())
                     .to_owned(),
             )
             .await
@@ -38,4 +39,5 @@ enum Device {
     Table,
     Id,
     Name,
+    Image,
 }

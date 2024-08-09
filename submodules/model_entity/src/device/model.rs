@@ -8,6 +8,8 @@ pub struct Model {
     #[serde(skip_deserializing)]
     pub id: i32,
     pub name: String,
+    #[sea_orm(nullable)]
+    pub image: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

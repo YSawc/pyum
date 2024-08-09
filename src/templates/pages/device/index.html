@@ -22,7 +22,7 @@
       {% for device in devices %}
       <tr class="post" onclick="window.location='/{{ device.id }}';">
         <td class="px-2">{{ device.name }}</td>
-        <td><img src="https://www.switch-science.com/cdn/shop/files/a765c843-530d-466a-aa11-4b9616435c26_1200x1200.jpg?v=1720761398" width="128" height="128"></td>
+        <td><img src="{{ device.image}}" width="128" height="128"></td>
       </tr>
       {% endfor %}
     </tbody>

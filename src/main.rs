@@ -165,8 +165,6 @@ async fn create_device(
     cookies: Cookies,
     Form(new_device): Form<device::model::Model>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
-    println!("{:?}", new_device);
-    println!("{:?}", new_device.name);
     device::mutation::create_device(&state.conn, new_device)
         .await
         .unwrap();

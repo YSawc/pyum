@@ -8,6 +8,7 @@ pub async fn create_device(
 ) -> Result<model::ActiveModel, DbErr> {
     model::ActiveModel {
         name: Set(form_data.name.to_owned()),
+        image: Set(form_data.image.to_owned()),
         ..Default::default()
     }
     .save(db)
@@ -28,6 +29,7 @@ pub async fn update_device_by_id(
     model::ActiveModel {
         id: device.id,
         name: Set(form_data.name.to_owned()),
+        image: Set(form_data.image.to_owned()),
     }
     .update(db)
     .await

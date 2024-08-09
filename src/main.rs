@@ -3,7 +3,7 @@ use axum::{
     http::StatusCode,
     response::{Html, IntoResponse, Json, Redirect},
     routing::{get, post},
-    Router,
+    Form, Router,
 };
 use model_entity::{device, device::model::Entity as Device, device::query::DeviceQuery};
 use pyum::{
@@ -163,8 +163,10 @@ async fn create_device(
     state: State<AppState>,
     Query(params): Query<Params>,
     cookies: Cookies,
-    Json(new_device): Json<device::model::Model>,
+    Form(new_device): Form<device::model::Model>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
+    println!("{:?}", new_device);
+    println!("{:?}", new_device.name);
     device::mutation::create_device(&state.conn, new_device)
         .await
         .unwrap();

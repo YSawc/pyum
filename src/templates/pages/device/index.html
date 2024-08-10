@@ -22,7 +22,13 @@
       {% for device in devices %}
       <tr class="post" onclick="window.location='/device/{{ device.id }}';">
         <td class="px-2">{{ device.name }}</td>
-        <td><img src="{{ device.image}}" width="128" height="128"></td>
+        <td>
+          {% if device.image != '' %}
+            <img src="{{ device.image}}" width="128" height="128">
+          {% else %}
+            <img src="https://nijomart.com/wp-content/uploads/2021/05/no_image.jpg" width="128" height="128">
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>

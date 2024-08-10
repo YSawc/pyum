@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Path, Query, State},
+    extract::{MatchedPath, Path, Query, Request, State},
     http::StatusCode,
     response::{Html, IntoResponse, Json, Redirect},
     routing::{get, post},
@@ -9,6 +9,7 @@ use model_entity::{device, device::query::DeviceQuery};
 use pyum::{flash::get_flash_cookie, middleware::AppState};
 use std::net::SocketAddr;
 use tower_cookies::{CookieManagerLayer, Cookies};
+use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use sea_orm::Database;
@@ -58,6 +59,26 @@ async fn main() -> anyhow::Result<()> {
         .route("/device/:device_id/edit", get(edit_device))
         .route("/device/:device_id/edit", post(edit_device))
         .layer(CookieManagerLayer::new())
+        .layer(
+            TraceLayer::new_for_http()
+                // Create our own span for the request and include the matched path. The matched
+                // path is useful for figuring out which handler the request was routed to.
+                .make_span_with(|req: &Request| {
+                    let method = req.method();
+                    let uri = req.uri();
+
+                    // axum automatically adds this extension.
+                    let matched_path = req
+                        .extensions()
+                        .get::<MatchedPath>()
+                        .map(|matched_path| matched_path.as_str());
+
+                    tracing::debug_span!("request", %method, %uri, matched_path)
+                })
+                // By default `TraceLayer` will log 5xx responses but we're doing our specific
+                // logging of errors so disable that
+                .on_failure(()),
+        )
         // .layer(axum::middleware::from_fn_with_state(
         //     state.clone(),
         //     handle_error,

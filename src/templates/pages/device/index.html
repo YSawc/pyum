@@ -9,7 +9,6 @@
       add device
     </a>
   </button>
-
   <table class="table-fixed">
     <tbody>
       <thead>
@@ -32,24 +31,22 @@
       {% endfor %}
     </tbody>
   </table>
-
-    <tfoot>
-      <tr>
-        <td></td>
-        <td>
-          {% if page == 1 %} Previous {% else %}
-          <a href="/?page={{ page - 1 }}&devices_per_page={{ devices_per_page }}"
-            >Previous</a
-          >
-          {% endif %} | {% if page == num_pages %} Next {% else %}
-          <a href="/?page={{ page + 1 }}&devices_per_page ={{ devices_per_page }}"
-            >Next</a
-          >
-          {% endif %}
-        </td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
+  <tfoot>
+    <tr>
+      <td></td>
+      <td>
+        {% if page == 1 %} Previous {% else %}
+        <a href="/?page={{ page - 1 }}&devices_per_page={{ devices_per_page }}"
+          >Previous</a
+        >
+        {% endif %} | {% if page == num_pages %} Next {% else %}
+        <a href="/?page={{ page + 1 }}&devices_per_page ={{ devices_per_page }}"
+          >Next</a
+        >
+        {% endif %}
+      </td>
+      <td></td>
+    </tr>
+  </tfoot>
 </div>
 {% endblock content %}

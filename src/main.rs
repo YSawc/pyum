@@ -56,8 +56,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/device/new", get(new_device))
         .route("/device/new", post(create_device))
         .route("/device/:device_id", get(detail_device))
-        .route("/device/:device_id/edit", get(edit_device))
-        .route("/device/:device_id/edit", post(edit_device))
+        .route("/device/:device_id/edit", get(get_edit_device))
+        .route("/device/:device_id/edit", post(post_edit_device))
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
@@ -202,7 +202,27 @@ async fn detail_device(
     Ok(Html(body))
 }
 
-async fn edit_device(
+async fn get_edit_device(
+    state: State<AppState>,
+    Path(device_id): Path<i32>,
+) -> Result<Html<String>, (StatusCode, &'static str)> {
+    let device = device::mutation::get_by_id(&state.conn, device_id)
+        .await
+        .unwrap();
+    let mut ctx = tera::Context::new();
+    ctx.insert("device", &device);
+    let body = state
+        .templates
+        .render("pages/device/edit.html", &ctx)
+        .map_err(|e| {
+            println!("{:?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, "Template error")
+        })?;
+
+    Ok(Html(body))
+}
+
+async fn post_edit_device(
     state: State<AppState>,
     Path(device_id): Path<i32>,
     Form(new_device): Form<device::model::Model>,

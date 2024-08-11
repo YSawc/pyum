@@ -2,10 +2,7 @@ use sea_orm::*;
 
 use super::{model, model::Entity as Device};
 
-pub async fn create_device(
-    db: &DbConn,
-    form_data: model::Model,
-) -> Result<model::ActiveModel, DbErr> {
+pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::ActiveModel, DbErr> {
     model::ActiveModel {
         name: Set(form_data.name.to_owned()),
         image: Set(form_data.image.to_owned()),
@@ -19,7 +16,7 @@ pub async fn get_by_id(db: &DbConn, id: i32) -> Result<Option<model::Model>, DbE
     Device::find_by_id(id).one(db).await
 }
 
-pub async fn update_device_by_id(
+pub async fn update_by_id(
     db: &DbConn,
     id: i32,
     form_data: model::Model,
@@ -39,7 +36,7 @@ pub async fn update_device_by_id(
     .await
 }
 
-pub async fn delete_device(db: &DbConn, id: i32) -> Result<DeleteResult, DbErr> {
+pub async fn delete_by_id(db: &DbConn, id: i32) -> Result<DeleteResult, DbErr> {
     let device: model::ActiveModel = Device::find_by_id(id)
         .one(db)
         .await?

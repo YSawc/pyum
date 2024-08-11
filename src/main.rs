@@ -204,7 +204,7 @@ async fn create_device(
     state: State<AppState>,
     Form(new_device): Form<device::model::Model>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
-    device::mutation::create_device(&state.conn, new_device)
+    device::mutation::create(&state.conn, new_device)
         .await
         .unwrap();
 
@@ -256,7 +256,7 @@ async fn post_edit_device(
     Path(device_id): Path<i32>,
     Form(new_device): Form<device::model::Model>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
-    device::mutation::update_device_by_id(&state.conn, device_id, new_device)
+    device::mutation::update_by_id(&state.conn, device_id, new_device)
         .await
         .unwrap();
 

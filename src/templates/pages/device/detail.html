@@ -13,6 +13,7 @@
               title: 'Confirm',
               text:'really delete?',
               showCancelButton: true,
+              confirmButtonColor: '#3B82F6',
             }).then((result)=>{
                 if(result.isConfirmed){
                   htmx.trigger(this, 'confirmed');

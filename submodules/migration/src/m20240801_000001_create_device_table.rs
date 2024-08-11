@@ -21,6 +21,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Device::Name).string().not_null())
                     .col(ColumnDef::new(Device::Image).string())
+                    .col(ColumnDef::new(Device::DeletedAt).date_time())
                     .to_owned(),
             )
             .await
@@ -40,4 +41,5 @@ enum Device {
     Id,
     Name,
     Image,
+    DeletedAt,
 }

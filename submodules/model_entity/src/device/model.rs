@@ -10,6 +10,9 @@ pub struct Model {
     pub name: String,
     #[sea_orm(nullable)]
     pub image: String,
+    #[sea_orm(nullable)]
+    #[serde(skip_deserializing)]
+    pub deleted_at: Option<DateTime>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

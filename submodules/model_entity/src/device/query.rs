@@ -1,4 +1,4 @@
-use super::{model as device, model::Entity as Device};
+use super::{model, model::Entity as Device};
 use sea_orm::*;
 
 pub struct DeviceQuery;
@@ -8,9 +8,10 @@ impl DeviceQuery {
         db: &DbConn,
         page: u64,
         devices_per_page: u64,
-    ) -> Result<(Vec<device::Model>, u64), DbErr> {
+    ) -> Result<(Vec<model::Model>, u64), DbErr> {
         let paginator = Device::find()
-            .order_by_asc(device::Column::Id)
+            .filter(model::Column::DeletedAt.is_null())
+            .order_by_asc(model::Column::Id)
             .paginate(db, devices_per_page);
         let num_pages = paginator.num_pages().await?;
 

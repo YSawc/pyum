@@ -4,6 +4,23 @@
 {% block content %}
 
 <div class="container">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4"
+          hx-get="/device/{{ device.id }}/delete"
+          hx-trigger='confirmed'
+          onClick="
+            Swal.fire({
+              title: 'Confirm',
+              text:'really delete?',
+              showCancelButton: true,
+            }).then((result)=>{
+                if(result.isConfirmed){
+                  htmx.trigger(this, 'confirmed');
+                }
+            })
+          ">
+    delete
+  </button>
   <table class="table-fixed">
     <tbody>
       <thead>

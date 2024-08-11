@@ -60,6 +60,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/device/:device_id", get(detail_device))
         .route("/device/:device_id/edit", get(get_edit_device))
         .route("/device/:device_id/edit", post(post_edit_device))
+        .route("/device/:device_id/delete", get(delete_device))
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
@@ -257,6 +258,17 @@ async fn post_edit_device(
     Form(new_device): Form<device::model::Model>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
     device::mutation::update_by_id(&state.conn, device_id, new_device)
+        .await
+        .unwrap();
+
+    Ok(Redirect::to("/device/"))
+}
+
+async fn delete_device(
+    state: State<AppState>,
+    Path(device_id): Path<i32>,
+) -> Result<Redirect, (StatusCode, &'static str)> {
+    device::mutation::delete_by_id(&state.conn, device_id)
         .await
         .unwrap();
 

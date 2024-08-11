@@ -16,5 +16,18 @@ async fn main() -> anyhow::Result<()> {
         .await
         .expect("failed to create oauth2 client secret");
 
+    let result = oauth2_client_secret::mutation::get_by_id(&db)
+        .await
+        .expect("failed to create oauth2 client secret");
+
+    match result {
+        Some(created_secret) => {
+            println!("generated new client secret. Below is the secret code.");
+            println!("client_id: {}", created_secret.client_id);
+            println!("client_secret: {}", created_secret.client_secret);
+        }
+        None => unimplemented!("Something is wrong for creating client secret"),
+    }
+
     Ok(())
 }

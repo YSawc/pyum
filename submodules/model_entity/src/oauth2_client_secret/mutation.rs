@@ -4,6 +4,13 @@ use sqlx::types::chrono::Utc;
 
 use super::{model, model::Entity as Oauth2ClientSecret};
 
+pub async fn get_by_id(db: &DbConn) -> Result<Option<model::Model>, DbErr> {
+    Oauth2ClientSecret::find()
+        .order_by_desc(model::Column::ClientId)
+        .one(db)
+        .await
+}
+
 pub async fn create_oauth2_client_secret(db: &DbConn) -> Result<model::ActiveModel, DbErr> {
     let client_secret: String = rand::thread_rng()
         .sample_iter(&Alphanumeric)

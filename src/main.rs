@@ -155,10 +155,9 @@ async fn list_devices(
     let page = params.page.unwrap_or(1);
     let devices_per_page = params.devices_per_page.unwrap_or(5);
 
-    let (devices, num_pages) =
-        DeviceQuery::find_devices_in_page(&state.conn, page, devices_per_page)
-            .await
-            .map_err(|_| (StatusCode::OK, "Cannot find devices in page"))?;
+    let (devices, num_pages) = DeviceQuery::find_in_page(&state.conn, page, devices_per_page)
+        .await
+        .map_err(|_| (StatusCode::OK, "Cannot find devices in page"))?;
 
     let mut ctx = tera::Context::new();
     ctx.insert("devices", &devices);

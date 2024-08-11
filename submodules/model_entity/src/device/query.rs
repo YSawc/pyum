@@ -4,11 +4,7 @@ use sea_orm::*;
 pub struct DeviceQuery;
 
 impl DeviceQuery {
-    pub async fn find_device_by_id(db: &DbConn, id: i32) -> Result<Option<device::Model>, DbErr> {
-        Device::find_by_id(id).one(db).await
-    }
-
-    pub async fn find_devices_in_page(
+    pub async fn find_in_page(
         db: &DbConn,
         page: u64,
         devices_per_page: u64,

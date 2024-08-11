@@ -1,7 +1,8 @@
 use rand::{distributions::Alphanumeric, Rng};
 use sea_orm::*;
+use sqlx::types::chrono::Utc;
 
-use super::model;
+use super::{model, model::Entity as Oauth2ClientSecret};
 
 pub async fn create_oauth2_client_secret(db: &DbConn) -> Result<model::ActiveModel, DbErr> {
     let client_secret: String = rand::thread_rng()
@@ -16,4 +17,11 @@ pub async fn create_oauth2_client_secret(db: &DbConn) -> Result<model::ActiveMod
     }
     .save(db)
     .await
+}
+
+pub async fn logic_delete_all(db: &DbConn) -> Result<UpdateResult, DbErr> {
+    Oauth2ClientSecret::update_many()
+        .col_expr(model::Column::DeletedAt, Utc::now().naive_utc().into())
+        .exec(db)
+        .await
 }

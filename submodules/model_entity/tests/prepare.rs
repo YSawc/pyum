@@ -19,12 +19,12 @@ pub fn prepare_mock_db() -> DatabaseConnection {
             Model {
                 client_id: 1,
                 client_secret: prepare_client_secret(),
-                is_deleted_at: None,
+                deleted_at: None,
             },
             Model {
                 client_id: 2,
                 client_secret: prepare_client_secret(),
-                is_deleted_at: Some(
+                deleted_at: Some(
                     NaiveDate::from_ymd_opt(2000, 1, 1)
                         .unwrap()
                         .and_hms_opt(0, 0, 0)
@@ -34,12 +34,12 @@ pub fn prepare_mock_db() -> DatabaseConnection {
             Model {
                 client_id: 3,
                 client_secret: prepare_client_secret(),
-                is_deleted_at: None,
+                deleted_at: None,
             },
             Model {
                 client_id: 4,
                 client_secret: prepare_client_secret(),
-                is_deleted_at: None,
+                deleted_at: None,
             },
         ]])
         .into_connection()

@@ -9,7 +9,7 @@ pub struct Model {
     pub client_id: i32,
     pub client_secret: String,
     #[sea_orm(nullable)]
-    pub is_deleted_at: Option<DateTime>,
+    pub deleted_at: Option<DateTime>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -2,15 +2,20 @@ use axum::{
     body::Body,
     extract::{MatchedPath, Path, Query, Request, State},
     http::{header, HeaderMap, HeaderValue, StatusCode},
+    middleware,
     response::{Html, IntoResponse, Json, Redirect},
     routing::{get, post},
     Form, Router,
 };
 use model_entity::{device, device::query::DeviceQuery};
-use pyum::{flash::get_flash_cookie, middleware::AppState};
+use pyum::{
+    flash::get_flash_cookie,
+    middleware::{print_request_response, AppState},
+};
 use std::net::SocketAddr;
 use tower_cookies::{CookieManagerLayer, Cookies};
 use tower_http::trace::TraceLayer;
+use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use sea_orm::Database;
@@ -36,13 +41,14 @@ struct FlashData {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "tokio_mysql=debug".into()),
-        )
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+    // let file_appender = RollingFileAppender::new(Rotation::DAILY, "/var/log/pyum", "logfile.log");
+    // let subscriber = tracing_subscriber::registry()
+    //     .with(
+    //         tracing_subscriber::EnvFilter::try_from_default_env()
+    //             .unwrap_or_else(|_| "tokio_mysql=debug".into()),
+    //     )
+    //     .with(tracing_subscriber::fmt::layer())
+    //     .init();
 
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
     let conn = Database::connect(db_url)
@@ -82,6 +88,7 @@ async fn main() -> anyhow::Result<()> {
                 // logging of errors so disable that
                 .on_failure(()),
         )
+        .layer(middleware::from_fn(print_request_response))
         .with_state(state);
 
     // run it with hyper

@@ -1,48 +1,18 @@
-use crate::{flash::get_flash_cookie, middleware::AppState};
+use crate::{
+    flash::get_flash_cookie,
+    middleware::AppState,
+    web::routes::{FlashData, Params},
+};
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
     response::{Html, Redirect},
-    routing::{get, post},
-    Form, Router,
+    Form,
 };
 use model_entity::device::{self, query::DeviceQuery};
 use tower_cookies::Cookies;
 
-use serde::{Deserialize, Serialize};
-
-#[derive(Deserialize)]
-struct Params {
-    page: Option<u64>,
-    devices_per_page: Option<u64>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-enum FlashKind {
-    Error,
-    Info,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-struct FlashData {
-    kind: FlashKind,
-    message: String,
-}
-
-pub fn router() -> Router<AppState> {
-    let router = Router::new()
-        .route("/device/", get(list_devices))
-        .route("/device/new", get(new_device))
-        .route("/device/new", post(create_device))
-        .route("/device/:device_id", get(detail_device))
-        .route("/device/:device_id/edit", get(get_edit_device))
-        .route("/device/:device_id/edit", post(post_edit_device))
-        .route("/device/:device_id/delete", get(delete_device));
-
-    router
-}
-
-async fn list_devices(
+pub async fn list_devices(
     state: State<AppState>,
     Query(params): Query<Params>,
     cookies: Cookies,
@@ -82,7 +52,9 @@ async fn list_devices(
     Ok(Html(body))
 }
 
-async fn new_device(state: State<AppState>) -> Result<Html<String>, (StatusCode, &'static str)> {
+pub async fn new_device(
+    state: State<AppState>,
+) -> Result<Html<String>, (StatusCode, &'static str)> {
     let ctx = tera::Context::new();
     let body = state
         .templates
@@ -95,7 +67,7 @@ async fn new_device(state: State<AppState>) -> Result<Html<String>, (StatusCode,
     Ok(Html(body))
 }
 
-async fn create_device(
+pub async fn create_device(
     state: State<AppState>,
     Form(new_device): Form<device::model::Model>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
@@ -106,7 +78,7 @@ async fn create_device(
     Ok(Redirect::to("/device/"))
 }
 
-async fn detail_device(
+pub async fn detail_device(
     state: State<AppState>,
     Path(device_id): Path<i32>,
 ) -> Result<Html<String>, (StatusCode, &'static str)> {
@@ -126,7 +98,7 @@ async fn detail_device(
     Ok(Html(body))
 }
 
-async fn get_edit_device(
+pub async fn get_edit_device(
     state: State<AppState>,
     Path(device_id): Path<i32>,
 ) -> Result<Html<String>, (StatusCode, &'static str)> {
@@ -146,7 +118,7 @@ async fn get_edit_device(
     Ok(Html(body))
 }
 
-async fn post_edit_device(
+pub async fn post_edit_device(
     state: State<AppState>,
     Path(device_id): Path<i32>,
     Form(new_device): Form<device::model::Model>,
@@ -158,7 +130,7 @@ async fn post_edit_device(
     Ok(Redirect::to("/device/"))
 }
 
-async fn delete_device(
+pub async fn delete_device(
     state: State<AppState>,
     Path(device_id): Path<i32>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {

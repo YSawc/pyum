@@ -1,1 +1,2 @@
-pub mod protected;
+pub mod controllers;
+pub mod routes;

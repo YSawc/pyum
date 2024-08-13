@@ -70,6 +70,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/device/:device_id/edit", get(get_edit_device))
         .route("/device/:device_id/edit", post(post_edit_device))
         .route("/device/:device_id/delete", get(delete_device))
+        .route("/admin_user/new", get(get_create_admin_user))
+        .route("/admin_user/new", post(post_create_admin_user))
         .route("/admin_user/login", get(get_login_admin_user))
         .route("/admin_user/login", post(post_login_admin_user))
         .layer(CookieManagerLayer::new())
@@ -282,6 +284,29 @@ async fn delete_device(
     device::mutation::delete_by_id(&state.conn, device_id)
         .await
         .unwrap();
+
+    Ok(Redirect::to("/device/"))
+}
+
+async fn get_create_admin_user(
+    state: State<AppState>,
+) -> Result<Html<String>, (StatusCode, &'static str)> {
+    let ctx = tera::Context::new();
+    let body = state
+        .templates
+        .render("pages/admin_user/new.html", &ctx)
+        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
+
+    Ok(Html(body))
+}
+
+async fn post_create_admin_user(
+    state: State<AppState>,
+    Form(admin_user): Form<admin_user::model::Model>,
+) -> Result<Redirect, (StatusCode, &'static str)> {
+    admin_user::mutation::create(&state.conn, admin_user)
+        .await
+        .expect("failed to create admin user.");
 
     Ok(Redirect::to("/device/"))
 }

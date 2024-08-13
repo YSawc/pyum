@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 
-{% block title %}Login{% endblock title %}
+{% block title %}Create Admin User{% endblock title %}
 {% block content %}
 
 <div class="container">
   <div class="w-full max-w-xs">
-    <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" method="post" hx-post="/admin_user/login" id="login-form">
+    <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" method="post" hx-post="/admin_user/new" id="create-admin-user-form">
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
           name

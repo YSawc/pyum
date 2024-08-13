@@ -27,12 +27,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(AdminUser::CreatedAt)
-                            .timestamp()
+                            .date_time()
                             .default(Expr::current_timestamp()),
                     )
                     .col(
                         ColumnDef::new(AdminUser::UpdatedAt)
-                            .timestamp()
+                            .date_time()
                             .default(Expr::current_timestamp())
                             .extra("ON UPDATE CURRENT_TIMESTAMP"),
                     )

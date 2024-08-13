@@ -1,0 +1,27 @@
+use bcrypt::DEFAULT_COST;
+use sea_orm::*;
+
+use super::{model, model::Entity as AdminUser};
+
+pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::ActiveModel, DbErr> {
+    let encrypted_password = bcrypt::hash(form_data.password, DEFAULT_COST)
+        .expect("error occured when encrypting password");
+
+    model::ActiveModel {
+        name: Set(form_data.name.to_owned()),
+        encrypted_password: ActiveValue::Set(encrypted_password),
+        ..Default::default()
+    }
+    .save(db)
+    .await
+}
+
+pub async fn find_by_name(
+    db: &DbConn,
+    form_data: model::Model,
+) -> Result<Option<model::Model>, DbErr> {
+    AdminUser::find()
+        .filter(model::Column::Name.eq(form_data.name))
+        .one(db)
+        .await
+}

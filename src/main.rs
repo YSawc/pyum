@@ -7,7 +7,10 @@ use axum::{
     routing::{get, post},
     Form, Router,
 };
-use model_entity::{device, device::query::DeviceQuery};
+use model_entity::{
+    admin_user,
+    device::{self, query::DeviceQuery},
+};
 use pyum::{
     flash::get_flash_cookie,
     middleware::{print_request_response, AppState},
@@ -67,6 +70,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/device/:device_id/edit", get(get_edit_device))
         .route("/device/:device_id/edit", post(post_edit_device))
         .route("/device/:device_id/delete", get(delete_device))
+        .route("/admin_user/login", get(get_login_admin_user))
+        .route("/admin_user/login", post(post_login_admin_user))
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
@@ -275,6 +280,29 @@ async fn delete_device(
     Path(device_id): Path<i32>,
 ) -> Result<Redirect, (StatusCode, &'static str)> {
     device::mutation::delete_by_id(&state.conn, device_id)
+        .await
+        .unwrap();
+
+    Ok(Redirect::to("/device/"))
+}
+
+async fn get_login_admin_user(
+    state: State<AppState>,
+) -> Result<Html<String>, (StatusCode, &'static str)> {
+    let ctx = tera::Context::new();
+    let body = state
+        .templates
+        .render("pages/admin_user/login.html", &ctx)
+        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Template error"))?;
+
+    Ok(Html(body))
+}
+
+async fn post_login_admin_user(
+    state: State<AppState>,
+    Form(admin_user): Form<admin_user::model::Model>,
+) -> Result<Redirect, (StatusCode, &'static str)> {
+    let admin_user = admin_user::mutation::find_by_name(&state.conn, admin_user)
         .await
         .unwrap();
 

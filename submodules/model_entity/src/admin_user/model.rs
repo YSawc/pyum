@@ -8,9 +8,13 @@ pub struct Model {
     #[serde(skip_deserializing)]
     pub id: i32,
     pub name: String,
-    #[serde(skip_serializing)]
+    #[sea_orm(ignore)]
+    pub password: String,
+    #[serde(skip_deserializing)]
     pub encrypted_password: String,
+    #[serde(skip_deserializing)]
     pub created_at: DateTime,
+    #[serde(skip_deserializing)]
     pub updated_at: DateTime,
 }
 

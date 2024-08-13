@@ -58,22 +58,24 @@ async fn main() -> anyhow::Result<()> {
         .await
         .expect("database connection failed.");
 
-    let state = AppState::new(conn);
-    let app = Router::new()
-        .route("/api/health_check", get(health_check_handler))
-        .route("/hello", get(hello))
-        .route("/assets/images/:path", get(get_image_asset))
+    let login_required_routes = Router::new()
         .route("/device/", get(list_devices))
         .route("/device/new", get(new_device))
         .route("/device/new", post(create_device))
         .route("/device/:device_id", get(detail_device))
         .route("/device/:device_id/edit", get(get_edit_device))
         .route("/device/:device_id/edit", post(post_edit_device))
-        .route("/device/:device_id/delete", get(delete_device))
+        .route("/device/:device_id/delete", get(delete_device));
+    let state = AppState::new(conn);
+    let app = Router::new()
+        .route("/api/health_check", get(health_check_handler))
+        .route("/hello", get(hello))
+        .route("/assets/images/:path", get(get_image_asset))
         .route("/admin_user/new", get(get_create_admin_user))
         .route("/admin_user/new", post(post_create_admin_user))
         .route("/admin_user/login", get(get_login_admin_user))
         .route("/admin_user/login", post(post_login_admin_user))
+        .merge(login_required_routes)
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()

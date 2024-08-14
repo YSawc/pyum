@@ -3,7 +3,7 @@ use axum::{
     Router,
 };
 
-use crate::{middleware::AppState, web::controllers::*};
+use crate::{web::controllers::*, web::middleware::AppState};
 
 pub fn router() -> Router<AppState> {
     Router::new()

@@ -5,7 +5,7 @@ use axum::response::{Html, Redirect};
 use axum::Form;
 use model_entity::admin_user;
 
-use crate::middleware::AppState;
+use crate::web::middleware::AppState;
 
 pub async fn get_create_admin_user(
     state: State<AppState>,

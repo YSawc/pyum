@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use tower_cookies::CookieManagerLayer;
 use tower_http::trace::TraceLayer;
 
-use crate::middleware::{print_request_response, AppState};
+use crate::web::middleware::{print_request_response, AppState};
 
 #[derive(Deserialize)]
 pub struct Params {

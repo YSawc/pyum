@@ -1,4 +1,4 @@
-use crate::middleware::AppState;
+use crate::web::middleware::AppState;
 use axum::{
     routing::{get, post},
     Router,

@@ -1,6 +1,6 @@
 use crate::{
     flash::get_flash_cookie,
-    middleware::AppState,
+    web::middleware::AppState,
     web::routes::{FlashData, Params},
 };
 use axum::{

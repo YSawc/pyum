@@ -1,6 +1,6 @@
 use axum::{extract::State, http::StatusCode, response::Html};
 
-use crate::middleware::AppState;
+use crate::web::middleware::AppState;
 
 pub async fn hello(state: State<AppState>) -> Result<Html<String>, (StatusCode, &'static str)> {
     let ctx = tera::Context::new();

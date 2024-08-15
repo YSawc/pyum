@@ -39,3 +39,8 @@
     ```sh
     cargo run -- status
     ```
+
+- Apply migration for test. Don't forget set `TEST_DATABASE_URL` before run.
+    ```sh
+    cargo run --features for_test
+    ```

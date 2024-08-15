@@ -8,6 +8,7 @@ devenv.local.nix
 .direnv
 
 .env*
+!.env.sample
 
 # pre-commit
 .pre-commit-config.yaml

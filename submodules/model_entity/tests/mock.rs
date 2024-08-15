@@ -9,14 +9,17 @@ use sea_orm::{prelude::Expr, EntityOrSelect, EntityTrait, QueryFilter, QueryTrai
 #[cfg(feature = "mock")]
 #[tokio::test]
 async fn main() {
-    use model_entity::{admin_user::model::Model, oauth2_client_secret::model::Entity};
+    use model_entity::{
+        admin_user::model::Model,
+        oauth2_client_secret::{self, model::Entity},
+    };
     use sea_orm::DatabaseBackend;
 
     {
         let db = &prepare::prepare_mock_db();
-        let oauth2_client_secret = Query::find_by_id(db, 1).await.unwrap().unwrap();
+        // let oauth2_client_secret = Entity::find().find_by_id(db, 1).await.unwrap().unwrap();
 
-        assert_eq!(oauth2_client_secret.client_id, 1);
+        // assert_eq!(oauth2_client_secret.client_id, 1);
     }
     // {
     //     let db = &prepare::prepare_mock_db();

@@ -1,4 +1,4 @@
-use model_entity::oauth2_client_secret::model::Model;
+use model_entity::oauth2_client_secret;
 use rand::{distributions::Alphanumeric, Rng};
 use sea_orm::*;
 use sqlx::types::chrono::NaiveDate;
@@ -16,12 +16,12 @@ fn prepare_client_secret() -> String {
 pub fn prepare_mock_db() -> DatabaseConnection {
     MockDatabase::new(DatabaseBackend::MySql)
         .append_query_results([[
-            Model {
+            oauth2_client_secret::model::Model {
                 client_id: 1,
                 client_secret: prepare_client_secret(),
                 deleted_at: None,
             },
-            Model {
+            oauth2_client_secret::model::Model {
                 client_id: 2,
                 client_secret: prepare_client_secret(),
                 deleted_at: Some(
@@ -31,12 +31,12 @@ pub fn prepare_mock_db() -> DatabaseConnection {
                         .unwrap(),
                 ),
             },
-            Model {
+            oauth2_client_secret::model::Model {
                 client_id: 3,
                 client_secret: prepare_client_secret(),
                 deleted_at: None,
             },
-            Model {
+            oauth2_client_secret::model::Model {
                 client_id: 4,
                 client_secret: prepare_client_secret(),
                 deleted_at: None,

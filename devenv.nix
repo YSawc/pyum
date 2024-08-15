@@ -54,7 +54,10 @@
   # https://devenv.sh/services/
   services.mysql = {
     enable = true;
-    initialDatabases = [{ name = "pyum"; }];
+    initialDatabases = [
+      { name = "pyum"; }
+      { name = "pyum_test"; }
+    ];
     ensureUsers = [
       {
         name = "root";

@@ -33,36 +33,51 @@ pub async fn check_session_id(
 
 #[cfg(test)]
 mod tests {
+    use std::env;
+
     use crate::web::routes;
     use axum::{
         body::Body,
         http::{Request, StatusCode},
+        Router,
     };
+    use model_entity::admin_user;
     use rstest::rstest;
-    use std::env;
+    use sea_orm::{Database, DatabaseConnection};
     use tower::ServiceExt;
+
+    async fn prepare_db_connection() -> DatabaseConnection {
+        let test_db_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL is not set");
+        env::set_var("DATABASE_URL", test_db_url);
+        let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
+        Database::connect(db_url)
+            .await
+            .expect("database connection failed.")
+    }
+
+    async fn prepare_router(conn: DatabaseConnection) -> Router {
+        routes::router(conn).await
+    }
 
     #[tokio::test]
     async fn request_hello() {
-        let db_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL is not set");
-        env::set_var("DATABASE_URL", db_url);
+        let conn = prepare_db_connection().await;
         let req = Request::builder()
             .uri("/hello")
             .body(Body::empty())
             .unwrap();
-        let res = routes::router().await.oneshot(req).await.unwrap();
+        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
         assert_eq!(res.status(), StatusCode::OK);
     }
 
     #[tokio::test]
     async fn request_nonprepared_route() {
-        let db_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL is not set");
-        env::set_var("DATABASE_URL", db_url);
+        let conn = prepare_db_connection().await;
         let req = Request::builder()
             .uri("/not_exists_route")
             .body(Body::empty())
             .unwrap();
-        let res = routes::router().await.oneshot(req).await.unwrap();
+        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
         assert_eq!(res.status(), StatusCode::NOT_FOUND);
     }
 
@@ -75,8 +90,7 @@ mod tests {
         #[case] missing_uid: bool,
         #[case] missing_session_id: bool,
     ) {
-        let db_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL is not set");
-        env::set_var("DATABASE_URL", db_url);
+        let conn = prepare_db_connection().await;
         let mut custom_req = Request::builder().uri("/device/");
         if !missing_uid {
             custom_req = custom_req.header("uid", "Bar");
@@ -85,7 +99,7 @@ mod tests {
             custom_req = custom_req.header("cookie_id", "Bar");
         }
         let req = custom_req.body(Body::empty()).unwrap();
-        let res = routes::router().await.oneshot(req).await.unwrap();
+        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
         let expect_code = if missing_uid || missing_session_id {
             StatusCode::EXPECTATION_FAILED
         } else {

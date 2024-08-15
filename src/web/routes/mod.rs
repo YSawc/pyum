@@ -5,7 +5,7 @@ use axum::{
     extract::{MatchedPath, Request},
     middleware, Router,
 };
-use sea_orm::Database;
+use sea_orm::{Database, DatabaseConnection};
 use serde::{Deserialize, Serialize};
 use tower_cookies::CookieManagerLayer;
 use tower_http::trace::TraceLayer;
@@ -30,11 +30,7 @@ pub struct FlashData {
     pub message: String,
 }
 
-pub async fn router() -> Router {
-    let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-    let conn = Database::connect(db_url)
-        .await
-        .expect("database connection failed.");
+pub async fn router(conn: DatabaseConnection) -> Router {
     let state = AppState::new(conn);
     Router::new()
         .merge(protected::router())

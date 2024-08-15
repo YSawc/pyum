@@ -1,4 +1,5 @@
 use pyum::web::routes;
+use sea_orm::Database;
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -12,7 +13,11 @@ async fn main() -> anyhow::Result<()> {
     //     .with(tracing_subscriber::fmt::layer())
     //     .init();
 
-    let app = routes::router().await;
+    let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
+    let conn = Database::connect(db_url)
+        .await
+        .expect("database connection failed.");
+    let app = routes::router(conn).await;
 
     // run it with hyper
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));

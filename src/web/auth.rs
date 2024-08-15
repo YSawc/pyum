@@ -33,14 +33,14 @@ pub async fn check_session_id(
 
 #[cfg(test)]
 mod tests {
+    use crate::web::routes;
     use axum::{
         body::Body,
         http::{Request, StatusCode},
     };
-    use tower::ServiceExt;
-
-    use crate::web::routes;
+    use rstest::rstest;
     use std::env;
+    use tower::ServiceExt;
 
     #[tokio::test]
     async fn request_hello() {
@@ -67,42 +67,30 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn missing_header_uid_for_protected_route() {
+    #[rstest]
+    #[case(false, true)]
+    #[case(true, false)]
+    #[case(true, true)]
+    async fn checking_header_uid_for_protected_route(
+        #[case] missing_uid: bool,
+        #[case] missing_session_id: bool,
+    ) {
         let db_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL is not set");
         env::set_var("DATABASE_URL", db_url);
-        let req = Request::builder()
-            .uri("/device/")
-            .header("cookie_id", "Bar")
-            .body(Body::empty())
-            .unwrap();
+        let mut custom_req = Request::builder().uri("/device/");
+        if !missing_uid {
+            custom_req = custom_req.header("uid", "Bar");
+        }
+        if !missing_session_id {
+            custom_req = custom_req.header("cookie_id", "Bar");
+        }
+        let req = custom_req.body(Body::empty()).unwrap();
         let res = routes::router().await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::EXPECTATION_FAILED);
-    }
-
-    #[tokio::test]
-    async fn missing_header_cookie_id_for_protected_route() {
-        let db_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL is not set");
-        env::set_var("DATABASE_URL", db_url);
-        let req = Request::builder()
-            .uri("/device/")
-            .header("uid", "Bar")
-            .body(Body::empty())
-            .unwrap();
-        let res = routes::router().await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::EXPECTATION_FAILED);
-    }
-
-    #[tokio::test]
-    async fn meet_header_for_protected_route() {
-        let db_url = std::env::var("TEST_DATABASE_URL").expect("TEST_DATABASE_URL is not set");
-        env::set_var("DATABASE_URL", db_url);
-        let req = Request::builder()
-            .uri("/device/")
-            .header("uid", "Bar")
-            .header("cookie_id", "Bar")
-            .body(Body::empty())
-            .unwrap();
-        let res = routes::router().await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::OK);
+        let expect_code = if missing_uid || missing_session_id {
+            StatusCode::EXPECTATION_FAILED
+        } else {
+            StatusCode::OK
+        };
+        assert_eq!(res.status(), expect_code);
     }
 }

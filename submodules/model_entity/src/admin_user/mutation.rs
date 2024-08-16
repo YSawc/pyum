@@ -40,3 +40,10 @@ pub async fn find_by_name(
         .one(db)
         .await
 }
+
+pub async fn delete_all(db: &DbConn) -> Result<DeleteResult, DbErr> {
+    AdminUser::delete_many()
+        .filter(model::Column::Id.is_not_null())
+        .exec(db)
+        .await
+}

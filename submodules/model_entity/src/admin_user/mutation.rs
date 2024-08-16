@@ -1,6 +1,8 @@
 use bcrypt::DEFAULT_COST;
 use sea_orm::*;
 
+use crate::session;
+
 use super::{model, model::Entity as AdminUser};
 
 pub async fn seed(db: &DbConn) -> Result<model::ActiveModel, DbErr> {
@@ -46,11 +48,14 @@ pub async fn find_by_id(db: &DbConn, uid: i32) -> Result<Option<model::Model>, D
         .await
 }
 
-pub async fn find_by_id_with_session(db: &DbConn, uid: i32) -> Result<Option<model::Model>, DbErr> {
+pub async fn find_by_id_with_session(
+    db: &DbConn,
+    uid: i32,
+) -> Result<Vec<(model::Model, Vec<session::model::Model>)>, DbErr> {
     AdminUser::find()
+        .find_with_related(session::model::Entity)
         .filter(model::Column::Id.eq(uid))
-        .join(JoinType::LeftJoin, model::Relation::Session.def())
-        .one(db)
+        .all(db)
         .await
 }
 

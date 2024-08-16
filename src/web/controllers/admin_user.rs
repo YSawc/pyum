@@ -3,7 +3,7 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::{Html, Redirect};
 use axum::Form;
-use model_entity::admin_user;
+use model_entity::models::admin_user;
 
 use crate::web::middleware::AppState;
 

@@ -1,4 +1,4 @@
-use crate::session;
+use crate::models::session;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 

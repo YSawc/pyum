@@ -1,4 +1,4 @@
-use model_entity::oauth2_client_secret;
+use model_entity::models::oauth2_client_secret;
 use rand::{distributions::Alphanumeric, Rng};
 use sea_orm::*;
 

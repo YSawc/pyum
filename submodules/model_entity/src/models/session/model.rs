@@ -1,4 +1,4 @@
-use crate::admin_user;
+use crate::models::admin_user;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 

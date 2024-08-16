@@ -1,7 +1,7 @@
 use bcrypt::DEFAULT_COST;
 use sea_orm::*;
 
-use crate::session;
+use crate::models::session;
 
 use super::{model, model::Entity as AdminUser};
 

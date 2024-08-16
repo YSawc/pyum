@@ -1,5 +1,5 @@
 pub mod prepare;
-use model_entity::oauth2_client_secret::{
+use model_entity::models::oauth2_client_secret::{
     model::{Entity, Model},
     query::Query,
 };
@@ -9,7 +9,7 @@ use sea_orm::{prelude::Expr, EntityOrSelect, EntityTrait, QueryFilter, QueryTrai
 #[cfg(feature = "mock")]
 #[tokio::test]
 async fn main() {
-    use model_entity::{
+    use model_entity::models::{
         admin_user::model::Model,
         oauth2_client_secret::{self, model::Entity},
     };

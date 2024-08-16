@@ -5,7 +5,7 @@ use axum::{
     middleware::Next,
     response::IntoResponse,
 };
-use model_entity::admin_user;
+use model_entity::models::admin_user;
 
 use crate::web::middleware::buffer_and_print;
 
@@ -37,7 +37,9 @@ pub async fn check_session_id(
                     .expect("failed to find admin_user by id")
                     .first()
                 {
-                    Some(_admin_user_with_session) => println!("{:?}", _admin_user_with_session),
+                    Some(_admin_user_with_session) => {
+                        println!("{:?}", _admin_user_with_session);
+                    }
                     None => {
                         return Err((
                             StatusCode::INTERNAL_SERVER_ERROR,
@@ -69,7 +71,7 @@ mod tests {
         http::{Request, StatusCode},
         Router,
     };
-    use model_entity::admin_user;
+    use model_entity::models::admin_user;
     use rstest::rstest;
     use sea_orm::{Database, DatabaseConnection};
     use tower::ServiceExt;

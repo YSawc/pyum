@@ -9,7 +9,7 @@ use axum::{
     response::{Html, Redirect},
     Form,
 };
-use model_entity::device::{self, query::DeviceQuery};
+use model_entity::models::device::{self, query::DeviceQuery};
 use tower_cookies::Cookies;
 
 pub async fn list_devices(

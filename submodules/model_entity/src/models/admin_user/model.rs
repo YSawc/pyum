@@ -45,7 +45,7 @@ impl ActiveModelBehavior for ActiveModel {}
 
 #[cfg(test)]
 mod tests {
-    use crate::admin_user;
+    use crate::models::admin_user;
     use sea_orm::{DbBackend, EntityTrait, JoinType, QuerySelect, QueryTrait, RelationTrait};
     #[tokio::test]
     async fn query_string_for_relation_of_session_and_admin_user() {

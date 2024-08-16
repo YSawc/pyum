@@ -1,14 +1,18 @@
 use axum::{
     body::Body,
-    extract::Request,
+    extract::{Request, State},
     http::{Response, StatusCode},
     middleware::Next,
     response::IntoResponse,
 };
+use model_entity::admin_user;
 
 use crate::web::middleware::buffer_and_print;
 
+use super::middleware::AppState;
+
 pub async fn check_session_id(
+    state: State<AppState>,
     req: Request,
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, String)> {
@@ -20,6 +24,29 @@ pub async fn check_session_id(
             StatusCode::EXPECTATION_FAILED,
             "uid or cookie_id is not set.".to_string(),
         ));
+    } else {
+        match maybe_uid
+            .unwrap()
+            .to_str()
+            .expect("something is wrong of header uid value")
+            .parse::<i32>()
+        {
+            Ok(uid) => {
+                match admin_user::mutation::find_by_id(&state.conn, uid)
+                    .await
+                    .expect("failed to find admin_user by id")
+                {
+                    Some(_admin_user) => (),
+                    None => {
+                        return Err((
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                            "admin_user linked with specified uid is not exists".to_string(),
+                        ));
+                    }
+                }
+            }
+            Err(e) => return Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
+        }
     }
     let bytes = buffer_and_print("request", body).await?;
     let req = Request::from_parts(parts, Body::from(bytes));
@@ -85,7 +112,7 @@ mod tests {
     #[rstest]
     #[case(false, true)]
     #[case(true, false)]
-    #[case(true, true)]
+    #[case(false, false)]
     async fn checking_header_uid_for_protected_route(
         #[case] missing_uid: bool,
         #[case] missing_session_id: bool,
@@ -93,7 +120,17 @@ mod tests {
         let conn = prepare_db_connection().await;
         let mut custom_req = Request::builder().uri("/device/");
         if !missing_uid {
-            custom_req = custom_req.header("uid", "Bar");
+            admin_user::mutation::delete_all(&conn)
+                .await
+                .expect("failed to delete all admin_user");
+            admin_user::mutation::seed(&conn)
+                .await
+                .expect("failed to seed admin_user");
+            let all_users = admin_user::mutation::find_all(&conn)
+                .await
+                .expect("failed to find all admin_user");
+            let first_user = all_users.first().unwrap();
+            custom_req = custom_req.header("uid", first_user.id);
         }
         if !missing_session_id {
             custom_req = custom_req.header("cookie_id", "Bar");
@@ -106,5 +143,27 @@ mod tests {
             StatusCode::OK
         };
         assert_eq!(res.status(), expect_code);
+    }
+
+    #[tokio::test]
+    async fn passing_not_exist_uid() {
+        let conn = prepare_db_connection().await;
+        admin_user::mutation::delete_all(&conn)
+            .await
+            .expect("failed to delete all admin_user");
+        admin_user::mutation::seed(&conn)
+            .await
+            .expect("failed to seed admin_user");
+        let all_users = admin_user::mutation::find_all(&conn)
+            .await
+            .expect("failed to find all admin_user");
+        let req = Request::builder()
+            .uri("/device/")
+            .header("uid", 0)
+            .header("cookie_id", "Bar")
+            .body(Body::empty())
+            .unwrap();
+        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
+        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
     }
 }

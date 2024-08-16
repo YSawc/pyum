@@ -5,7 +5,7 @@ use axum::{
     extract::{MatchedPath, Request},
     middleware, Router,
 };
-use sea_orm::{Database, DatabaseConnection};
+use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 use tower_cookies::CookieManagerLayer;
 use tower_http::trace::TraceLayer;
@@ -33,8 +33,9 @@ pub struct FlashData {
 pub async fn router(conn: DatabaseConnection) -> Router {
     let state = AppState::new(conn);
     Router::new()
-        .merge(protected::router())
+        .merge(protected::router(state.clone()))
         .merge(published::router())
+        .with_state(state)
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
@@ -57,5 +58,4 @@ pub async fn router(conn: DatabaseConnection) -> Router {
                 .on_failure(()),
         )
         .layer(middleware::from_fn(print_request_response))
-        .with_state(state)
 }

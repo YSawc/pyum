@@ -7,8 +7,6 @@ pub async fn seed(db: &DbConn) -> Result<model::ActiveModel, DbErr> {
     let name = "test".to_string();
     let encrypted_password =
         bcrypt::hash("test", DEFAULT_COST).expect("error occured when encrypting password");
-    println!("from seed.");
-
     model::ActiveModel {
         name: Set(name),
         encrypted_password: ActiveValue::Set(encrypted_password),
@@ -38,6 +36,20 @@ pub async fn find_by_name(
     AdminUser::find()
         .filter(model::Column::Name.eq(form_data.name))
         .one(db)
+        .await
+}
+
+pub async fn find_by_id(db: &DbConn, uid: i32) -> Result<Option<model::Model>, DbErr> {
+    AdminUser::find()
+        .filter(model::Column::Id.eq(uid))
+        .one(db)
+        .await
+}
+
+pub async fn find_all(db: &DbConn) -> Result<Vec<model::Model>, DbErr> {
+    AdminUser::find()
+        .filter(model::Column::Id.is_not_null())
+        .all(db)
         .await
 }
 

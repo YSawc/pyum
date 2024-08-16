@@ -3,6 +3,21 @@ use sea_orm::*;
 
 use super::{model, model::Entity as AdminUser};
 
+pub async fn seed(db: &DbConn) -> Result<model::ActiveModel, DbErr> {
+    let name = "test".to_string();
+    let encrypted_password =
+        bcrypt::hash("test", DEFAULT_COST).expect("error occured when encrypting password");
+    println!("from seed.");
+
+    model::ActiveModel {
+        name: Set(name),
+        encrypted_password: ActiveValue::Set(encrypted_password),
+        ..Default::default()
+    }
+    .save(db)
+    .await
+}
+
 pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::ActiveModel, DbErr> {
     let encrypted_password = bcrypt::hash(form_data.password, DEFAULT_COST)
         .expect("error occured when encrypting password");

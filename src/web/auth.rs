@@ -154,9 +154,6 @@ mod tests {
         admin_user::mutation::seed(&conn)
             .await
             .expect("failed to seed admin_user");
-        let all_users = admin_user::mutation::find_all(&conn)
-            .await
-            .expect("failed to find all admin_user");
         let req = Request::builder()
             .uri("/device/")
             .header("uid", 0)

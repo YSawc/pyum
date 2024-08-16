@@ -9,7 +9,7 @@ pub struct Model {
     #[serde(skip_deserializing)]
     pub id: i32,
     pub admin_user_id: i32,
-    pub cookieid: String,
+    pub cookie_id: String,
     pub expire_at: DateTime,
 }
 

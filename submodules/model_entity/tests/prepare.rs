@@ -1,8 +1,6 @@
 use model_entity::oauth2_client_secret;
 use rand::{distributions::Alphanumeric, Rng};
-use sea_orm::MockDatabase;
 use sea_orm::*;
-use sqlx::types::chrono::NaiveDate;
 
 fn prepare_client_secret() -> String {
     let client_secret: String = rand::thread_rng()
@@ -14,7 +12,10 @@ fn prepare_client_secret() -> String {
     client_secret
 }
 
+#[cfg(feature = "mock")]
 pub fn prepare_mock_db() -> DatabaseConnection {
+    use sea_orm::MockDatabase;
+
     MockDatabase::new(DatabaseBackend::MySql)
         .append_query_results([[
             oauth2_client_secret::model::Model {

@@ -32,11 +32,11 @@ pub async fn check_session_id(
             .parse::<i32>()
         {
             Ok(uid) => {
-                match admin_user::mutation::find_by_id(&state.conn, uid)
+                match admin_user::mutation::find_by_id_with_session(&state.conn, uid)
                     .await
                     .expect("failed to find admin_user by id")
                 {
-                    Some(_admin_user) => (),
+                    Some(_admin_user) => println!("{:?}", _admin_user),
                     None => {
                         return Err((
                             StatusCode::INTERNAL_SERVER_ERROR,

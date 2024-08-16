@@ -31,7 +31,7 @@ impl RelationTrait for Relation {
 
 impl Related<admin_user::model::Entity> for Entity {
     fn to() -> RelationDef {
-        admin_user::model::Relation::Session.def().rev()
+        Relation::AdminUser.def()
     }
 }
 

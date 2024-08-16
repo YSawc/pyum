@@ -46,6 +46,14 @@ pub async fn find_by_id(db: &DbConn, uid: i32) -> Result<Option<model::Model>, D
         .await
 }
 
+pub async fn find_by_id_with_session(db: &DbConn, uid: i32) -> Result<Option<model::Model>, DbErr> {
+    AdminUser::find()
+        .filter(model::Column::Id.eq(uid))
+        .join(JoinType::LeftJoin, model::Relation::Session.def())
+        .one(db)
+        .await
+}
+
 pub async fn find_all(db: &DbConn) -> Result<Vec<model::Model>, DbErr> {
     AdminUser::find()
         .filter(model::Column::Id.is_not_null())

@@ -21,10 +21,7 @@ pub async fn check_session_id(
     let maybe_uid = parts.headers.get("uid");
     let maybe_cookie_id = parts.headers.get("cookie_id");
     if maybe_uid.is_none() || maybe_cookie_id.is_none() {
-        return Err((
-            StatusCode::EXPECTATION_FAILED,
-            "uid or cookie_id is not set.".to_string(),
-        ));
+        return Ok(Redirect::to("/admin_user/login").into_response());
     } else {
         match maybe_uid
             .unwrap()
@@ -47,7 +44,6 @@ pub async fn check_session_id(
                             .unwrap()
                             .to_str()
                             .expect("something is wrong of header cookie id value")
-                            .to_string()
                             != *cookie_id
                             || sessions
                                 .first()
@@ -56,7 +52,7 @@ pub async fn check_session_id(
                                 .and_utc()
                                 <= Utc::now()
                         {
-                            return Ok(Redirect::to("admin_user/login").into_response());
+                            return Ok(Redirect::to("/admin_user/login").into_response());
                         }
                     }
                     None => {
@@ -167,7 +163,7 @@ mod tests {
         let req = custom_req.body(Body::empty()).unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
         let expect_code = if missing_uid || missing_session_id {
-            StatusCode::EXPECTATION_FAILED
+            StatusCode::SEE_OTHER
         } else {
             StatusCode::OK
         };

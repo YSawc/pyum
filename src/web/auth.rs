@@ -3,7 +3,7 @@ use axum::{
     extract::{Request, State},
     http::{Response, StatusCode},
     middleware::Next,
-    response::IntoResponse,
+    response::{IntoResponse, Redirect},
 };
 use model_entity::models::admin_user;
 
@@ -49,10 +49,7 @@ pub async fn check_session_id(
                             .to_string()
                             != *cookie_id
                         {
-                            return Err((
-                                StatusCode::INTERNAL_SERVER_ERROR,
-                                "passed cookie id related user is not exist".to_string(),
-                            ));
+                            return Ok(Redirect::to("admin_user/login").into_response());
                         }
                     }
                     None => {
@@ -197,7 +194,7 @@ mod tests {
             .body(Body::empty())
             .unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+        assert_eq!(res.status(), StatusCode::SEE_OTHER);
     }
 
     #[tokio::test]

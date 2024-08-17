@@ -37,8 +37,23 @@ pub async fn check_session_id(
                     .expect("failed to find admin_user by id")
                     .first()
                 {
-                    Some(_admin_user_with_session) => {
-                        println!("{:?}", _admin_user_with_session);
+                    Some((_admin_user, sessions)) => {
+                        let cookie_id = &sessions
+                            .first()
+                            .expect("failed to get first session")
+                            .cookie_id;
+                        if maybe_cookie_id
+                            .unwrap()
+                            .to_str()
+                            .expect("something is wrong of header cookie id value")
+                            .to_string()
+                            != *cookie_id
+                        {
+                            return Err((
+                                StatusCode::INTERNAL_SERVER_ERROR,
+                                "passed cookie id related user is not exist".to_string(),
+                            ));
+                        }
                     }
                     None => {
                         return Err((
@@ -71,7 +86,7 @@ mod tests {
         http::{Request, StatusCode},
         Router,
     };
-    use model_entity::models::admin_user;
+    use model_entity::models::{admin_user, session};
     use rstest::rstest;
     use sea_orm::{Database, DatabaseConnection};
     use tower::ServiceExt;
@@ -115,8 +130,7 @@ mod tests {
     #[rstest]
     #[case(false, true)]
     #[case(true, false)]
-    #[case(false, false)]
-    async fn checking_header_uid_for_protected_route(
+    async fn miss_passing_header_uid_for_protected_route(
         #[case] missing_uid: bool,
         #[case] missing_session_id: bool,
     ) {
@@ -165,5 +179,49 @@ mod tests {
             .unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
         assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    }
+
+    #[tokio::test]
+    async fn passing_not_exist_cookie_id() {
+        let conn = prepare_db_connection().await;
+        admin_user::mutation::seed_with_session(&conn)
+            .await
+            .expect("failed to seed admin_user");
+        let all_users = admin_user::mutation::find_all(&conn)
+            .await
+            .expect("failed to find all admin_user");
+        let first_user = all_users.first().unwrap();
+        let req = Request::builder()
+            .uri("/device/")
+            .header("uid", first_user.id)
+            .header("cookie_id", "Bar")
+            .body(Body::empty())
+            .unwrap();
+        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
+        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    }
+
+    #[tokio::test]
+    async fn passing_exist_cookie_id_and_cookie_id() {
+        let conn = prepare_db_connection().await;
+        admin_user::mutation::seed_with_session(&conn)
+            .await
+            .expect("failed to seed admin_user");
+        let all_users = admin_user::mutation::find_all(&conn)
+            .await
+            .expect("failed to find all admin_user");
+        let first_user = all_users.first().unwrap();
+        let all_sessions = session::mutation::find_by_admin_user_id(&conn, first_user.id)
+            .await
+            .expect("failed to find admin_user sessions");
+        let first_session = all_sessions.first().unwrap();
+        let req = Request::builder()
+            .uri("/device/")
+            .header("uid", first_user.id)
+            .header("cookie_id", first_session.cookie_id.clone())
+            .body(Body::empty())
+            .unwrap();
+        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
+        assert_eq!(res.status(), StatusCode::OK);
     }
 }

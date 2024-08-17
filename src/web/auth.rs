@@ -78,8 +78,6 @@ pub async fn check_session_id(
 
 #[cfg(test)]
 mod tests {
-    use std::env;
-
     use crate::web::routes;
     use axum::{
         body::Body,
@@ -89,6 +87,7 @@ mod tests {
     use model_entity::models::{admin_user, session};
     use rstest::rstest;
     use sea_orm::{Database, DatabaseConnection};
+    use std::env;
     use tower::ServiceExt;
 
     async fn prepare_db_connection() -> DatabaseConnection {
@@ -184,7 +183,7 @@ mod tests {
     #[tokio::test]
     async fn passing_not_exist_cookie_id() {
         let conn = prepare_db_connection().await;
-        admin_user::mutation::seed_with_session(&conn)
+        admin_user::mutation::seed_with_unexpired_session(&conn)
             .await
             .expect("failed to seed admin_user");
         let all_users = admin_user::mutation::find_all(&conn)
@@ -204,7 +203,7 @@ mod tests {
     #[tokio::test]
     async fn passing_exist_cookie_id_and_cookie_id() {
         let conn = prepare_db_connection().await;
-        admin_user::mutation::seed_with_session(&conn)
+        admin_user::mutation::seed_with_unexpired_session(&conn)
             .await
             .expect("failed to seed admin_user");
         let all_users = admin_user::mutation::find_all(&conn)

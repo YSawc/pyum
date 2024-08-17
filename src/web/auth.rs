@@ -6,6 +6,7 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use model_entity::models::admin_user;
+use sea_orm::sqlx::types::chrono::Utc;
 
 use crate::web::middleware::buffer_and_print;
 
@@ -48,6 +49,12 @@ pub async fn check_session_id(
                             .expect("something is wrong of header cookie id value")
                             .to_string()
                             != *cookie_id
+                            || sessions
+                                .first()
+                                .expect("failed to get first session")
+                                .expire_at
+                                .and_utc()
+                                <= Utc::now()
                         {
                             return Ok(Redirect::to("admin_user/login").into_response());
                         }
@@ -73,6 +80,8 @@ pub async fn check_session_id(
     Ok(res)
 }
 
+// In executing with muti thread, model deletion is not works expected, so thread should be only one.
+// run below test: cargo test -- --nocapture --test-threads=1
 #[cfg(test)]
 mod tests {
     use crate::web::routes;
@@ -98,6 +107,15 @@ mod tests {
 
     async fn prepare_router(conn: DatabaseConnection) -> Router {
         routes::router(conn).await
+    }
+
+    async fn delete_related_models(conn: &DatabaseConnection) {
+        admin_user::mutation::delete_all(conn)
+            .await
+            .expect("failed to delete all admin user");
+        session::mutation::delete_all(conn)
+            .await
+            .expect("failed to delete all session");
     }
 
     #[tokio::test]
@@ -133,9 +151,7 @@ mod tests {
         let conn = prepare_db_connection().await;
         let mut custom_req = Request::builder().uri("/device/");
         if !missing_uid {
-            admin_user::mutation::delete_all(&conn)
-                .await
-                .expect("failed to delete all admin_user");
+            delete_related_models(&conn).await;
             admin_user::mutation::seed(&conn)
                 .await
                 .expect("failed to seed admin_user");
@@ -161,9 +177,7 @@ mod tests {
     #[tokio::test]
     async fn passing_not_exist_uid() {
         let conn = prepare_db_connection().await;
-        admin_user::mutation::delete_all(&conn)
-            .await
-            .expect("failed to delete all admin_user");
+        delete_related_models(&conn).await;
         admin_user::mutation::seed(&conn)
             .await
             .expect("failed to seed admin_user");
@@ -180,6 +194,7 @@ mod tests {
     #[tokio::test]
     async fn passing_not_exist_cookie_id() {
         let conn = prepare_db_connection().await;
+        delete_related_models(&conn).await;
         admin_user::mutation::seed_with_unexpired_session(&conn)
             .await
             .expect("failed to seed admin_user");
@@ -198,8 +213,9 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn passing_exist_cookie_id_and_cookie_id() {
+    async fn passing_exist_unexpired_cookie_id() {
         let conn = prepare_db_connection().await;
+        delete_related_models(&conn).await;
         admin_user::mutation::seed_with_unexpired_session(&conn)
             .await
             .expect("failed to seed admin_user");
@@ -219,5 +235,30 @@ mod tests {
             .unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
         assert_eq!(res.status(), StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn passing_exist_expired_cookie_id() {
+        let conn = prepare_db_connection().await;
+        delete_related_models(&conn).await;
+        admin_user::mutation::seed_with_expired_session(&conn)
+            .await
+            .expect("failed to seed admin_user");
+        let all_users = admin_user::mutation::find_all(&conn)
+            .await
+            .expect("failed to find all admin_user");
+        let first_user = all_users.first().unwrap();
+        let all_sessions = session::mutation::find_by_admin_user_id(&conn, first_user.id)
+            .await
+            .expect("failed to find admin_user sessions");
+        let first_session = all_sessions.first().unwrap();
+        let req = Request::builder()
+            .uri("/device/")
+            .header("uid", first_user.id)
+            .header("cookie_id", first_session.cookie_id.clone())
+            .body(Body::empty())
+            .unwrap();
+        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
+        assert_eq!(res.status(), StatusCode::SEE_OTHER);
     }
 }

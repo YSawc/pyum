@@ -9,7 +9,7 @@
   dotenv.enable = true;
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.mysql pkgs.libmysqlclient pkgs.sea-orm-cli ];
+  packages = [ pkgs.git pkgs.mysql pkgs.libmysqlclient pkgs.sea-orm-cli pkgs.deno ];
 
   # https://devenv.sh/languages/
   languages.rust = {

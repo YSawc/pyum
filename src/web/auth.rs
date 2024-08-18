@@ -219,7 +219,7 @@ mod tests {
             .await
             .expect("failed to find all admin_user");
         let first_user = all_users.first().unwrap();
-        let all_sessions = session::mutation::find_by_admin_user_id(&conn, first_user.id)
+        let all_sessions = session::mutation::find_unexpired_by_admin_user_id(&conn, first_user.id)
             .await
             .expect("failed to find admin_user sessions");
         let first_session = all_sessions.first().unwrap();
@@ -244,7 +244,7 @@ mod tests {
             .await
             .expect("failed to find all admin_user");
         let first_user = all_users.first().unwrap();
-        let all_sessions = session::mutation::find_by_admin_user_id(&conn, first_user.id)
+        let all_sessions = session::mutation::find_expired_by_admin_user_id(&conn, first_user.id)
             .await
             .expect("failed to find admin_user sessions");
         let first_session = all_sessions.first().unwrap();

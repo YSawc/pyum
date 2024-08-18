@@ -1,6 +1,7 @@
 use crate::utils::{generate_1day_after_date_time, generate_1day_before_date_time};
 
 use super::{model, model::Entity as Session};
+use chrono::Utc;
 use rand::{distributions::Alphanumeric, Rng};
 use sea_orm::*;
 
@@ -50,12 +51,24 @@ pub async fn seed_expired_with_admin_user_id(
     Ok(session)
 }
 
-pub async fn find_by_admin_user_id(
+pub async fn find_unexpired_by_admin_user_id(
     db: &DbConn,
     admin_user_id: i32,
 ) -> Result<Vec<model::Model>, DbErr> {
     Session::find()
         .filter(model::Column::AdminUserId.eq(admin_user_id))
+        .filter(model::Column::ExpireAt.gte(Utc::now()))
+        .all(db)
+        .await
+}
+
+pub async fn find_expired_by_admin_user_id(
+    db: &DbConn,
+    admin_user_id: i32,
+) -> Result<Vec<model::Model>, DbErr> {
+    Session::find()
+        .filter(model::Column::AdminUserId.eq(admin_user_id))
+        .filter(model::Column::ExpireAt.lt(Utc::now()))
         .all(db)
         .await
 }

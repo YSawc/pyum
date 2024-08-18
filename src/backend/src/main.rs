@@ -1,4 +1,4 @@
-use pyum::web::routes;
+use backend::web::routes;
 use sea_orm::Database;
 use std::net::SocketAddr;
 

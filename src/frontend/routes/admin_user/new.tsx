@@ -1,16 +1,56 @@
-import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
 import Title from "../_title.tsx";
+import { Effect } from "npm:effect@3.6.5";
+import { Handlers, PageProps } from "$fresh/server.ts";
+import { type HttpClientError } from "npm:@effect/platform";
 
-const New: FunctionComponent = () => {
+interface Data {
+  results: string[];
+  query: string;
+}
+
+export const handler: Handlers<Data> = {
+  async POST(req) {
+    const form = await req.formData();
+    const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
+      try: () =>
+        fetch("http://localhost:3000/admin_user/new", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: form.get("name")?.toString(),
+            password: form.get("password")?.toString(),
+          }),
+        }).then((
+          res,
+        ) => res.json()),
+      catch: (err) =>
+        new Error(`In post for admin_user/new, something went wrong ${err}`),
+    }).pipe(
+      Effect.andThen((res) => console.log(res)),
+      Effect.catchAll((err) => console.log(err)),
+    );
+    Effect.runPromise(prog).then(console.log, console.error);
+
+    const headers = new Headers();
+    headers.set("location", "/admin_user/login");
+    return new Response(null, {
+      status: 303, // See Other
+      headers,
+    });
+  },
+};
+
+const New = ({ }: PageProps<Data>) => {
   return (
     <div class="container">
       <Title title="Create Admin User" />
       <div class="w-full max-w-xs">
         <form
-          class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
           method="post"
-          hx-post="/admin_user/new"
-          id="create-admin-user-form"
+          class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+          id="login-form"
         >
           <div class="mb-4">
             <label
@@ -42,12 +82,13 @@ const New: FunctionComponent = () => {
               placeholder="password"
             />
           </div>
+
           <div class="flex items-center justify-between">
             <button
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Submit
+              Login
             </button>
           </div>
         </form>

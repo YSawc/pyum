@@ -1,11 +1,17 @@
 use axum::extract::State;
 
 use axum::http::{HeaderMap, HeaderValue, StatusCode};
-use axum::response::{Html, IntoResponse, Redirect};
-use axum::Form;
+use axum::response::Html;
+use axum::Json;
 use model_entity::models::{admin_user, session};
+use serde::Serialize;
 
 use crate::web::middleware::AppState;
+
+#[derive(Serialize)]
+pub struct SimpleRes {
+    message: String,
+}
 
 pub async fn get_create_admin_user(
     state: State<AppState>,
@@ -21,13 +27,15 @@ pub async fn get_create_admin_user(
 
 pub async fn post_create_admin_user(
     state: State<AppState>,
-    Form(admin_user): Form<admin_user::model::Model>,
-) -> Result<Redirect, (StatusCode, &'static str)> {
+    Json(admin_user): Json<admin_user::model::Model>,
+) -> Result<Json<SimpleRes>, (StatusCode, &'static str)> {
     admin_user::mutation::create(&state.conn, admin_user)
         .await
         .expect("failed to create admin user.");
 
-    Ok(Redirect::to("/device/"))
+    Ok(Json(SimpleRes {
+        message: "success to create admin user.".to_string(),
+    }))
 }
 
 pub async fn get_login_admin_user(

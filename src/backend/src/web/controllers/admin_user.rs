@@ -50,10 +50,16 @@ pub async fn get_login_admin_user(
     Ok(Html(body))
 }
 
+#[derive(Serialize)]
+pub struct PostLoginAdminUserRes {
+    message: String,
+    cid: String,
+}
+
 pub async fn post_login_admin_user(
     state: State<AppState>,
-    Form(admin_user): Form<admin_user::model::Model>,
-) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    Json(admin_user): Json<admin_user::model::Model>,
+) -> Result<Json<PostLoginAdminUserRes>, (StatusCode, &'static str)> {
     if let Some(admin_user) = admin_user::mutation::find_by_name(&state.conn, admin_user)
         .await
         .map_err(|_| {
@@ -78,8 +84,11 @@ pub async fn post_login_admin_user(
             HeaderValue::from_str(format!("cid={:?}", first_session.cookie_id.clone()).as_str())
                 .unwrap(),
         );
-        Ok((headers, Redirect::to("/device/")).into_response())
+        Ok(Json(PostLoginAdminUserRes {
+            message: "success to login admin user.".to_string(),
+            cid: first_session.cookie_id.clone().to_string(),
+        }))
     } else {
-        Ok(Redirect::to("/admin_user/login").into_response())
+        Err((StatusCode::INTERNAL_SERVER_ERROR, "user not found"))
     }
 }

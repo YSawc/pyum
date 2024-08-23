@@ -1,5 +1,63 @@
 import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
 import Title from "../_title.tsx";
+import { Effect } from "npm:effect@3.6.5";
+import { Handlers } from "$fresh/server.ts";
+import { type HttpClientError } from "npm:@effect/platform";
+import { AdminUserLoginRes } from "../../types/request/admin_user/login.ts";
+import {
+  Cookie,
+  setCookie,
+} from "https://deno.land/std@0.224.0/http/cookie.ts";
+
+interface Data {
+  results: string[];
+  query: string;
+}
+
+export const handler: Handlers<Data> = {
+  async POST(req) {
+    const form = await req.formData();
+    const loginProg: Effect<AdminUserLoginRes, HttpClientError> = Effect
+      .tryPromise({
+        try: () =>
+          fetch("http://localhost:3000/admin_user/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: form.get("name")?.toString(),
+              password: form.get("password")?.toString(),
+            }),
+          }).then((
+            res,
+          ) => res.json() as Promise<AdminUserLoginRes>),
+        catch: (err) =>
+          new Error(`In post admin_user/login, something went wrong ${err}`),
+      });
+    // loginProg().pipe(
+    //   Effect.andThen((res) => {
+    //     console.log("res.cid");
+    //     console.log(res.cid);
+    //   }),
+    // );
+
+    const headers = new Headers();
+    await Effect.runPromise(loginProg).then(
+      (res) => {
+        const adminUserLoginRes: AdminUserLoginRes = res as AdminUserLoginRes;
+        const cookie: Cookie = { name: "cid", value: adminUserLoginRes.cid };
+        setCookie(headers, cookie);
+      },
+    ).catch((err) => console.error(err));
+
+    headers.set("location", "/admin_user/login");
+    return new Response(null, {
+      status: 303, // See Other
+      headers,
+    });
+  },
+};
 
 const Login: FunctionComponent = () => {
   return (
@@ -9,7 +67,6 @@ const Login: FunctionComponent = () => {
         <form
           class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
           method="post"
-          hx-post="/admin_user/login"
           id="login-form"
         >
           <div class="mb-4">

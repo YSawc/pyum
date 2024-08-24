@@ -8,6 +8,7 @@ import {
   Cookie,
   setCookie,
 } from "https://deno.land/std@0.224.0/http/cookie.ts";
+import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 
 interface Data {
   results: string[];
@@ -53,7 +54,7 @@ export const handler: Handlers<Data> = {
 
     headers.set("location", "/admin_user/login");
     return new Response(null, {
-      status: 303, // See Other
+      status: HttpStatusCode.SEE_OTHER,
       headers,
     });
   },

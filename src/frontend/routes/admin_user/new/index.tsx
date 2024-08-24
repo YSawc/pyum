@@ -2,6 +2,7 @@ import Title from "../../_title.tsx";
 import { Effect } from "npm:effect@3.6.5";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { type HttpClientError } from "npm:@effect/platform";
+import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 
 interface Data {
   results: string[];
@@ -36,7 +37,7 @@ export const handler: Handlers<Data> = {
     const headers = new Headers();
     headers.set("location", "/admin_user/login");
     return new Response(null, {
-      status: 303, // See Other
+      status: HttpStatusCode.SEE_OTHER,
       headers,
     });
   },

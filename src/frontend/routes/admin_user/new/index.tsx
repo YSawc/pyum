@@ -1,5 +1,5 @@
 import Title from "../../_title.tsx";
-import { Effect } from "npm:effect@3.6.5";
+import { Effect } from "@effect";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { type HttpClientError } from "npm:@effect/platform";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";

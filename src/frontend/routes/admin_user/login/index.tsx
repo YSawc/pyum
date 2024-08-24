@@ -47,7 +47,11 @@ export const handler: Handlers<Data> = {
     await Effect.runPromise(loginProg).then(
       (res) => {
         const adminUserLoginRes: AdminUserLoginRes = res as AdminUserLoginRes;
-        const cookie: Cookie = { name: "cid", value: adminUserLoginRes.cid };
+        const cookie: Cookie = {
+          name: "cid",
+          value: adminUserLoginRes.cid,
+          path: "/",
+        };
         setCookie(headers, cookie);
       },
     ).catch((err) => console.error(err));

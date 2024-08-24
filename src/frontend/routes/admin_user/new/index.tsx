@@ -1,4 +1,4 @@
-import Title from "../_title.tsx";
+import Title from "../../_title.tsx";
 import { Effect } from "npm:effect@3.6.5";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { type HttpClientError } from "npm:@effect/platform";
@@ -42,7 +42,7 @@ export const handler: Handlers<Data> = {
   },
 };
 
-const New = ({ }: PageProps<Data>) => {
+const New = ({}: PageProps<Data>) => {
   return (
     <div class="container">
       <Title title="Create Admin User" />

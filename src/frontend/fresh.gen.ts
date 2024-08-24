@@ -9,12 +9,12 @@ import * as $_head from "./routes/_head.tsx";
 import * as $_header from "./routes/_header.tsx";
 import * as $_layout from "./routes/_layout.tsx";
 import * as $_title from "./routes/_title.tsx";
-import * as $admin_user_login from "./routes/admin_user/login.tsx";
-import * as $admin_user_new from "./routes/admin_user/new.tsx";
-import * as $device_detail from "./routes/device/detail.tsx";
-import * as $device_edit from "./routes/device/edit.tsx";
+import * as $admin_user_login_index from "./routes/admin_user/login/index.tsx";
+import * as $admin_user_new_index from "./routes/admin_user/new/index.tsx";
+import * as $device_detail_index from "./routes/device/detail/index.tsx";
+import * as $device_edit_index from "./routes/device/edit/index.tsx";
 import * as $device_index from "./routes/device/index.tsx";
-import * as $device_new from "./routes/device/new.tsx";
+import * as $device_new_index from "./routes/device/new/index.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import { type Manifest } from "$fresh/server.ts";
@@ -28,12 +28,12 @@ const manifest = {
     "./routes/_header.tsx": $_header,
     "./routes/_layout.tsx": $_layout,
     "./routes/_title.tsx": $_title,
-    "./routes/admin_user/login.tsx": $admin_user_login,
-    "./routes/admin_user/new.tsx": $admin_user_new,
-    "./routes/device/detail.tsx": $device_detail,
-    "./routes/device/edit.tsx": $device_edit,
+    "./routes/admin_user/login/index.tsx": $admin_user_login_index,
+    "./routes/admin_user/new/index.tsx": $admin_user_new_index,
+    "./routes/device/detail/index.tsx": $device_detail_index,
+    "./routes/device/edit/index.tsx": $device_edit_index,
     "./routes/device/index.tsx": $device_index,
-    "./routes/device/new.tsx": $device_new,
+    "./routes/device/new/index.tsx": $device_new_index,
     "./routes/greet/[name].tsx": $greet_name_,
   },
   islands: {

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
-import Title from "../_title.tsx";
+import Title from "../../_title.tsx";
 
 const Detail: FunctionComponent = () => {
   return (

@@ -51,6 +51,14 @@ pub async fn seed_expired_with_admin_user_id(
     Ok(session)
 }
 
+pub async fn find_by_cid(db: &DbConn, cid: String) -> Result<Option<model::Model>, DbErr> {
+    Session::find()
+        .filter(model::Column::CookieId.eq(cid))
+        .filter(model::Column::ExpireAt.gte(Utc::now()))
+        .one(db)
+        .await
+}
+
 pub async fn find_unexpired_by_admin_user_id(
     db: &DbConn,
     admin_user_id: i32,

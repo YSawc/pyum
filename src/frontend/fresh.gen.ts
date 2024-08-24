@@ -8,6 +8,7 @@ import * as $_footer from "./routes/_footer.tsx";
 import * as $_head from "./routes/_head.tsx";
 import * as $_header from "./routes/_header.tsx";
 import * as $_layout from "./routes/_layout.tsx";
+import * as $_middleware from "./routes/_middleware.ts";
 import * as $_title from "./routes/_title.tsx";
 import * as $admin_user_login_index from "./routes/admin_user/login/index.tsx";
 import * as $admin_user_new_index from "./routes/admin_user/new/index.tsx";
@@ -27,6 +28,7 @@ const manifest = {
     "./routes/_head.tsx": $_head,
     "./routes/_header.tsx": $_header,
     "./routes/_layout.tsx": $_layout,
+    "./routes/_middleware.ts": $_middleware,
     "./routes/_title.tsx": $_title,
     "./routes/admin_user/login/index.tsx": $admin_user_login_index,
     "./routes/admin_user/new/index.tsx": $admin_user_new_index,

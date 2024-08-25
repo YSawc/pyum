@@ -2,7 +2,6 @@ import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.
 import Title from "../../_title.tsx";
 import { Effect } from "@effect";
 import { Handlers } from "$fresh/server.ts";
-import { type HttpClientError } from "npm:@effect/platform";
 import { AdminUserLoginRes } from "../../../types/request/admin_user/login.ts";
 import {
   Cookie,
@@ -18,7 +17,7 @@ interface Data {
 export const handler: Handlers<Data> = {
   async POST(req) {
     const form = await req.formData();
-    const loginProg: Effect<AdminUserLoginRes, HttpClientError> = Effect
+    const prog = Effect
       .tryPromise({
         try: () =>
           fetch("http://localhost:3000/admin_user/login", {
@@ -35,27 +34,23 @@ export const handler: Handlers<Data> = {
           ) => res.json() as Promise<AdminUserLoginRes>),
         catch: (err) =>
           new Error(`In post admin_user/login, something went wrong ${err}`),
-      });
-    // loginProg().pipe(
-    //   Effect.andThen((res) => {
-    //     console.log("res.cid");
-    //     console.log(res.cid);
-    //   }),
-    // );
+      }).pipe(
+        Effect.andThen((res) => {
+          const adminUserLoginRes: AdminUserLoginRes = res as AdminUserLoginRes;
+          const cookie: Cookie = {
+            name: "cid",
+            value: adminUserLoginRes.cid,
+            path: "/",
+          };
+          setCookie(headers, cookie);
+        }),
+        Effect.catchAll((err) => {
+          console.log(err);
+        }),
+      );
 
     const headers = new Headers();
-    await Effect.runPromise(loginProg).then(
-      (res) => {
-        const adminUserLoginRes: AdminUserLoginRes = res as AdminUserLoginRes;
-        const cookie: Cookie = {
-          name: "cid",
-          value: adminUserLoginRes.cid,
-          path: "/",
-        };
-        setCookie(headers, cookie);
-      },
-    ).catch((err) => console.error(err));
-
+    await Effect.runPromise(prog).then(console.log, console.error);
     headers.set("location", "/device");
     return new Response(null, {
       status: HttpStatusCode.SEE_OTHER,

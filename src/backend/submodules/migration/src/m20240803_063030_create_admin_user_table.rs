@@ -19,7 +19,12 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(AdminUser::Name).string().not_null())
+                    .col(
+                        ColumnDef::new(AdminUser::Name)
+                            .string()
+                            .unique_key()
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(AdminUser::EncryptedPassword)
                             .string()

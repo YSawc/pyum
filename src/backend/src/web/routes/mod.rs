@@ -7,7 +7,6 @@ use axum::{
 };
 use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
-use tower_cookies::CookieManagerLayer;
 use tower_http::trace::TraceLayer;
 
 use crate::web::middleware::{print_request_response, AppState};
@@ -36,7 +35,6 @@ pub async fn router(conn: DatabaseConnection) -> Router {
         .merge(protected::router(state.clone()))
         .merge(published::router())
         .with_state(state)
-        .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
                 // Create our own span for the request and include the matched path. The matched

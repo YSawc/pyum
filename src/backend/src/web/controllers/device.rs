@@ -1,8 +1,4 @@
-use crate::{
-    flash::get_flash_cookie,
-    web::middleware::AppState,
-    web::routes::{FlashData, Params},
-};
+use crate::{web::middleware::AppState, web::routes::Params};
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
@@ -10,12 +6,10 @@ use axum::{
     Form,
 };
 use model_entity::models::device::{self, query::DeviceQuery};
-use tower_cookies::Cookies;
 
 pub async fn list_devices(
     state: State<AppState>,
     Query(params): Query<Params>,
-    cookies: Cookies,
 ) -> Result<Html<String>, (StatusCode, &'static str)> {
     let page = params.page.unwrap_or(1);
     let devices_per_page = params.devices_per_page.unwrap_or(5);
@@ -29,17 +23,6 @@ pub async fn list_devices(
     ctx.insert("page", &page);
     ctx.insert("devices_per_page", &devices_per_page);
     ctx.insert("num_pages", &num_pages);
-    // ctx.insert(
-    //     "flash",
-    //     &FlashData {
-    //         kind: FlashKind::Info,
-    //         message: "created device".to_string(),
-    //     },
-    // );
-
-    if let Some(value) = get_flash_cookie::<FlashData>(&cookies) {
-        ctx.insert("flash", &value);
-    }
 
     let body = state
         .templates

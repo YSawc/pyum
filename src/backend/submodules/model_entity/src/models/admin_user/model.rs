@@ -1,4 +1,4 @@
-use crate::models::session;
+use crate::models::{device, session};
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -22,6 +22,7 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
     Session,
+    Device,
 }
 
 impl RelationTrait for Relation {
@@ -31,6 +32,10 @@ impl RelationTrait for Relation {
                 .from(Column::Id)
                 .to(session::model::Column::AdminUserId)
                 .into(),
+            Self::Device => Entity::has_many(device::model::Entity)
+                .from(Column::Id)
+                .to(device::model::Column::AdminUserId)
+                .into(),
         }
     }
 }
@@ -38,6 +43,12 @@ impl RelationTrait for Relation {
 impl Related<session::model::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Session.def()
+    }
+}
+
+impl Related<device::model::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Device.def()
     }
 }
 

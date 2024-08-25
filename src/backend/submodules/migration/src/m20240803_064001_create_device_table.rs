@@ -1,5 +1,7 @@
 use sea_orm_migration::prelude::*;
 
+use crate::m20240803_063030_create_admin_user_table::AdminUser;
+
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 
@@ -18,6 +20,15 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .auto_increment()
                             .primary_key(),
+                    )
+                    .col(ColumnDef::new(Device::AdminUserId).integer().not_null())
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("pk_device_admin_user_id")
+                            .from(Device::Table, Device::AdminUserId)
+                            .to(AdminUser::Table, AdminUser::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .col(ColumnDef::new(Device::Name).string().not_null())
                     .col(ColumnDef::new(Device::Image).string())
@@ -39,6 +50,7 @@ impl MigrationTrait for Migration {
 enum Device {
     Table,
     Id,
+    AdminUserId,
     Name,
     Image,
     DeletedAt,

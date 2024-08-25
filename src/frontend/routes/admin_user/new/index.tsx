@@ -11,6 +11,8 @@ interface Data {
 
 export const handler: Handlers<Data> = {
   async POST(req) {
+    const resHeaders: ResponseInit = {};
+    const headers = new Headers();
     const form = await req.formData();
     const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
       try: () =>
@@ -29,17 +31,21 @@ export const handler: Handlers<Data> = {
       catch: (err) =>
         new Error(`In post for admin_user/new, something went wrong ${err}`),
     }).pipe(
-      Effect.andThen((res) => console.log(res)),
-      Effect.catchAll((err) => console.log(err)),
+      Effect.andThen((res) => {
+        resHeaders.status = HttpStatusCode.SEE_OTHER;
+        headers.set("location", "/admin_user/login");
+        console.log(res);
+      }),
+      Effect.catchAll((err) => {
+        resHeaders.status = HttpStatusCode.SEE_OTHER;
+        headers.set("location", "/admin_user/new");
+        console.log(err);
+      }),
     );
-    Effect.runPromise(prog).then(console.log, console.error);
+    await Effect.runPromise(prog).then(console.log, console.error);
 
-    const headers = new Headers();
-    headers.set("location", "/admin_user/login");
-    return new Response(null, {
-      status: HttpStatusCode.SEE_OTHER,
-      headers,
-    });
+    resHeaders.headers = headers;
+    return new Response(null, resHeaders);
   },
 };
 

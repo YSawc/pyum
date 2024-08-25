@@ -56,7 +56,7 @@ export const handler: Handlers<Data> = {
       },
     ).catch((err) => console.error(err));
 
-    headers.set("location", "/admin_user/login");
+    headers.set("location", "/device");
     return new Response(null, {
       status: HttpStatusCode.SEE_OTHER,
       headers,

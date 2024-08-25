@@ -15,7 +15,7 @@ pub async fn check_valid(
     state: State<AppState>,
     Json(body): Json<CheckValidBody>,
 ) -> Result<Json<SimpleRes>, (StatusCode, &'static str)> {
-    if let Some(_session) = session::mutation::find_by_cid(&state.conn, body.cid)
+    if let Some(_session) = session::mutation::find_unexpired_by_cid(&state.conn, body.cid)
         .await
         .expect("failed to checking session")
     {

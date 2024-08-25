@@ -5,7 +5,7 @@ import { type HttpClientError } from "npm:@effect/platform";
 import { wrapOption } from "../utils/effect/option.ts";
 import HttpStatusCode from "../enums/HttpStatusCode.ts";
 
-const validateSession = (cid: string): boolean => {
+const validateSession = async (cid: string): boolean => {
   let isValidSession = false;
   const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
     try: () =>
@@ -33,7 +33,7 @@ const validateSession = (cid: string): boolean => {
       console.log(err);
     }),
   );
-  Effect.runPromise(prog).then(console.log, console.error);
+  await Effect.runPromise(prog).then(console.log, console.error);
   return isValidSession;
 };
 

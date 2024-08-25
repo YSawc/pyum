@@ -3,6 +3,7 @@ use axum::extract::State;
 use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::Html;
 use axum::Json;
+use model_entity::models::admin_user::mutation::verify_password;
 use model_entity::models::{admin_user, session};
 use serde::Serialize;
 
@@ -58,9 +59,9 @@ pub struct PostLoginAdminUserRes {
 
 pub async fn post_login_admin_user(
     state: State<AppState>,
-    Json(admin_user): Json<admin_user::model::Model>,
+    Json(body): Json<admin_user::model::Model>,
 ) -> Result<Json<PostLoginAdminUserRes>, (StatusCode, &'static str)> {
-    if let Some(admin_user) = admin_user::mutation::find_by_name(&state.conn, admin_user)
+    if let Some(admin_user) = admin_user::mutation::find_by_name(&state.conn, body.clone())
         .await
         .map_err(|_| {
             (
@@ -70,24 +71,42 @@ pub async fn post_login_admin_user(
         })
         .unwrap()
     {
-        session::mutation::seed_unexpired_with_admin_user_id(&state.conn, admin_user.id)
-            .await
-            .expect("failed to create session");
-        let all_session =
-            session::mutation::find_unexpired_by_admin_user_id(&state.conn, admin_user.id)
-                .await
-                .expect("");
-        let first_session = all_session.first().unwrap();
-        let mut headers = HeaderMap::new();
-        headers.insert(
-            "cookie",
-            HeaderValue::from_str(format!("cid={:?}", first_session.cookie_id.clone()).as_str())
-                .unwrap(),
-        );
-        Ok(Json(PostLoginAdminUserRes {
-            message: "success to login admin user.".to_string(),
-            cid: first_session.cookie_id.clone().to_string(),
-        }))
+        match verify_password(admin_user.encrypted_password, body.password) {
+            Ok(res) => match res {
+                true => {
+                    session::mutation::seed_unexpired_with_admin_user_id(
+                        &state.conn,
+                        admin_user.id,
+                    )
+                    .await
+                    .expect("failed to create session");
+                    let all_session = session::mutation::find_unexpired_by_admin_user_id(
+                        &state.conn,
+                        admin_user.id,
+                    )
+                    .await
+                    .expect("");
+                    let last_session = all_session.last().unwrap();
+                    let mut headers = HeaderMap::new();
+                    headers.insert(
+                        "cookie",
+                        HeaderValue::from_str(
+                            format!("cid={:?}", last_session.cookie_id.clone()).as_str(),
+                        )
+                        .unwrap(),
+                    );
+                    Ok(Json(PostLoginAdminUserRes {
+                        message: "success to login admin user.".to_string(),
+                        cid: last_session.cookie_id.clone().to_string(),
+                    }))
+                }
+                false => Err((StatusCode::INTERNAL_SERVER_ERROR, "password is wrong")),
+            },
+            Err(_err) => Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "something is wrong in verify password",
+            )),
+        }
     } else {
         Err((StatusCode::INTERNAL_SERVER_ERROR, "user not found"))
     }

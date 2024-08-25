@@ -1,4 +1,4 @@
-use bcrypt::DEFAULT_COST;
+use bcrypt::{verify, BcryptError, DEFAULT_COST};
 use sea_orm::*;
 
 use crate::models::session::{
@@ -8,10 +8,14 @@ use crate::models::session::{
 
 use super::{model, model::Entity as AdminUser};
 
+fn get_hashed_password(password: String) -> Result<std::string::String, BcryptError> {
+    Ok(bcrypt::hash(password, DEFAULT_COST)?)
+}
+
 pub async fn seed(db: &DbConn) -> Result<model::ActiveModel, DbErr> {
     let name = "test".to_string();
     let encrypted_password =
-        bcrypt::hash("test", DEFAULT_COST).expect("error occured when encrypting password");
+        get_hashed_password("test".to_string()).expect("error occured when encrypting password");
     model::ActiveModel {
         name: Set(name),
         encrypted_password: ActiveValue::Set(encrypted_password),
@@ -43,9 +47,13 @@ pub async fn seed_with_expired_session(
     Ok((admin_user, session))
 }
 
+pub fn verify_password(encrypted_password: String, password: String) -> Result<bool, BcryptError> {
+    Ok(verify(password, &encrypted_password)?)
+}
+
 pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::ActiveModel, DbErr> {
-    let encrypted_password = bcrypt::hash(form_data.password, DEFAULT_COST)
-        .expect("error occured when encrypting password");
+    let encrypted_password =
+        get_hashed_password(form_data.password).expect("error occured when encrypting password");
 
     model::ActiveModel {
         name: Set(form_data.name.to_owned()),

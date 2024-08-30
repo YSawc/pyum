@@ -1,27 +1,40 @@
 use axum::{
     body::Body,
     extract::{Request, State},
-    http::{Response, StatusCode},
     middleware::Next,
-    response::{IntoResponse, Redirect},
+    response::{IntoResponse, Response},
+    Json,
 };
 use model_entity::models::admin_user;
 use sea_orm::sqlx::types::chrono::Utc;
+use tower_sessions::Session;
 
-use crate::web::middleware::buffer_and_print;
-
-use super::middleware::AppState;
+use super::{
+    middleware::{buffer_and_print, AppState},
+    SimpleRes,
+};
 
 pub async fn check_session_id(
+    session: Session,
     state: State<AppState>,
     req: Request,
     next: Next,
-) -> Result<impl IntoResponse, (StatusCode, String)> {
+) -> Result<impl IntoResponse, Json<SimpleRes>> {
+    match session.get_value("uid").await.unwrap() {
+        Some(_uid) => (),
+        None => {
+            return Err(Json(SimpleRes {
+                message: "session is not valid".to_string(),
+            }))
+        }
+    }
     let (parts, body) = req.into_parts();
     let maybe_uid = parts.headers.get("uid");
     let maybe_cookie_id = parts.headers.get("cookie_id");
     if maybe_uid.is_none() || maybe_cookie_id.is_none() {
-        return Ok(Redirect::to("/admin_user/login").into_response());
+        return Err(Json(SimpleRes {
+            message: "session is not valid".to_string(),
+        }));
     } else {
         match maybe_uid
             .unwrap()
@@ -52,18 +65,24 @@ pub async fn check_session_id(
                                 .and_utc()
                                 <= Utc::now()
                         {
-                            return Ok(Redirect::to("/admin_user/login").into_response());
+                            return Err(Json(SimpleRes {
+                                message: "session is expired".to_string(),
+                            }));
                         }
                     }
                     None => {
-                        return Err((
-                            StatusCode::INTERNAL_SERVER_ERROR,
-                            "admin_user linked with specified uid is not exists".to_string(),
-                        ));
+                        return Err(Json(SimpleRes {
+                            message: "admin_user linked with specified uid is not exists"
+                                .to_string(),
+                        }));
                     }
                 }
             }
-            Err(e) => return Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
+            Err(_e) => {
+                return Err(Json(SimpleRes {
+                    message: "admin_user linked with specified uid is not exists".to_string(),
+                }))
+            }
         }
     }
     let bytes = buffer_and_print("request", body).await?;

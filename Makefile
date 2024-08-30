@@ -1,4 +1,4 @@
-.PHONY: cargo_all_fmt run_api_server run_api_server_with_watch deno_task_start deno_test migrate_run migrate_run_refresh
+.PHONY: cargo_all_fmt run_api_server run_api_server_verbose run_api_server_with_watch deno_task_start deno_test migrate_run migrate_run_refresh
 
 cargo_all_fmt:
 	cd ./src/backend && \
@@ -13,6 +13,10 @@ cargo_all_fmt:
 run_api_server:
 	cd ./src/backend && \
 	cargo run
+
+run_api_server_verbose:
+	cd ./src/backend && \
+	cargo run --verbose
 
 run_api_server_with_watch:
 	cd ./src/backend && \

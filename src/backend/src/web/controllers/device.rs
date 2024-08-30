@@ -1,38 +1,36 @@
-use crate::{web::middleware::AppState, web::routes::Params};
+use crate::web::{middleware::AppState, routes::Params, util::get_uid, SimpleRes};
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
     response::{Html, Redirect},
-    Form,
+    Form, Json,
 };
 use model_entity::models::device::{self, query::DeviceQuery};
+use serde::Serialize;
+use tower_sessions::Session;
+
+#[derive(Serialize)]
+pub struct ListDevices {
+    devices: Vec<device::model::Model>,
+}
 
 pub async fn list_devices(
+    session: Session,
     state: State<AppState>,
     Query(params): Query<Params>,
-) -> Result<Html<String>, (StatusCode, &'static str)> {
+) -> Result<Json<ListDevices>, Json<SimpleRes>> {
+    let uid = session.get("uid").await.unwrap().unwrap();
     let page = params.page.unwrap_or(1);
     let devices_per_page = params.devices_per_page.unwrap_or(5);
-
-    let (devices, num_pages) = DeviceQuery::find_in_page(&state.conn, page, devices_per_page)
+    let (devices, _num_pages) = DeviceQuery::find_in_page(&state.conn, uid, page, devices_per_page)
         .await
-        .map_err(|_| (StatusCode::OK, "Cannot find devices in page"))?;
-
-    let mut ctx = tera::Context::new();
-    ctx.insert("devices", &devices);
-    ctx.insert("page", &page);
-    ctx.insert("devices_per_page", &devices_per_page);
-    ctx.insert("num_pages", &num_pages);
-
-    let body = state
-        .templates
-        .render("pages/device/index.html", &ctx)
-        .map_err(|e| {
-            println!("{:?}", e);
-            (StatusCode::INTERNAL_SERVER_ERROR, "Template error")
+        .map_err(|_| {
+            Json(SimpleRes {
+                message: "Cannot find devices in page".to_string(),
+            })
         })?;
 
-    Ok(Html(body))
+    Ok(Json(ListDevices { devices }))
 }
 
 pub async fn new_device(
@@ -52,13 +50,16 @@ pub async fn new_device(
 
 pub async fn create_device(
     state: State<AppState>,
-    Form(new_device): Form<device::model::Model>,
-) -> Result<Redirect, (StatusCode, &'static str)> {
-    device::mutation::create(&state.conn, new_device)
+    Json(new_device): Json<device::model::Model>,
+) -> Result<Json<SimpleRes>, Json<SimpleRes>> {
+    let uid = get_uid(&state).await?;
+    device::mutation::create(&state.conn, new_device, uid)
         .await
         .unwrap();
 
-    Ok(Redirect::to("/device/"))
+    Ok(Json(SimpleRes {
+        message: "Successed to creat device.".to_string(),
+    }))
 }
 
 pub async fn detail_device(

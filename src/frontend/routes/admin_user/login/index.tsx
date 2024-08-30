@@ -2,9 +2,9 @@ import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.
 import Title from "../../_title.tsx";
 import { Effect } from "@effect";
 import { Handlers } from "$fresh/server.ts";
-import { AdminUserLoginRes } from "../../../types/request/admin_user/login.ts";
 import {
   Cookie,
+  deleteCookie,
   setCookie,
 } from "https://deno.land/std@0.224.0/http/cookie.ts";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
@@ -17,6 +17,7 @@ interface Data {
 export const handler: Handlers<Data> = {
   async POST(req) {
     const form = await req.formData();
+    const headers = new Headers();
     const prog = Effect
       .tryPromise({
         try: () =>
@@ -31,25 +32,31 @@ export const handler: Handlers<Data> = {
             }),
           }).then((
             res,
-          ) => res.json() as Promise<AdminUserLoginRes>),
+          ) => {
+            deleteCookie(headers, "id");
+            const id =
+              res.headers.get("set-cookie").split(" ", 1)[0].slice(0, -1).split(
+                "=",
+              )[1];
+            const cookie: Cookie = {
+              name: "id",
+              value: id,
+              path: "/",
+            };
+            setCookie(headers, cookie);
+            return res.json();
+          }),
         catch: (err) =>
           new Error(`In post admin_user/login, something went wrong ${err}`),
       }).pipe(
         Effect.andThen((res) => {
-          const adminUserLoginRes: AdminUserLoginRes = res as AdminUserLoginRes;
-          const cookie: Cookie = {
-            name: "cid",
-            value: adminUserLoginRes.cid,
-            path: "/",
-          };
-          setCookie(headers, cookie);
+          console.log(res);
         }),
         Effect.catchAll((err) => {
           console.log(err);
         }),
       );
 
-    const headers = new Headers();
     await Effect.runPromise(prog).then(console.log, console.error);
     headers.set("location", "/device");
     return new Response(null, {

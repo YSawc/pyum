@@ -1,4 +1,7 @@
-use crate::utils::{generate_1day_after_date_time, generate_1day_before_date_time};
+use crate::{
+    models::admin_user,
+    utils::{generate_1day_after_date_time, generate_1day_before_date_time},
+};
 
 use super::{model, model::Entity as Session};
 use chrono::Utc;
@@ -54,11 +57,12 @@ pub async fn seed_expired_with_admin_user_id(
 pub async fn find_unexpired_by_cid(
     db: &DbConn,
     cid: String,
-) -> Result<Option<model::Model>, DbErr> {
+) -> Result<Vec<(model::Model, Option<admin_user::model::Model>)>, DbErr> {
     Session::find()
         .filter(model::Column::CookieId.eq(cid))
         .filter(model::Column::ExpireAt.gte(Utc::now()))
-        .one(db)
+        .find_also_related(admin_user::model::Entity)
+        .all(db)
         .await
 }
 

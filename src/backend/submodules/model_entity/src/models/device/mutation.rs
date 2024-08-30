@@ -3,9 +3,14 @@ use sqlx::types::chrono::Utc;
 
 use super::{model, model::Entity as Device};
 
-pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::ActiveModel, DbErr> {
+pub async fn create(
+    db: &DbConn,
+    form_data: model::Model,
+    uid: i32,
+) -> Result<model::ActiveModel, DbErr> {
     model::ActiveModel {
         name: Set(form_data.name.to_owned()),
+        admin_user_id: Set(uid),
         image: Set(form_data.image.to_owned()),
         ..Default::default()
     }

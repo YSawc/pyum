@@ -1,18 +1,14 @@
 use axum::extract::State;
 
-use axum::http::{HeaderMap, HeaderValue, StatusCode};
+use axum::http::StatusCode;
 use axum::response::Html;
 use axum::Json;
 use model_entity::models::admin_user::mutation::verify_password;
 use model_entity::models::{admin_user, session};
-use serde::Serialize;
+use tower_sessions::Session;
 
 use crate::web::middleware::AppState;
-
-#[derive(Serialize)]
-pub struct SimpleRes {
-    message: String,
-}
+use crate::web::SimpleRes;
 
 pub async fn get_create_admin_user(
     state: State<AppState>,
@@ -51,16 +47,11 @@ pub async fn get_login_admin_user(
     Ok(Html(body))
 }
 
-#[derive(Serialize)]
-pub struct PostLoginAdminUserRes {
-    message: String,
-    cid: String,
-}
-
 pub async fn post_login_admin_user(
+    session: Session,
     state: State<AppState>,
     Json(body): Json<admin_user::model::Model>,
-) -> Result<Json<PostLoginAdminUserRes>, (StatusCode, &'static str)> {
+) -> Result<Json<SimpleRes>, (StatusCode, &'static str)> {
     if let Some(admin_user) = admin_user::mutation::find_by_name(&state.conn, body.clone())
         .await
         .map_err(|_| {
@@ -87,17 +78,12 @@ pub async fn post_login_admin_user(
                     .await
                     .expect("");
                     let last_session = all_session.last().unwrap();
-                    let mut headers = HeaderMap::new();
-                    headers.insert(
-                        "cookie",
-                        HeaderValue::from_str(
-                            format!("cid={:?}", last_session.cookie_id.clone()).as_str(),
-                        )
-                        .unwrap(),
-                    );
-                    Ok(Json(PostLoginAdminUserRes {
+                    session
+                        .insert("uid", last_session.admin_user_id)
+                        .await
+                        .unwrap();
+                    Ok(Json(SimpleRes {
                         message: "success to login admin user.".to_string(),
-                        cid: last_session.cookie_id.clone().to_string(),
                     }))
                 }
                 false => Err((StatusCode::INTERNAL_SERVER_ERROR, "password is wrong")),

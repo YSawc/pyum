@@ -1,14 +1,17 @@
 use axum::{
     body::{Body, Bytes},
     extract::Request,
-    http::{HeaderValue, StatusCode},
+    http::HeaderValue,
     middleware::Next,
     response::{IntoResponse, Redirect, Response},
+    Json,
 };
 use http_body_util::BodyExt;
 
 use sea_orm::DatabaseConnection;
 use tera::Tera;
+
+use super::SimpleRes;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -36,13 +39,11 @@ pub fn error_response(code: u16, message: &str) -> Response {
 pub async fn print_request_response(
     req: Request,
     next: Next,
-) -> Result<impl IntoResponse, (StatusCode, String)> {
+) -> Result<impl IntoResponse, Json<SimpleRes>> {
     let (parts, body) = req.into_parts();
     let bytes = buffer_and_print("request", body).await?;
     let req = Request::from_parts(parts, Body::from(bytes));
-
     let res = next.run(req).await;
-
     let (parts, body) = res.into_parts();
     let bytes = buffer_and_print("response", body).await?;
     let res = Response::from_parts(parts, Body::from(bytes));
@@ -50,7 +51,7 @@ pub async fn print_request_response(
     Ok(res)
 }
 
-pub async fn buffer_and_print<B>(direction: &str, body: B) -> Result<Bytes, (StatusCode, String)>
+pub async fn buffer_and_print<B>(direction: &str, body: B) -> Result<Bytes, Json<SimpleRes>>
 where
     B: axum::body::HttpBody<Data = Bytes>,
     B::Error: std::fmt::Display,
@@ -58,10 +59,9 @@ where
     let bytes = match body.collect().await {
         Ok(collected) => collected.to_bytes(),
         Err(err) => {
-            return Err((
-                StatusCode::BAD_REQUEST,
-                format!("failed to read {direction} body: {err}"),
-            ));
+            return Err(Json(SimpleRes {
+                message: format!("failed to read {direction} body: {err}"),
+            }));
         }
     };
 

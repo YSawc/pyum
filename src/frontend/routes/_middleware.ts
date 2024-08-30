@@ -1,22 +1,21 @@
 import { FreshContext } from "$fresh/server.ts";
 import { match, P } from "npm:ts-pattern@5.3.1";
-import { Effect, Option } from "@effect";
-import { type HttpClientError } from "npm:@effect/platform";
-import { wrapOption } from "../utils/effect/option.ts";
+import { Effect } from "@effect";
 import HttpStatusCode from "../enums/HttpStatusCode.ts";
+import { getTargetCookieVal } from "../utils/browser/headers/cookie.ts";
 
-const validateSession = async (cid: string): boolean => {
+const validateSession = async (id: string): Promise<boolean> => {
   let isValidSession = false;
   const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
     try: () =>
       fetch("http://localhost:3000/session/check_valid", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          "Cookie": id,
         },
-        body: JSON.stringify({
-          cid: cid,
-        }),
+        body: JSON.stringify({}),
       }).then((
         res,
       ) => res.json()),
@@ -27,7 +26,6 @@ const validateSession = async (cid: string): boolean => {
   }).pipe(
     Effect.andThen((res) => {
       isValidSession = true;
-      console.log(res);
     }),
     Effect.catchAll((err) => {
       console.log(err);
@@ -46,16 +44,15 @@ export async function handler(req: Request, ctx: FreshContext) {
   let isRedirectNeed = false;
   if (ctx.destination === "route") {
     if (check_protected_route(req.url)) {
-      const maybeRawCookie = wrapOption(req.headers.get("cookie"));
-      Option.match(maybeRawCookie, {
-        onSome: (rawCookie) => {
-          const cidVal = rawCookie.split("=")[1];
-          isRedirectNeed = !validateSession(cidVal);
-        },
-        onNone: () => {
-          isRedirectNeed = true;
-        },
-      });
+      isRedirectNeed = true;
+      const maybeId = getTargetCookieVal(req.headers, "id");
+      if (!maybeId) {
+        isRedirectNeed = true;
+      } else {
+        const id = `id=${maybeId}`;
+        const isValid = await validateSession(id);
+        isRedirectNeed = !isValid;
+      }
     }
   }
 

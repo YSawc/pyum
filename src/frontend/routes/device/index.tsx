@@ -1,7 +1,50 @@
-import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
 import Title from "../_title.tsx";
+import { Effect } from "@effect";
+import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { getTargetCookieValCombinedAssign } from "../../utils/browser/headers/cookie.ts";
 
-const Index: FunctionComponent = () => {
+interface Data {
+  results: string[];
+  query: string;
+}
+
+export const handler: Handlers = {
+  async GET(req: Request, ctx: FreshContext) {
+    const devices = await getDevices(req);
+    const res: Response = await ctx.render();
+    return res;
+  },
+};
+
+const getDevices = async (req: Request) => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  const prog = Effect
+    .tryPromise({
+      try: () =>
+        fetch(`http://localhost:3000/device/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Cookie": id,
+          },
+        }).then((
+          res,
+        ) => res.json()),
+      catch: (err) =>
+        new Error(`In post admin_user/login, something went wrong ${err}`),
+    }).pipe(
+      Effect.andThen((res) => {
+        return res;
+      }),
+      Effect.catchAll((err) => {
+        console.log(err);
+      }),
+    );
+
+  return await Effect.runPromise(prog);
+};
+
+const Index = (props: PageProps) => {
   return (
     <div class="container">
       <Title title="Devices" />

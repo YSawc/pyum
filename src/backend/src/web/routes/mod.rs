@@ -7,7 +7,9 @@ use axum::{
 };
 use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
+use time::Duration;
 use tower_http::trace::TraceLayer;
+use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 
 use crate::web::middleware::{print_request_response, AppState};
 
@@ -30,6 +32,11 @@ pub struct FlashData {
 }
 
 pub async fn router(conn: DatabaseConnection) -> Router {
+    let session_store = MemoryStore::default();
+    let session_layer = SessionManagerLayer::new(session_store)
+        .with_secure(false)
+        .with_expiry(Expiry::OnInactivity(Duration::days(1)));
+
     let state = AppState::new(conn);
     Router::new()
         .merge(protected::router(state.clone()))
@@ -42,7 +49,6 @@ pub async fn router(conn: DatabaseConnection) -> Router {
                 .make_span_with(|req: &Request| {
                     let method = req.method();
                     let uri = req.uri();
-
                     // axum automatically adds this extension.
                     let matched_path = req
                         .extensions()
@@ -55,5 +61,6 @@ pub async fn router(conn: DatabaseConnection) -> Router {
                 // logging of errors so disable that
                 .on_failure(()),
         )
+        .layer(session_layer)
         .layer(middleware::from_fn(print_request_response))
 }

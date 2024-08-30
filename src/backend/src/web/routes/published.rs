@@ -1,10 +1,9 @@
+use super::super::controllers::*;
 use crate::web::middleware::AppState;
 use axum::{
     routing::{get, post},
     Router,
 };
-
-use super::super::controllers::*;
 
 pub fn router() -> Router<AppState> {
     Router::new()

@@ -22,11 +22,9 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tower = { version = "0.4.13", features = ["util"]}
 tower-http = { version = "0.5.2", features = ["fs", "trace"] }
-tower-cookies = "0.10.0"
 tower-sessions = "0.12.3"
 
 anyhow = "1.0.75"
-tera = "1.20.0"
 thiserror = "1.0.63"
 oauth2 = "4.4.2"
 rand = "0.8.5"
@@ -35,7 +33,6 @@ model_entity = { path = "./submodules/model_entity" }
 mime_guess = "2.0.5"
 http-body-util = "0.1.2"
 tracing-appender = "0.2.3"
-axum-login = "0.15.3"
 rstest = "0.22.0"
 time = "0.3.36"
 

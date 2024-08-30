@@ -9,21 +9,17 @@ use axum::{
 use http_body_util::BodyExt;
 
 use sea_orm::DatabaseConnection;
-use tera::Tera;
 
 use super::SimpleRes;
 
 #[derive(Clone)]
 pub struct AppState {
-    pub templates: Tera,
     pub conn: DatabaseConnection,
 }
 
 impl AppState {
     pub fn new(conn: DatabaseConnection) -> Self {
-        let templates = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/src/templates/**/*"))
-            .expect("Tera initialization failed");
-        Self { templates, conn }
+        Self { conn }
     }
 }
 

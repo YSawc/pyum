@@ -1,98 +1,35 @@
 use axum::{
     body::Body,
-    extract::{Request, State},
+    extract::Request,
     middleware::Next,
     response::{IntoResponse, Response},
     Json,
 };
-use model_entity::models::admin_user;
-use sea_orm::sqlx::types::chrono::Utc;
 use tower_sessions::Session;
 
-use super::{
-    middleware::{buffer_and_print, AppState},
-    SimpleRes,
-};
+use super::{middleware::buffer_and_print, SimpleRes};
 
 pub async fn check_session_id(
     session: Session,
-    state: State<AppState>,
     req: Request,
     next: Next,
 ) -> Result<impl IntoResponse, Json<SimpleRes>> {
     match session.get_value("uid").await.unwrap() {
-        Some(_uid) => (),
-        None => {
-            return Err(Json(SimpleRes {
-                message: "session is not valid".to_string(),
-            }))
-        }
-    }
-    let (parts, body) = req.into_parts();
-    let maybe_uid = parts.headers.get("uid");
-    let maybe_cookie_id = parts.headers.get("cookie_id");
-    if maybe_uid.is_none() || maybe_cookie_id.is_none() {
-        return Err(Json(SimpleRes {
-            message: "session is not valid".to_string(),
-        }));
-    } else {
-        match maybe_uid
-            .unwrap()
-            .to_str()
-            .expect("something is wrong of header uid value")
-            .parse::<i32>()
-        {
-            Ok(uid) => {
-                match admin_user::mutation::find_by_id_with_session(&state.conn, uid)
-                    .await
-                    .expect("failed to find admin_user by id")
-                    .first()
-                {
-                    Some((_admin_user, sessions)) => {
-                        let cookie_id = &sessions
-                            .first()
-                            .expect("failed to get first session")
-                            .cookie_id;
-                        if maybe_cookie_id
-                            .unwrap()
-                            .to_str()
-                            .expect("something is wrong of header cookie id value")
-                            != *cookie_id
-                            || sessions
-                                .first()
-                                .expect("failed to get first session")
-                                .expire_at
-                                .and_utc()
-                                <= Utc::now()
-                        {
-                            return Err(Json(SimpleRes {
-                                message: "session is expired".to_string(),
-                            }));
-                        }
-                    }
-                    None => {
-                        return Err(Json(SimpleRes {
-                            message: "admin_user linked with specified uid is not exists"
-                                .to_string(),
-                        }));
-                    }
-                }
-            }
-            Err(_e) => {
-                return Err(Json(SimpleRes {
-                    message: "admin_user linked with specified uid is not exists".to_string(),
-                }))
-            }
-        }
-    }
-    let bytes = buffer_and_print("request", body).await?;
-    let req = Request::from_parts(parts, Body::from(bytes));
-    let res = next.run(req).await;
-    let (parts, body) = res.into_parts();
-    let bytes = buffer_and_print("response", body).await?;
-    let res = Response::from_parts(parts, Body::from(bytes));
+        Some(_uid) => {
+            let (parts, body) = req.into_parts();
+            let bytes = buffer_and_print("request", body).await?;
+            let req = Request::from_parts(parts, Body::from(bytes));
+            let res = next.run(req).await;
+            let (parts, body) = res.into_parts();
+            let bytes = buffer_and_print("response", body).await?;
+            let res = Response::from_parts(parts, Body::from(bytes));
 
-    Ok(res)
+            Ok(res.into_response())
+        }
+        None => Err(Json(SimpleRes {
+            message: "session is not valid".to_string(),
+        })),
+    }
 }
 
 // In executing with muti thread, model deletion is not works expected, so thread should be only one.
@@ -164,7 +101,7 @@ mod tests {
         #[case] missing_session_id: bool,
     ) {
         let conn = prepare_db_connection().await;
-        let mut custom_req = Request::builder().uri("/device/");
+        let mut custom_req = Request::builder().uri("/device");
         if !missing_uid {
             delete_related_models(&conn).await;
             admin_user::mutation::seed(&conn)
@@ -197,7 +134,7 @@ mod tests {
             .await
             .expect("failed to seed admin_user");
         let req = Request::builder()
-            .uri("/device/")
+            .uri("/device")
             .header("uid", 0)
             .header("cookie_id", "Bar")
             .body(Body::empty())
@@ -218,7 +155,7 @@ mod tests {
             .expect("failed to find all admin_user");
         let first_user = all_users.first().unwrap();
         let req = Request::builder()
-            .uri("/device/")
+            .uri("/device")
             .header("uid", first_user.id)
             .header("cookie_id", "Bar")
             .body(Body::empty())
@@ -243,7 +180,7 @@ mod tests {
             .expect("failed to find admin_user sessions");
         let first_session = all_sessions.first().unwrap();
         let req = Request::builder()
-            .uri("/device/")
+            .uri("/device")
             .header("uid", first_user.id)
             .header("cookie_id", first_session.cookie_id.clone())
             .body(Body::empty())
@@ -268,7 +205,7 @@ mod tests {
             .expect("failed to find admin_user sessions");
         let first_session = all_sessions.first().unwrap();
         let req = Request::builder()
-            .uri("/device/")
+            .uri("/device")
             .header("uid", first_user.id)
             .header("cookie_id", first_session.cookie_id.clone())
             .body(Body::empty())

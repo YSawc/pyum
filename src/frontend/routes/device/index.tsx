@@ -1,50 +1,26 @@
 import Title from "../_title.tsx";
-import { Effect } from "@effect";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
-import { getTargetCookieValCombinedAssign } from "../../utils/browser/headers/cookie.ts";
+import { Devices } from "../../types/request/device/index.ts";
+import { getDevices } from "../../requests/device.tsx";
 
 interface Data {
-  results: string[];
-  query: string;
+  devices: Devices;
 }
 
-export const handler: Handlers = {
+export const handler: Handlers<Data> = {
   async GET(req: Request, ctx: FreshContext) {
     const devices = await getDevices(req);
-    const res: Response = await ctx.render();
+    const data: Data = {
+      devices,
+    };
+    const res: Response = await ctx.render(data);
     return res;
   },
 };
 
-const getDevices = async (req: Request) => {
-  const id = getTargetCookieValCombinedAssign(req.headers, "id");
-  const prog = Effect
-    .tryPromise({
-      try: () =>
-        fetch(`http://localhost:3000/device/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Cookie": id,
-          },
-        }).then((
-          res,
-        ) => res.json()),
-      catch: (err) =>
-        new Error(`In post admin_user/login, something went wrong ${err}`),
-    }).pipe(
-      Effect.andThen((res) => {
-        return res;
-      }),
-      Effect.catchAll((err) => {
-        console.log(err);
-      }),
-    );
+const Index = ({ data }: PageProps<Data>) => {
+  const { devices } = data.devices;
 
-  return await Effect.runPromise(prog);
-};
-
-const Index = (props: PageProps) => {
   return (
     <div class="container">
       <Title title="Devices" />
@@ -61,12 +37,21 @@ const Index = (props: PageProps) => {
           </tr>
         </thead>
         <tbody>
-          <tr class="post" onclick="window.location='/device/{{ device.id }}';">
-            <td class="px-2">device_name</td>
-            <td>
-              <img src="/assets/images/no_image.jpg" width="128" height="128" />
-            </td>
-          </tr>
+          {devices.map((device) => (
+            <tr
+              class="post"
+              onclick={"window.location=" + `'/device/${device.id}'`}
+            >
+              <td class="px-2">{device.name}</td>
+              <td>
+                <img
+                  src={`${device.image}`}
+                  width="128"
+                  height="128"
+                />
+              </td>
+            </tr>
+          ))}
         </tbody>
         <tfoot>
           <tr>

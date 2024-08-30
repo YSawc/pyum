@@ -1,6 +1,5 @@
 import { Option } from "@effect";
 import { wrapOption } from "../effect/option.ts";
-import HttpStatusCode from "../../enums/HttpStatusCode.ts";
 
 export const wrapSomeOrResponse = <A>(
   maybeValue: A,

@@ -1,7 +1,37 @@
-import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
 import Title from "../../_title.tsx";
+import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
+import { FreshContext, Handlers } from "$fresh/server.ts";
+import { editDevice, getDevice } from "../../../requests/device.tsx";
+import { Device } from "../../../types/request/device/index.ts";
 
-const Edit: FunctionComponent = () => {
+interface Data {
+  device: Device;
+}
+
+export const handler: Handlers<Data> = {
+  async GET(req: Request, ctx: FreshContext) {
+    const deviceId = ctx.params.id;
+    const device = await getDevice(req, deviceId);
+    const data: Data = {
+      device,
+    };
+    const res: Response = await ctx.render(data);
+    return res;
+  },
+
+  async POST(req: Request, ctx: FreshContext) {
+    const deviceId = ctx.params.id;
+    await editDevice(req, deviceId);
+
+    return new Response("", {
+      status: HttpStatusCode.SEE_OTHER,
+      headers: { Location: `/device/${deviceId}` },
+    });
+  },
+};
+
+const Page = ({ data }: PageProps<Data>) => {
+  const { device } = data.device;
   return (
     <div class="container">
       <Title title="Edit Device" />
@@ -9,8 +39,7 @@ const Edit: FunctionComponent = () => {
         <form
           class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
           method="post"
-          hx-post="/device/new"
-          id="create-device-form"
+          id="edit-device-form"
         >
           <div class="mb-4">
             <label
@@ -24,7 +53,7 @@ const Edit: FunctionComponent = () => {
               id="name"
               name="name"
               type="text"
-              placeholder="name"
+              value={`${device.name}`}
             />
           </div>
           <div class="mb-4">
@@ -40,6 +69,7 @@ const Edit: FunctionComponent = () => {
               name="image"
               type="text"
               placeholder="image path"
+              value={`${device.image}`}
             />
           </div>
           <div class="flex items-center justify-between">
@@ -47,7 +77,7 @@ const Edit: FunctionComponent = () => {
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Create Device
+              Edit Device
             </button>
           </div>
         </form>
@@ -56,4 +86,4 @@ const Edit: FunctionComponent = () => {
   );
 };
 
-export default Edit;
+export default Page;

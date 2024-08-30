@@ -7,7 +7,7 @@ export default function Header() {
       <div class="ml-4 block flex-grow lg:flex lg:items-center lg:w-auto">
         <div class="text-sm lg:flex-grow text-gray-500">
           <a
-            href="/device/"
+            href="/device"
             class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4"
           >
             Devices

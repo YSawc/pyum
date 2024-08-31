@@ -9,5 +9,4 @@ pub mod util;
 #[derive(Serialize)]
 pub struct SimpleRes {
     message: String,
-    // message: &'static str,
 }

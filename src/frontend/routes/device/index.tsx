@@ -2,23 +2,26 @@ import Title from "../_title.tsx";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { Devices } from "../../types/request/device/index.ts";
 import { getDevices } from "../../requests/device.tsx";
+import { Effect } from "@effect";
 
-interface Data {
+interface PageData {
   devices: Devices;
 }
 
-export const handler: Handlers<Data> = {
+export const handler: Handlers<PageData> = {
   async GET(req: Request, ctx: FreshContext) {
-    const devices = await getDevices(req);
-    const data: Data = {
-      devices,
+    const devices = await Effect.runPromise(
+      getDevices(req),
+    );
+    const pageData: PageData = {
+      devices: devices,
     };
-    const res: Response = await ctx.render(data);
+    const res: Response = await ctx.render(pageData);
     return res;
   },
 };
 
-const Index = ({ data }: PageProps<Data>) => {
+const Index = ({ data }: PageProps<PageData>) => {
   const { devices } = data.devices;
 
   return (

@@ -6,31 +6,32 @@ import { getTargetCookieVal } from "../utils/browser/headers/cookie.ts";
 
 const validateSession = async (id: string): Promise<boolean> => {
   let isValidSession = false;
-  const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
-    try: () =>
-      fetch("http://localhost:3000/session/check_valid", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          "Cookie": id,
-        },
-        body: JSON.stringify({}),
-      }).then((
-        res,
-      ) => res.json()),
-    catch: (err) =>
-      new Error(
-        `While request for session/check_valid, something went wrong ${err}`,
-      ),
-  }).pipe(
-    Effect.andThen((res) => {
-      isValidSession = true;
-    }),
-    Effect.catchAll((err) => {
-      console.log(err);
-    }),
-  );
+  const prog = Effect
+    .tryPromise({
+      try: () =>
+        fetch("http://localhost:3000/session/check_valid", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "Cookie": id,
+          },
+          body: JSON.stringify({}),
+        }).then((
+          res,
+        ) => res.json()),
+      catch: (err) =>
+        new Error(
+          `While request for session/check_valid, something went wrong ${err}`,
+        ),
+    }).pipe(
+      Effect.andThen((res) => {
+        isValidSession = true;
+      }),
+      Effect.catchAll((err) => {
+        console.log(err);
+      }),
+    );
   await Effect.runPromise(prog).then(console.log, console.error);
   return isValidSession;
 };

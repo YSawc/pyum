@@ -1,32 +1,33 @@
 import { Effect } from "@effect";
+import {
+  HttpClient,
+  HttpClientError,
+  HttpClientRequest,
+  HttpClientResponse,
+} from "@effect/platform";
 import { FreshContext } from "$fresh/server.ts";
 import { getTargetCookieValCombinedAssign } from "../utils/browser/headers/cookie.ts";
+import { Devices, DevicesSchema } from "../types/request/device/index.ts";
+import { ParseError } from "@effect/schema/ParseResult";
 
-export const getDevices = async (req: Request) => {
+export const getDevices = (req: Request): Effect.Effect<
+  Devices,
+  HttpClientError.HttpClientError | ParseError,
+  never
+> => {
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
-  const prog = Effect
-    .tryPromise({
-      try: () =>
-        fetch(`http://localhost:3000/device`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Cookie": id,
-          },
-        }).then((
-          res,
-        ) => res.json()),
-      catch: (err) => new Error(`In get device/, something went wrong ${err}`),
-    }).pipe(
-      Effect.andThen((res) => {
-        return res;
+  return HttpClientRequest
+    .get(
+      `http://localhost:3000/device`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
       }),
-      Effect.catchAll((err) => {
-        console.log(err);
-      }),
+      HttpClient.fetch,
+      Effect.andThen(HttpClientResponse.schemaBodyJson(DevicesSchema)),
+      Effect.scoped,
     );
-
-  return await Effect.runPromise(prog);
 };
 
 export const getDevice = async (req: Request, deviceId: string) => {

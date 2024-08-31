@@ -4,16 +4,16 @@ import { Devices } from "../../types/request/device/index.ts";
 import { getDevices } from "../../requests/device.tsx";
 import { Effect } from "@effect";
 
-interface PageData {
+interface Props {
   devices: Devices;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler: Handlers<Props> = {
   async GET(req: Request, ctx: FreshContext) {
     const devices = await Effect.runPromise(
       getDevices(req),
     );
-    const pageData: PageData = {
+    const pageData: Props = {
       devices: devices,
     };
     const res: Response = await ctx.render(pageData);
@@ -21,7 +21,7 @@ export const handler: Handlers<PageData> = {
   },
 };
 
-const Index = ({ data }: PageProps<PageData>) => {
+const Index = ({ data}: PageProps<Props>) => {
   const { devices } = data.devices;
 
   return (

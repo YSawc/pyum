@@ -5,17 +5,17 @@ import { editDevice, getDevice } from "../../../requests/device.tsx";
 import { Device } from "../../../types/request/device/index.ts";
 import { Effect } from "@effect";
 
-interface PageData {
+interface Props {
   device: Device;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler: Handlers<Props> = {
   async GET(req: Request, ctx: FreshContext) {
     const deviceId = ctx.params.id;
     const device = await Effect.runPromise(
       getDevice(req, deviceId),
     );
-    const data: PageData = {
+    const data: Props = {
       device,
     };
     const res: Response = await ctx.render(data);
@@ -33,7 +33,7 @@ export const handler: Handlers<PageData> = {
   },
 };
 
-const Page = ({ data }: PageProps<PageData>) => {
+const Page = ({ data }: PageProps<Props>) => {
   const { device } = data.device;
   return (
     <div class="container">

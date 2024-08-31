@@ -9,12 +9,12 @@ import {
 } from "https://deno.land/std@0.224.0/http/cookie.ts";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 
-interface Data {
+interface Props {
   results: string[];
   query: string;
 }
 
-export const handler: Handlers<Data> = {
+export const handler: Handlers<Props> = {
   async POST(req) {
     const form = await req.formData();
     const headers = new Headers();

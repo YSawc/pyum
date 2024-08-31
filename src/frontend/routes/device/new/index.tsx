@@ -4,7 +4,9 @@ import Title from "../../_title.tsx";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { getTargetCookieValCombinedAssign } from "../../../utils/browser/headers/cookie.ts";
 
-export const handler: Handlers<Data> = {
+interface Props { }
+
+export const handler: Handlers<Props> = {
   async POST(req) {
     const resHeaders: ResponseInit = {};
     const headers = new Headers();

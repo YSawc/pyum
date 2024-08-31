@@ -4,12 +4,12 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import { type HttpClientError } from "npm:@effect/platform";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 
-interface Data {
+interface Props {
   results: string[];
   query: string;
 }
 
-export const handler: Handlers<Data> = {
+export const handler: Handlers<Props> = {
   async POST(req) {
     const resHeaders: ResponseInit = {};
     const headers = new Headers();
@@ -49,7 +49,7 @@ export const handler: Handlers<Data> = {
   },
 };
 
-const New = ({}: PageProps<Data>) => {
+const New = ({ }: PageProps<Props>) => {
   return (
     <div class="container">
       <Title title="Create Admin User" />

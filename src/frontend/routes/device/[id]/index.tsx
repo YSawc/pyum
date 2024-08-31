@@ -1,20 +1,21 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
-import { Component } from "preact";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { deleteDevice, getDevice } from "../../../requests/device.tsx";
 import { Device } from "../../../types/request/device/index.ts";
 import Title from "../../_title.tsx";
-import { Button } from "../../../islands/Button.tsx";
+import { Effect } from "@effect";
 
-interface Data {
+interface Props {
   device: Device;
 }
 
-export const handler: Handlers<Data> = {
+export const handler: Handlers<Props> = {
   async GET(req: Request, ctx: FreshContext) {
     const deviceId = ctx.params.id;
-    const device = await getDevice(req, deviceId);
-    const data: Data = {
+    const device = await Effect.runPromise(
+      getDevice(req, deviceId),
+    );
+    const data: Props = {
       device,
     };
     const res: Response = await ctx.render(data);
@@ -38,7 +39,7 @@ export const handler: Handlers<Data> = {
   },
 };
 
-const Index = ({ data }: PageProps<Data>) => {
+const Index = ({ data }: PageProps<Props>) => {
   const { device } = data.device;
 
   return (

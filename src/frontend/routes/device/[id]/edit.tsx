@@ -1,18 +1,21 @@
 import Title from "../../_title.tsx";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
-import { FreshContext, Handlers } from "$fresh/server.ts";
+import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { editDevice, getDevice } from "../../../requests/device.tsx";
 import { Device } from "../../../types/request/device/index.ts";
+import { Effect } from "@effect";
 
-interface Data {
+interface PageData {
   device: Device;
 }
 
-export const handler: Handlers<Data> = {
+export const handler: Handlers<PageData> = {
   async GET(req: Request, ctx: FreshContext) {
     const deviceId = ctx.params.id;
-    const device = await getDevice(req, deviceId);
-    const data: Data = {
+    const device = await Effect.runPromise(
+      getDevice(req, deviceId),
+    );
+    const data: PageData = {
       device,
     };
     const res: Response = await ctx.render(data);
@@ -30,7 +33,7 @@ export const handler: Handlers<Data> = {
   },
 };
 
-const Page = ({ data }: PageProps<Data>) => {
+const Page = ({ data }: PageProps<PageData>) => {
   const { device } = data.device;
   return (
     <div class="container">

@@ -67,7 +67,7 @@ export const createDevice = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .post(
-      `http://localhost:3000/device/new`,
+      `http://localhost:3000/device`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

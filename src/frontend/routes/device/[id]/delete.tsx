@@ -6,7 +6,6 @@ import { Effect } from "@effect";
 export const handler: Handlers = {
   async GET(req: Request, ctx: FreshContext) {
     const deviceId = ctx.params.id;
-    console.log("req.referrer: %o", req.referrer);
     await Effect.runPromise(
       deleteDevice(req, deviceId),
     );

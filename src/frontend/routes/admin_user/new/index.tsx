@@ -2,6 +2,7 @@ import Title from "../../_title.tsx";
 import { Effect } from "@effect";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
+import { createAdminUser } from "../../../requests/admin_user.ts";
 
 interface Props {
   results: string[];
@@ -9,40 +10,20 @@ interface Props {
 }
 
 export const handler: Handlers<Props> = {
-  async POST(req) {
+  async POST(req: Request) {
     const resHeaders: ResponseInit = {};
     const headers = new Headers();
-    const form = await req.formData();
-    const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
-      try: () =>
-        fetch("http://localhost:3000/admin_user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: form.get("name")?.toString(),
-            password: form.get("password")?.toString(),
-          }),
-        }).then((
-          res,
-        ) => res.json()),
-      catch: (err) =>
-        new Error(`In post for admin_user/new, something went wrong ${err}`),
-    }).pipe(
-      Effect.andThen((res) => {
-        resHeaders.status = HttpStatusCode.SEE_OTHER;
-        headers.set("location", "/admin_user/login");
-        console.log(res);
-      }),
-      Effect.catchAll((err) => {
-        resHeaders.status = HttpStatusCode.SEE_OTHER;
-        headers.set("location", "/admin_user/new");
-        console.log(err);
-      }),
-    );
-    await Effect.runPromise(prog).then(console.log, console.error);
+    const formData = await req.formData();
+    let locationUrl: string;
+    try {
+      await Effect.runPromise(createAdminUser(formData));
+      locationUrl = "/admin_user/login";
+    } catch {
+      locationUrl = "/admin_user/new";
+    }
 
+    headers.set("location", locationUrl);
+    resHeaders.status = HttpStatusCode.SEE_OTHER;
     resHeaders.headers = headers;
     return new Response(null, resHeaders);
   },

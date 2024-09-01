@@ -14,6 +14,30 @@ import {
 } from "https://deno.land/std@0.224.0/http/cookie.ts";
 import { SimpleRes, SimpleResSchema } from "../types/request/util.ts";
 
+export const createAdminUser = (
+  formData: FormData,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
+  return HttpClientRequest
+    .post(
+      `http://localhost:3000/admin_user`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+      }),
+      HttpClientRequest.jsonBody({
+        name: formData.get("name")?.toString(),
+        password: formData.get("password")?.toString(),
+      }),
+      Effect.andThen(HttpClient.fetchOk),
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};
+
 export const loginAdminUser = (
   formData: FormData,
   headers: Headers,

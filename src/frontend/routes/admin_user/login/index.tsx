@@ -2,12 +2,8 @@ import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.
 import Title from "../../_title.tsx";
 import { Effect } from "@effect";
 import { Handlers } from "$fresh/server.ts";
-import {
-  Cookie,
-  deleteCookie,
-  setCookie,
-} from "https://deno.land/std@0.224.0/http/cookie.ts";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
+import { loginAdminUser } from "../../../requests/admin_user.ts";
 
 interface Props {
   results: string[];
@@ -15,49 +11,13 @@ interface Props {
 }
 
 export const handler: Handlers<Props> = {
-  async POST(req) {
-    const form = await req.formData();
+  async POST(req: Request) {
+    const formData = await req.formData();
     const headers = new Headers();
-    const prog = Effect
-      .tryPromise({
-        try: () =>
-          fetch("http://localhost:3000/admin_user/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: form.get("name")?.toString(),
-              password: form.get("password")?.toString(),
-            }),
-          }).then((
-            res,
-          ) => {
-            deleteCookie(headers, "id");
-            const id =
-              res.headers.get("set-cookie").split(" ", 1)[0].slice(0, -1).split(
-                "=",
-              )[1];
-            const cookie: Cookie = {
-              name: "id",
-              value: id,
-              path: "/",
-            };
-            setCookie(headers, cookie);
-            return res.json();
-          }),
-        catch: (err) =>
-          new Error(`In post admin_user/login, something went wrong ${err}`),
-      }).pipe(
-        Effect.andThen((res) => {
-          console.log(res);
-        }),
-        Effect.catchAll((err) => {
-          console.log(err);
-        }),
-      );
+    await Effect.runPromise(
+      loginAdminUser(formData, headers),
+    );
 
-    await Effect.runPromise(prog).then(console.log, console.error);
     headers.set("location", "/device");
     return new Response(null, {
       status: HttpStatusCode.SEE_OTHER,

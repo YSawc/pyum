@@ -10,6 +10,6 @@ pub fn router() -> Router<AppState> {
         .route("/api/health_check", get(api::health_check_handler))
         .route("/session/check_valid", post(session::check_valid))
         .route("/assets/images/:path", get(assets::get_image_asset))
-        .route("/admin_user/new", post(admin_user::post_create_admin_user))
-        .route("/admin_user/login", post(admin_user::post_login_admin_user))
+        .route("/admin_user", post(admin_user::create_admin_user))
+        .route("/admin_user/login", post(admin_user::login_admin_user))
 }

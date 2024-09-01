@@ -9,7 +9,7 @@ use tower_sessions::Session;
 use crate::web::middleware::AppState;
 use crate::web::SimpleRes;
 
-pub async fn post_create_admin_user(
+pub async fn create_admin_user(
     state: State<AppState>,
     Json(admin_user): Json<admin_user::model::Model>,
 ) -> Result<Json<SimpleRes>, (StatusCode, &'static str)> {
@@ -22,7 +22,7 @@ pub async fn post_create_admin_user(
     }))
 }
 
-pub async fn post_login_admin_user(
+pub async fn login_admin_user(
     session: Session,
     state: State<AppState>,
     Json(body): Json<admin_user::model::Model>,

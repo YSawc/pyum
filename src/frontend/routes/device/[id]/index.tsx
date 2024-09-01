@@ -1,6 +1,6 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { ConfirmButton } from "../../../islands/routes/device/[id]/index/ConfirmButton.tsx";
-import { getDevice } from "../../../requests/device.tsx";
+import { getDevice } from "../../../requests/device.ts";
 import { Device } from "../../../types/request/device/index.ts";
 import Title from "../../_title.tsx";
 import { Effect } from "@effect";

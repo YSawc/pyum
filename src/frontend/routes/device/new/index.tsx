@@ -2,7 +2,7 @@ import { Effect } from "@effect";
 import Title from "../../_title.tsx";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { Handlers } from "$fresh/server.ts";
-import { createDevice } from "../../../requests/device.tsx";
+import { createDevice } from "../../../requests/device.ts";
 
 export const handler: Handlers = {
   async POST(req: Request) {

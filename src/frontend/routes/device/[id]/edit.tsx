@@ -1,7 +1,7 @@
 import Title from "../../_title.tsx";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
-import { editDevice, getDevice } from "../../../requests/device.tsx";
+import { editDevice, getDevice } from "../../../requests/device.ts";
 import { Device } from "../../../types/request/device/index.ts";
 import { Effect } from "@effect";
 

@@ -1,7 +1,6 @@
 import Title from "../../_title.tsx";
 import { Effect } from "@effect";
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { type HttpClientError } from "npm:@effect/platform";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 
 interface Props {
@@ -16,7 +15,7 @@ export const handler: Handlers<Props> = {
     const form = await req.formData();
     const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
       try: () =>
-        fetch("http://localhost:3000/admin_user/new", {
+        fetch("http://localhost:3000/admin_user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -49,7 +48,7 @@ export const handler: Handlers<Props> = {
   },
 };
 
-const New = ({ }: PageProps<Props>) => {
+const New = ({}: PageProps<Props>) => {
   return (
     <div class="container">
       <Title title="Create Admin User" />

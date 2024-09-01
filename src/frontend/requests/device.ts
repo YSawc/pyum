@@ -6,7 +6,6 @@ import {
   HttpClientResponse,
 } from "@effect/platform";
 import { ParseError } from "@effect/schema/ParseResult";
-import { FreshContext } from "$fresh/server.ts";
 import { getTargetCookieValCombinedAssign } from "../utils/browser/headers/cookie.ts";
 import {
   GetDevice,
@@ -14,8 +13,7 @@ import {
   GetDeviceSchema,
   GetDevicesSchema,
 } from "../types/request/device/index.ts";
-import { SimpleResSchema } from "../types/request/util.tsx";
-import { SimpleRes } from "../types/request/util.tsx";
+import { SimpleRes, SimpleResSchema } from "../types/request/util.ts";
 import { HttpBodyError } from "@effect/platform/HttpBody";
 
 export const getDevices = (req: Request): Effect.Effect<

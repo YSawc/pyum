@@ -24,9 +24,12 @@ export const handler: Handlers<Props> = {
 
   async POST(req: Request, ctx: FreshContext) {
     const deviceId = ctx.params.id;
-    await editDevice(req, deviceId);
+    const formData = await req.formData();
+    await Effect.runPromise(
+      editDevice(req, deviceId, formData),
+    );
 
-    return new Response("", {
+    return new Response(null, {
       status: HttpStatusCode.SEE_OTHER,
       headers: { Location: `/device/${deviceId}` },
     });

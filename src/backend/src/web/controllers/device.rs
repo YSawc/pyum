@@ -2,7 +2,6 @@ use crate::web::{middleware::AppState, routes::Params, SimpleRes};
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
-    response::Redirect,
     Json,
 };
 use model_entity::models::device::{self, query::DeviceQuery};
@@ -44,7 +43,7 @@ pub async fn create_device(
         .unwrap();
 
     Ok(Json(SimpleRes {
-        message: "Successed to creat device.".to_string(),
+        message: "Successed to create device.".to_string(),
     }))
 }
 
@@ -69,12 +68,14 @@ pub async fn edit_device(
     state: State<AppState>,
     Path(device_id): Path<i32>,
     Json(new_device): Json<device::model::Model>,
-) -> Result<Redirect, (StatusCode, &'static str)> {
+) -> Result<Json<SimpleRes>, (StatusCode, &'static str)> {
     device::mutation::update_by_id(&state.conn, device_id, new_device)
         .await
         .unwrap();
 
-    Ok(Redirect::to("/device"))
+    Ok(Json(SimpleRes {
+        message: "Success to edit device".to_string(),
+    }))
 }
 
 pub async fn delete_device(
@@ -86,6 +87,6 @@ pub async fn delete_device(
         .unwrap();
 
     Ok(Json(SimpleRes {
-        message: "Success to delet device".to_string(),
+        message: "Success to delete device".to_string(),
     }))
 }

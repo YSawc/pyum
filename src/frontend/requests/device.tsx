@@ -14,6 +14,9 @@ import {
   GetDeviceSchema,
   GetDevicesSchema,
 } from "../types/request/device/index.ts";
+import { SimpleResSchema } from "../types/request/util.tsx";
+import { SimpleRes } from "../types/request/util.tsx";
+import { HttpBodyError } from "@effect/platform/HttpBody";
 
 export const getDevices = (req: Request): Effect.Effect<
   GetDevices,
@@ -55,37 +58,32 @@ export const getDevice = (req: Request, deviceId: string): Effect.Effect<
     );
 };
 
-export const editDevice = async (req: Request, deviceId: string) => {
+export const editDevice = (
+  req: Request,
+  deviceId: string,
+  formData: FormData,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
-  const form = await req.formData();
-  const prog = Effect
-    .tryPromise({
-      try: () =>
-        fetch(`http://localhost:3000/device/${deviceId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "Cookie": id,
-          },
-          body: JSON.stringify({
-            name: form.get("name")?.toString(),
-            image: form.get("image")?.toString(),
-          }),
-        }).then((
-          res,
-        ) => res.json()),
-      catch: (err) =>
-        new Error(`In patch device/${deviceId}, something went wrong ${err}`),
-    }).pipe(
-      Effect.andThen((res) => {
-        return res;
+  return HttpClientRequest
+    .patch(
+      `http://localhost:3000/device/${deviceId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
       }),
-      Effect.catchAll((err) => {
-        console.log(err);
+      HttpClientRequest.jsonBody({
+        name: formData.get("name")?.toString(),
+        image: formData.get("image")?.toString(),
       }),
+      Effect.andThen(HttpClient.fetch),
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
     );
-
-  return await Effect.runPromise(prog);
 };
 
 export const deleteDevice = async (req: Request, ctx: FreshContext) => {

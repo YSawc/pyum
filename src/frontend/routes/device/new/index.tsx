@@ -3,11 +3,10 @@ import { Effect } from "@effect";
 import Title from "../../_title.tsx";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { getTargetCookieValCombinedAssign } from "../../../utils/browser/headers/cookie.ts";
+import { Handlers } from "$fresh/server.ts";
 
-interface Props { }
-
-export const handler: Handlers<Props> = {
-  async POST(req) {
+export const handler: Handlers = {
+  async POST(req: Request) {
     const resHeaders: ResponseInit = {};
     const headers = new Headers();
     const form = await req.formData();
@@ -48,35 +47,7 @@ export const handler: Handlers<Props> = {
   },
 };
 
-const createDevices = async (req: Request) => {
-  const id = getTargetCookieValCombinedAssign(req.headers, "id");
-  const prog = Effect
-    .tryPromise({
-      try: () =>
-        fetch(`http://localhost:3000/device/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Cookie": id,
-          },
-        }).then((
-          res,
-        ) => res.json()),
-      catch: (err) =>
-        new Error(`In post admin_user/login, something went wrong ${err}`),
-    }).pipe(
-      Effect.andThen((res) => {
-        return res;
-      }),
-      Effect.catchAll((err) => {
-        console.log(err);
-      }),
-    );
-
-  return await Effect.runPromise(prog);
-};
-
-const New: FunctionComponent = () => {
+const Page = () => {
   return (
     <div class="container">
       <Title title="Create Device" />
@@ -130,4 +101,4 @@ const New: FunctionComponent = () => {
   );
 };
 
-export default New;
+export default Page;

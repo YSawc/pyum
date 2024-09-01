@@ -21,7 +21,7 @@ export const handler: Handlers<Props> = {
   },
 };
 
-const Index = ({ data}: PageProps<Props>) => {
+const Page = ({ data }: PageProps<Props>) => {
   const { devices } = data.devices;
 
   return (
@@ -74,4 +74,4 @@ const Index = ({ data}: PageProps<Props>) => {
   );
 };
 
-export default Index;
+export default Page;

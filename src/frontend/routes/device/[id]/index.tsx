@@ -1,6 +1,6 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
-import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
-import { deleteDevice, getDevice } from "../../../requests/device.tsx";
+import { ConfirmButton } from "../../../islands/routes/device/[id]/index/ConfirmButton.tsx";
+import { getDevice } from "../../../requests/device.tsx";
 import { Device } from "../../../types/request/device/index.ts";
 import Title from "../../_title.tsx";
 import { Effect } from "@effect";
@@ -21,33 +21,19 @@ export const handler: Handlers<Props> = {
     const res: Response = await ctx.render(data);
     return res;
   },
-  async DELETE(req: Request, ctx: FreshContext) {
-    const deviceId = ctx.params.id;
-    if (confirm("realy delete device?")) {
-      await deleteDevice(req, ctx);
-      return new Response("", {
-        status: HttpStatusCode.SEE_OTHER,
-        headers: { Location: "/device" },
-      });
-    } else {
-      console.log("false");
-      return new Response("", {
-        status: HttpStatusCode.SEE_OTHER,
-        headers: { Location: `/device/${deviceId}` },
-      });
-    }
-  },
 };
 
-const Index = ({ data }: PageProps<Props>) => {
+const Page = ({ data }: PageProps<Props>) => {
   const { device } = data.device;
 
   return (
     <div class="container">
       <Title title="Device detail" />
-      <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4">
-        delete
-      </button>
+      <ConfirmButton
+        text="delete"
+        confirmText="really delete?"
+        url={`/device/${device.id}/delete`}
+      />
       <table class="table-fixed">
         <thead>
           <tr>
@@ -77,4 +63,4 @@ const Index = ({ data }: PageProps<Props>) => {
   );
 };
 
-export default Index;
+export default Page;

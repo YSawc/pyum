@@ -86,33 +86,25 @@ export const editDevice = (
     );
 };
 
-export const deleteDevice = async (req: Request, ctx: FreshContext) => {
+export const deleteDevice = (
+  req: Request,
+  deviceId: string,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
-  const deviceId = ctx.params.id;
-  const prog = Effect
-    .tryPromise({
-      try: () =>
-        fetch(`http://localhost:3000/device/${deviceId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "Cookie": id,
-          },
-        }).then((
-          res,
-        ) => res.json()),
-      catch: (err) =>
-        Error(
-          `In delete device/${deviceId}, something went wrong ${err}`,
-        ),
-    }).pipe(
-      Effect.andThen((res) => {
-        return res;
+  return HttpClientRequest
+    .del(
+      `http://localhost:3000/device/${deviceId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
       }),
-      Effect.catchAll((err) => {
-        console.log(err);
-      }),
+      HttpClient.fetch,
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
     );
-
-  return await Effect.runPromise(prog);
 };

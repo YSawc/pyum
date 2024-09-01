@@ -12,13 +12,14 @@ import * as $_middleware from "./routes/_middleware.ts";
 import * as $_title from "./routes/_title.tsx";
 import * as $admin_user_login_index from "./routes/admin_user/login/index.tsx";
 import * as $admin_user_new_index from "./routes/admin_user/new/index.tsx";
+import * as $device_id_delete from "./routes/device/[id]/delete.tsx";
 import * as $device_id_edit from "./routes/device/[id]/edit.tsx";
 import * as $device_id_index from "./routes/device/[id]/index.tsx";
 import * as $device_index from "./routes/device/index.tsx";
 import * as $device_new_index from "./routes/device/new/index.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
-import * as $Button from "./islands/Button.tsx";
 import * as $Counter from "./islands/Counter.tsx";
+import * as $routes_device_id_index_ConfirmButton from "./islands/routes/device/[id]/index/ConfirmButton.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -33,6 +34,7 @@ const manifest = {
     "./routes/_title.tsx": $_title,
     "./routes/admin_user/login/index.tsx": $admin_user_login_index,
     "./routes/admin_user/new/index.tsx": $admin_user_new_index,
+    "./routes/device/[id]/delete.tsx": $device_id_delete,
     "./routes/device/[id]/edit.tsx": $device_id_edit,
     "./routes/device/[id]/index.tsx": $device_id_index,
     "./routes/device/index.tsx": $device_index,
@@ -40,8 +42,9 @@ const manifest = {
     "./routes/greet/[name].tsx": $greet_name_,
   },
   islands: {
-    "./islands/Button.tsx": $Button,
     "./islands/Counter.tsx": $Counter,
+    "./islands/routes/device/[id]/index/ConfirmButton.tsx":
+      $routes_device_id_index_ConfirmButton,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

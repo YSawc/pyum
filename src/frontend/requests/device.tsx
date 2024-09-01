@@ -58,6 +58,33 @@ export const getDevice = (req: Request, deviceId: string): Effect.Effect<
     );
 };
 
+export const createDevice = (
+  req: Request,
+  formData: FormData,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .post(
+      `http://localhost:3000/device/new`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClientRequest.jsonBody({
+        name: formData.get("name")?.toString(),
+        image: formData.get("image")?.toString(),
+      }),
+      Effect.andThen(HttpClient.fetch),
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};
+
 export const editDevice = (
   req: Request,
   deviceId: string,

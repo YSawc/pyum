@@ -1,49 +1,20 @@
-import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
 import { Effect } from "@effect";
 import Title from "../../_title.tsx";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
-import { getTargetCookieValCombinedAssign } from "../../../utils/browser/headers/cookie.ts";
 import { Handlers } from "$fresh/server.ts";
+import { createDevice } from "../../../requests/device.tsx";
 
 export const handler: Handlers = {
   async POST(req: Request) {
-    const resHeaders: ResponseInit = {};
-    const headers = new Headers();
-    const form = await req.formData();
-    const id = getTargetCookieValCombinedAssign(req.headers, "id");
-    const prog: Effect<unknown, HttpClientError> = Effect.tryPromise({
-      try: () =>
-        fetch("http://localhost:3000/device/new", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Cookie": id,
-          },
-          body: JSON.stringify({
-            name: form.get("name")?.toString(),
-            image: form.get("image")?.toString(),
-          }),
-        }).then((
-          res,
-        ) => res.json()),
-      catch: (err) =>
-        new Error(`In post for device/new, something went wrong ${err}`),
-    }).pipe(
-      Effect.andThen((res) => {
-        resHeaders.status = HttpStatusCode.SEE_OTHER;
-        headers.set("location", "/device");
-        console.log(res);
-      }),
-      Effect.catchAll((err) => {
-        resHeaders.status = HttpStatusCode.SEE_OTHER;
-        headers.set("location", "/device/new");
-        console.log(err);
-      }),
+    const formData = await req.formData();
+    await Effect.runPromise(
+      createDevice(req, formData),
     );
-    await Effect.runPromise(prog).then(console.log, console.error);
 
-    resHeaders.headers = headers;
-    return new Response(null, resHeaders);
+    return new Response(null, {
+      status: HttpStatusCode.SEE_OTHER,
+      headers: { Location: `/device` },
+    });
   },
 };
 

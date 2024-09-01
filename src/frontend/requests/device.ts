@@ -12,7 +12,7 @@ import {
   GetDevices,
   GetDeviceSchema,
   GetDevicesSchema,
-} from "../types/request/device/index.ts";
+} from "../types/request/device.ts";
 import { SimpleRes, SimpleResSchema } from "../types/request/util.ts";
 import { HttpBodyError } from "@effect/platform/HttpBody";
 

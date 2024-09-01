@@ -2,7 +2,7 @@ import Title from "../_title.tsx";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { Devices } from "../../types/request/device.ts";
 import { getDevices } from "../../requests/device.ts";
-import { Effect } from "@effect";
+import { Effect } from "effect";
 
 interface Props {
   devices: Devices;

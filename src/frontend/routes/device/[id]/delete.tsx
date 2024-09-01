@@ -1,7 +1,7 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { deleteDevice } from "../../../requests/device.ts";
-import { Effect } from "@effect";
+import { Effect } from "effect";
 
 export const handler: Handlers = {
   async GET(req: Request, ctx: FreshContext) {

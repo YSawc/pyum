@@ -1,4 +1,4 @@
-import { Option } from "@effect";
+import { Option } from "effect";
 
 export const wrapOption = <A>(value: A): Option.Option<A> =>
   (typeof value === "undefined" || value === null)

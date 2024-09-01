@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { match, P } from "npm:ts-pattern@5.3.1";
-import { Effect } from "@effect";
+import { Effect } from "effect";
 import HttpStatusCode from "../enums/HttpStatusCode.ts";
 import { getTargetCookieVal } from "../utils/browser/headers/cookie.ts";
 import { validateSession } from "../requests/session.ts";

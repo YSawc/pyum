@@ -1,5 +1,5 @@
 import Title from "../../_title.tsx";
-import { Effect } from "@effect";
+import { Effect } from "effect";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { createAdminUser } from "../../../requests/admin_user.ts";

@@ -1,4 +1,4 @@
-import { Option } from "@effect";
+import { Option } from "effect";
 import { wrapOption } from "../effect/option.ts";
 
 export const wrapSomeOrResponse = <A>(

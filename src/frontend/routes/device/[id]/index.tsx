@@ -3,7 +3,7 @@ import { ConfirmButton } from "../../../islands/routes/device/[id]/index/Confirm
 import { getDevice } from "../../../requests/device.ts";
 import { Device } from "../../../types/request/device.ts";
 import Title from "../../_title.tsx";
-import { Effect } from "@effect";
+import { Effect } from "effect";
 
 interface Props {
   device: Device;

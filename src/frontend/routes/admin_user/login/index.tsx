@@ -1,6 +1,6 @@
 import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
 import Title from "../../_title.tsx";
-import { Effect } from "@effect";
+import { Effect } from "effect";
 import { Handlers } from "$fresh/server.ts";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { loginAdminUser } from "../../../requests/admin_user.ts";

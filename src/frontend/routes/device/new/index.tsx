@@ -1,4 +1,4 @@
-import { Effect } from "@effect";
+import { Effect } from "effect";
 import Title from "../../_title.tsx";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { Handlers } from "$fresh/server.ts";

@@ -14,7 +14,7 @@
   "imports": {
     "$fresh/": "https://deno.land/x/fresh@1.6.8/",
     "$std/": "https://deno.land/std@0.216.0/",
-    "@effect": "npm:/effect/",
+    "effect": "npm:effect@^3.7.0",
     "@effect/platform": "npm:@effect/platform@^0.63.0",
     "@effect/platform-node": "npm:@effect/platform-node@^0.58.0",
     "@effect/schema": "npm:@effect/schema@^0.72.0",

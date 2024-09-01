@@ -3,7 +3,7 @@ import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { editDevice, getDevice } from "../../../requests/device.ts";
 import { Device } from "../../../types/request/device.ts";
-import { Effect } from "@effect";
+import { Effect } from "effect";
 
 interface Props {
   device: Device;

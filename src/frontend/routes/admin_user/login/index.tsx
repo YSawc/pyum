@@ -1,4 +1,3 @@
-import { FunctionComponent } from "https://esm.sh/v128/preact@10.19.6/src/index.js";
 import Title from "../../_title.tsx";
 import { Effect } from "effect";
 import { Handlers } from "$fresh/server.ts";
@@ -26,7 +25,7 @@ export const handler: Handlers<Props> = {
   },
 };
 
-const Login: FunctionComponent = () => {
+const Page = () => {
   return (
     <div class="container">
       <Title title="Login" />
@@ -81,4 +80,4 @@ const Login: FunctionComponent = () => {
   );
 };
 
-export default Login;
+export default Page;

@@ -39,12 +39,6 @@ impl MigrationTrait for Migration {
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
-                    .col(
-                        ColumnDef::new(Sensor::Id)
-                            .integer()
-                            .not_null()
-                            .primary_key(),
-                    )
                     .col(ColumnDef::new(Sensor::TriggerLimitVal).float().not_null())
                     .col(
                         ColumnDef::new(Sensor::TriggerLimitSequenceCount)
@@ -62,15 +56,14 @@ impl MigrationTrait for Migration {
                             .timestamp()
                             .default(Expr::current_timestamp())
                             .extra("ON UPDATE CURRENT_TIMESTAMP"),
-                    ),
+                    )
+                    .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
             .drop_table(Table::drop().table(Sensor::Table).to_owned())
             .await

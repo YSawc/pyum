@@ -1,3 +1,4 @@
+use crate::models::sensor_purpose;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -9,7 +10,7 @@ pub struct Model {
     pub id: i32,
     pub device_id: i32,
     pub sensor_purpose_id: i32,
-    pub trigger_limit_val: f32,
+    pub trigger_limit_val: i32,
     pub trigger_limit_sequence_count: Option<i32>,
     #[serde(skip_deserializing)]
     pub created_at: DateTime,
@@ -17,7 +18,26 @@ pub struct Model {
     pub updated_at: DateTime,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+#[derive(Copy, Clone, Debug, EnumIter)]
+pub enum Relation {
+    SensorPurpose,
+}
+
+impl RelationTrait for Relation {
+    fn def(&self) -> RelationDef {
+        match self {
+            Self::SensorPurpose => Entity::belongs_to(sensor_purpose::model::Entity)
+                .from(Column::SensorPurposeId)
+                .to(sensor_purpose::model::Column::Id)
+                .into(),
+        }
+    }
+}
+
+impl Related<sensor_purpose::model::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::SensorPurpose.def()
+    }
+}
 
 impl ActiveModelBehavior for ActiveModel {}

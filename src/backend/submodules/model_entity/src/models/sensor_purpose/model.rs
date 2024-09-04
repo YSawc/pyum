@@ -1,3 +1,4 @@
+use crate::models::sensor;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -14,7 +15,20 @@ pub struct Model {
     pub updated_at: DateTime,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+#[derive(Copy, Clone, Debug, EnumIter)]
+pub enum Relation {
+    Sensor,
+}
+
+impl RelationTrait for Relation {
+    fn def(&self) -> RelationDef {
+        match self {
+            Self::Sensor => Entity::has_many(sensor::model::Entity)
+                .from(Column::Id)
+                .to(sensor::model::Column::SensorPurposeId)
+                .into(),
+        }
+    }
+}
 
 impl ActiveModelBehavior for ActiveModel {}

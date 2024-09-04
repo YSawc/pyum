@@ -1,7 +1,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::models::admin_user;
+use crate::models::{admin_user, sensor};
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "device")]
@@ -24,6 +24,7 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
     AdminUser,
+    Sensor,
 }
 
 impl RelationTrait for Relation {
@@ -33,6 +34,10 @@ impl RelationTrait for Relation {
                 .from(Column::AdminUserId)
                 .to(admin_user::model::Column::Id)
                 .into(),
+            Self::Sensor => Entity::belongs_to(sensor::model::Entity)
+                .from(Column::Id)
+                .to(sensor::model::Column::DeviceId)
+                .into(),
         }
     }
 }
@@ -40,6 +45,12 @@ impl RelationTrait for Relation {
 impl Related<admin_user::model::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::AdminUser.def()
+    }
+}
+
+impl Related<sensor::model::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Sensor.def()
     }
 }
 

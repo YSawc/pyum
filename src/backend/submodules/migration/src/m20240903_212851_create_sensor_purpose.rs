@@ -1,3 +1,4 @@
+use crate::m20240803_063030_create_admin_user_table::AdminUser;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -17,6 +18,19 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .auto_increment()
                             .primary_key(),
+                    )
+                    .col(
+                        ColumnDef::new(SensorPurpose::AdminUserId)
+                            .integer()
+                            .not_null(),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("pk_sensor_purpose_admin_user_id")
+                            .from(SensorPurpose::Table, SensorPurpose::AdminUserId)
+                            .to(AdminUser::Table, AdminUser::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .col(
                         ColumnDef::new(SensorPurpose::Description)
@@ -50,6 +64,7 @@ impl MigrationTrait for Migration {
 pub enum SensorPurpose {
     Table,
     Id,
+    AdminUserId,
     Description,
     CreatedAt,
     UpdatedAt,

@@ -51,10 +51,10 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum SensorPurpose {
+pub enum SensorPurpose {
     Table,
     Id,
     Description,
     CreatedAt,
-    UpdatedAt
+    UpdatedAt,
 }

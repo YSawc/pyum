@@ -47,7 +47,7 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum Device {
+pub enum Device {
     Table,
     Id,
     AdminUserId,

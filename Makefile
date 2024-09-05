@@ -1,4 +1,4 @@
-.PHONY: cargo_all_fmt run_api_server run_api_server_verbose run_api_server_with_watch deno_task_start deno_test migrate_run migrate_run_refresh
+.PHONY: cargo_all_fmt run_api_server run_api_server_verbose run_api_server_with_watch deno_task_start deno_test migrate migrate_rollback_last migrate_refresh
 
 cargo_all_fmt:
 	cd ./src/backend && \
@@ -30,11 +30,15 @@ deno_test:
 	cd ./src/frontend && \
 	deno test
 
-migrate_run:
+migrate:
 	cd ./src/backend/submodules/migration && \
 	cargo run
 
-migrate_run_refresh:
+migrate_rollback_last:
+	cd ./src/backend/submodules/migration && \
+	cargo run -- down
+
+migrate_refresh:
 	cd ./src/backend/submodules/migration && \
 	cargo run refresh
 

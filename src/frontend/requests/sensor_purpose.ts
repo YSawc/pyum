@@ -87,7 +87,7 @@ export const createSensorPurpose = (
     );
 };
 
-export const editDevice = (
+export const editSensorPurpose = (
   req: Request,
   sensorPurposeId: string,
   formData: FormData,

@@ -36,6 +36,7 @@ const Page = ({ data }: PageProps<Props>) => {
         <thead>
           <tr>
             <th>Descripion</th>
+            <th>Color Code</th>
           </tr>
         </thead>
         <tbody>
@@ -46,6 +47,7 @@ const Page = ({ data }: PageProps<Props>) => {
                 `'/sensor_purpose/${sensorPurpose.id}'`}
             >
               <td class="px-2">{sensorPurpose.description}</td>
+              <td class="px-2">{sensorPurpose.color_code}</td>
             </tr>
           ))}
         </tbody>

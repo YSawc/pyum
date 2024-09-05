@@ -3,6 +3,7 @@ import { Schema } from "@effect/schema";
 export const SensorPurposeSchema = Schema.Struct({
   id: Schema.Number,
   description: Schema.String,
+  color_code: Schema.String,
 });
 export type SensorPurpose = Schema.Schema.Type<typeof SensorPurposeSchema>;
 

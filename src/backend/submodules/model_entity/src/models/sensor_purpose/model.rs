@@ -12,6 +12,7 @@ pub struct Model {
     #[serde(skip_deserializing)]
     pub admin_user_id: i32,
     pub description: String,
+    pub color_code: String,
     #[serde(skip_deserializing)]
     pub created_at: DateTime,
     #[serde(skip_deserializing)]

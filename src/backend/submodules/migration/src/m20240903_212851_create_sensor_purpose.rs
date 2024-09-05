@@ -38,6 +38,12 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(
+                        ColumnDef::new(SensorPurpose::ColorCode)
+                            .string_len(6)
+                            .not_null()
+                            .default("FFFFFF"),
+                    )
+                    .col(
                         ColumnDef::new(SensorPurpose::CreatedAt)
                             .date_time()
                             .default(Expr::current_timestamp()),
@@ -66,6 +72,7 @@ pub enum SensorPurpose {
     Id,
     AdminUserId,
     Description,
+    ColorCode,
     CreatedAt,
     UpdatedAt,
 }

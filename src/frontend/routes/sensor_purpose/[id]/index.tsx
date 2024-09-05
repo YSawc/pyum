@@ -38,15 +38,18 @@ const Page = ({ data }: PageProps<Props>) => {
         <thead>
           <tr>
             <th>Description</th>
+            <th>Color Code</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td
-              class="px-2"
-              onclick={`window.location='/sensor_purpose/${sensorPurpose.id}/edit'`}
-            >
+          <tr
+            onclick={`window.location='/sensor_purpose/${sensorPurpose.id}/edit'`}
+          >
+            <td class="px-2">
               {sensorPurpose.description}
+            </td>
+            <td class="px-2">
+              {sensorPurpose.color_code}
             </td>
           </tr>
         </tbody>

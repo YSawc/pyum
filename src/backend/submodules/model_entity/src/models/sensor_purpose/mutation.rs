@@ -10,6 +10,7 @@ pub async fn create(
     model::ActiveModel {
         admin_user_id: Set(uid),
         description: Set(form_data.description.to_owned()),
+        color_code: Set(form_data.color_code.to_owned()),
         ..Default::default()
     }
     .save(db)
@@ -34,6 +35,7 @@ pub async fn update_by_id(
     model::ActiveModel {
         id: sensor_purpose.id,
         description: Set(form_data.description.to_owned()),
+        color_code: Set(form_data.color_code.to_owned()),
         ..Default::default()
     }
     .update(db)

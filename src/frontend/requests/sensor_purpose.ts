@@ -114,7 +114,7 @@ export const editSensorPurpose = (
     );
 };
 
-export const deleteDevice = (
+export const deleteSensorPurpose = (
   req: Request,
   sensorPurposeId: string,
 ): Effect.Effect<

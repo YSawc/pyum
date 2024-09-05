@@ -18,6 +18,7 @@ import * as $device_id_index from "./routes/device/[id]/index.tsx";
 import * as $device_index from "./routes/device/index.tsx";
 import * as $device_new_index from "./routes/device/new/index.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
+import * as $sensor_purpose_id_delete from "./routes/sensor_purpose/[id]/delete.tsx";
 import * as $sensor_purpose_id_edit from "./routes/sensor_purpose/[id]/edit.tsx";
 import * as $sensor_purpose_id_index from "./routes/sensor_purpose/[id]/index.tsx";
 import * as $sensor_purpose_index from "./routes/sensor_purpose/index.tsx";
@@ -44,6 +45,7 @@ const manifest = {
     "./routes/device/index.tsx": $device_index,
     "./routes/device/new/index.tsx": $device_new_index,
     "./routes/greet/[name].tsx": $greet_name_,
+    "./routes/sensor_purpose/[id]/delete.tsx": $sensor_purpose_id_delete,
     "./routes/sensor_purpose/[id]/edit.tsx": $sensor_purpose_id_edit,
     "./routes/sensor_purpose/[id]/index.tsx": $sensor_purpose_id_index,
     "./routes/sensor_purpose/index.tsx": $sensor_purpose_index,

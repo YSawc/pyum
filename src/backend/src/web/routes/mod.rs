@@ -13,12 +13,6 @@ use tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 
 use crate::web::middleware::{print_request_response, AppState};
 
-#[derive(Deserialize)]
-pub struct Params {
-    pub page: Option<u64>,
-    pub devices_per_page: Option<u64>,
-}
-
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub enum FlashKind {
     Error,

@@ -1,4 +1,4 @@
-use crate::models::{device, sensor, sensor_purpose, session};
+use crate::models::{device, sensor_purpose, session};
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -33,7 +33,7 @@ impl RelationTrait for Relation {
                 .from(Column::Id)
                 .to(session::model::Column::AdminUserId)
                 .into(),
-            Self::SensorPurpose => Entity::has_many(sensor::model::Entity)
+            Self::SensorPurpose => Entity::has_many(sensor_purpose::model::Entity)
                 .from(Column::Id)
                 .to(sensor_purpose::model::Column::AdminUserId)
                 .into(),
@@ -51,7 +51,7 @@ impl Related<session::model::Entity> for Entity {
     }
 }
 
-impl Related<sensor::model::Entity> for Entity {
+impl Related<sensor_purpose::model::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::SensorPurpose.def()
     }

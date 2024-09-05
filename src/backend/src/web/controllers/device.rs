@@ -1,11 +1,11 @@
-use crate::web::{middleware::AppState, routes::Params, SimpleRes};
+use crate::web::{middleware::AppState, SimpleRes};
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
     Json,
 };
 use model_entity::models::device::{self, query::DeviceQuery};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
 #[derive(Serialize)]
@@ -13,10 +13,16 @@ pub struct ListDevices {
     devices: Vec<device::model::Model>,
 }
 
+#[derive(Deserialize)]
+pub struct ListParams {
+    pub page: Option<u64>,
+    pub devices_per_page: Option<u64>,
+}
+
 pub async fn list_devices(
     session: Session,
     state: State<AppState>,
-    Query(params): Query<Params>,
+    Query(params): Query<ListParams>,
 ) -> Result<Json<ListDevices>, Json<SimpleRes>> {
     let uid = session.get("uid").await.unwrap().unwrap();
     let page = params.page.unwrap_or(1);

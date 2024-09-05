@@ -13,5 +13,19 @@ pub fn router(state: AppState) -> Router<AppState> {
         .route("/device/:device_id", get(device::detail_device))
         .route("/device/:device_id", patch(device::edit_device))
         .route("/device/:device_id", delete(device::delete_device))
+        .route("/sensor_purpose", get(sensor_purpose::list))
+        .route("/sensor_purpose", post(sensor_purpose::create))
+        .route(
+            "/sensor_purpose/:sensor_purpose_id",
+            get(sensor_purpose::detail),
+        )
+        .route(
+            "/sensor_purpose/:sensor_purpose_id",
+            patch(sensor_purpose::edit),
+        )
+        .route(
+            "/sensor_purpose/:sensor_purpose_id",
+            delete(sensor_purpose::delete),
+        )
         .layer(middleware::from_fn_with_state(state, check_session_id))
 }

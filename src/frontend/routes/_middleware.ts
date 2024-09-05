@@ -7,7 +7,12 @@ import { validateSession } from "../requests/session.ts";
 
 export const check_protected_route = (url: string): boolean =>
   match(url)
-    .with(P.string.regex(/^(?=.*\/device|.*\/admin_user).*$/), () => true)
+    .with(
+      P.string.regex(
+        /^(?=.*\/device|.*\/sensor_purpose).* $ /,
+      ),
+      () => true,
+    )
     .otherwise(() => false);
 
 export async function handler(req: Request, ctx: FreshContext) {

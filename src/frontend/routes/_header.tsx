@@ -12,6 +12,12 @@ export default function Header() {
           >
             Devices
           </a>
+          <a
+            href="/sensor_purpose"
+            class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4"
+          >
+            SensorPurpose
+          </a>
         </div>
       </div>
       <div>

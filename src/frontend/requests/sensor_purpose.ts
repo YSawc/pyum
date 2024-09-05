@@ -38,7 +38,10 @@ export const getSensorPurposes = (req: Request): Effect.Effect<
     );
 };
 
-export const getSensorPurpose = (req: Request, deviceId: string): Effect.Effect<
+export const getSensorPurpose = (
+  req: Request,
+  sensorPurposeId: string,
+): Effect.Effect<
   GetSensorPurpose,
   HttpClientError.HttpClientError | ParseError,
   never
@@ -46,7 +49,7 @@ export const getSensorPurpose = (req: Request, deviceId: string): Effect.Effect<
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/sensor_purpose/${deviceId}`,
+      `http://localhost:3000/sensor_purpose/${sensorPurposeId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

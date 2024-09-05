@@ -12,7 +12,7 @@ export const SensorPurposesSchema = Schema.Struct({
 export type SensorPurposes = Schema.Schema.Type<typeof SensorPurposesSchema>;
 
 export const GetSensorPurposeSchema = Schema.Struct({
-  device: SensorPurposeSchema,
+  sensor_purpose: SensorPurposeSchema,
 });
 export type GetSensorPurpose = Schema.Schema.Type<
   typeof GetSensorPurposeSchema

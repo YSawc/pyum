@@ -29,7 +29,7 @@ const Page = ({ data }: PageProps<Props>) => {
       <Title title="Devices" />
       <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
         <a href="/device/new">
-          add device
+          create device
         </a>
       </button>
       <table class="table-fixed">

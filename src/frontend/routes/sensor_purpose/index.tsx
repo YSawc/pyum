@@ -29,7 +29,7 @@ const Page = ({ data }: PageProps<Props>) => {
       <Title title="Sensor Purposes" />
       <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
         <a href="/sensor_purpose/new">
-          add sensor purpose
+          create sensor purpose
         </a>
       </button>
       <table class="table-fixed">
@@ -43,9 +43,9 @@ const Page = ({ data }: PageProps<Props>) => {
             <tr
               class="post"
               onclick={"window.location=" +
-                `'/sensorPurpose/${sensorPurpose.id}'`}
+                `'/sensor_purpose/${sensorPurpose.id}'`}
             >
-              <td class="px-2">{sensorPurpose.descripion}</td>
+              <td class="px-2">{sensorPurpose.description}</td>
             </tr>
           ))}
         </tbody>

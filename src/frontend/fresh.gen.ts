@@ -19,6 +19,7 @@ import * as $device_index from "./routes/device/index.tsx";
 import * as $device_new_index from "./routes/device/new/index.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $sensor_purpose_index from "./routes/sensor_purpose/index.tsx";
+import * as $sensor_purpose_new_index from "./routes/sensor_purpose/new/index.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $routes_device_id_index_ConfirmButton from "./islands/routes/device/[id]/index/ConfirmButton.tsx";
 import { type Manifest } from "$fresh/server.ts";
@@ -42,6 +43,7 @@ const manifest = {
     "./routes/device/new/index.tsx": $device_new_index,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/sensor_purpose/index.tsx": $sensor_purpose_index,
+    "./routes/sensor_purpose/new/index.tsx": $sensor_purpose_new_index,
   },
   islands: {
     "./islands/Counter.tsx": $Counter,

@@ -37,3 +37,99 @@ export const getSensorPurposes = (req: Request): Effect.Effect<
       Effect.scoped,
     );
 };
+
+export const getSensorPurpose = (req: Request, deviceId: string): Effect.Effect<
+  GetSensorPurpose,
+  HttpClientError.HttpClientError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .get(
+      `http://localhost:3000/sensor_purpose/${deviceId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClient.fetch,
+      Effect.andThen(HttpClientResponse.schemaBodyJson(GetSensorPurposeSchema)),
+      Effect.scoped,
+    );
+};
+
+export const createSensorPurpose = (
+  req: Request,
+  formData: FormData,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .post(
+      `http://localhost:3000/sensor_purpose`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClientRequest.jsonBody({
+        description: formData.get("description")?.toString(),
+      }),
+      Effect.andThen(HttpClient.fetch),
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};
+
+export const editDevice = (
+  req: Request,
+  sensorPurposeId: string,
+  formData: FormData,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .patch(
+      `http://localhost:3000/sensor_purpose/${sensorPurposeId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClientRequest.jsonBody({
+        description: formData.get("description")?.toString(),
+      }),
+      Effect.andThen(HttpClient.fetch),
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};
+
+export const deleteDevice = (
+  req: Request,
+  sensorPurposeId: string,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .del(
+      `http://localhost:3000/sensor_purpose/${sensorPurposeId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClient.fetch,
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};

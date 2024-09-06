@@ -3,7 +3,7 @@
 cargo_all_fmt:
 	cd ./src/backend && \
 	cargo fmt && \
-	cd ./submodules/migration && \
+	cd ./packages/migration && \
 	cargo fmt && \
 	cd ../oauth_gen && \
 	cargo fmt && \
@@ -31,14 +31,14 @@ deno_test:
 	deno test
 
 migrate:
-	cd ./src/backend/submodules/migration && \
+	cd ./src/backend/packages/migration && \
 	cargo run
 
 migrate_rollback_last:
-	cd ./src/backend/submodules/migration && \
+	cd ./src/backend/packages/migration && \
 	cargo run -- down
 
 migrate_refresh:
-	cd ./src/backend/submodules/migration && \
+	cd ./src/backend/packages/migration && \
 	cargo run refresh
 

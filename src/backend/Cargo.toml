@@ -25,7 +25,7 @@ anyhow = "1.0.75"
 thiserror = "1.0.63"
 oauth2 = "4.4.2"
 rand = "0.8.5"
-model_entity = { path = "./submodules/model_entity" }
+model_entity = { path = "./packages/model_entity" }
 mime_guess = "2.0.5"
 http-body-util = "0.1.2"
 tracing-appender = "0.2.3"

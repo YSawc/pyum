@@ -34,7 +34,7 @@ const Page = ({ data }: PageProps<Props>) => {
         confirmText="really delete?"
         url={`/sensor_purpose/${sensorPurpose.id}/delete`}
       />
-      <table class="table-fixed">
+      <table class="table-fixed border-separate border-spacing-2">
         <thead>
           <tr>
             <th>Description</th>
@@ -48,7 +48,9 @@ const Page = ({ data }: PageProps<Props>) => {
             <td class="px-2">
               {sensorPurpose.description}
             </td>
-            <td class="px-2">
+            <td
+              class={`px-2 border border-4 border-[#${sensorPurpose.color_code}]`}
+            >
               {sensorPurpose.color_code}
             </td>
           </tr>

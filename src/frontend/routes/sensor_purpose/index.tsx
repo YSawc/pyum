@@ -32,7 +32,7 @@ const Page = ({ data }: PageProps<Props>) => {
           create sensor purpose
         </a>
       </button>
-      <table class="table-fixed">
+      <table class="table-fixed border-separate border-spacing-2">
         <thead>
           <tr>
             <th>Descripion</th>
@@ -46,8 +46,14 @@ const Page = ({ data }: PageProps<Props>) => {
               onclick={"window.location=" +
                 `'/sensor_purpose/${sensorPurpose.id}'`}
             >
-              <td class="px-2">{sensorPurpose.description}</td>
-              <td class="px-2">{sensorPurpose.color_code}</td>
+              <td class="px-2">
+                {sensorPurpose.description}
+              </td>
+              <td
+                class={`px-2 border border-4 border-[#${sensorPurpose.color_code}]`}
+              >
+                {sensorPurpose.color_code}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -16,7 +16,7 @@ pub struct List {
 #[derive(Deserialize)]
 pub struct ListParams {
     pub page: Option<u64>,
-    pub sensor_purposes_per_page: Option<u64>,
+    pub models_per_page: Option<u64>,
 }
 
 pub async fn list(
@@ -26,9 +26,9 @@ pub async fn list(
 ) -> Result<Json<List>, Json<SimpleRes>> {
     let uid = session.get("uid").await.unwrap().unwrap();
     let page = params.page.unwrap_or(1);
-    let sensor_purposes_per_page = params.sensor_purposes_per_page.unwrap_or(5);
+    let models_per_page = params.models_per_page.unwrap_or(5);
     let (sensor_purposes, _num_pages) =
-        SensorPurposeQuery::find_in_page(&state.conn, uid, page, sensor_purposes_per_page)
+        SensorPurposeQuery::find_in_page(&state.conn, uid, page, models_per_page)
             .await
             .map_err(|_| {
                 Json(SimpleRes {

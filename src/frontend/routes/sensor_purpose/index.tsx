@@ -61,10 +61,10 @@ const Page = ({ data }: PageProps<Props>) => {
           <tr>
             <td></td>
             <td>
-              <a href="/?page={{ page - 1 }}&sensor_purpose_per_page={{ devices_per_page }}">
+              <a href="/?page={{ page - 1 }}&models_per_page={{ models_per_page }}">
                 Previous
               </a>
-              <a href="/?page={{ page + 1 }}&sensor_purpose_per_page={{ devices_per_page }}">
+              <a href="/?page={{ page + 1 }}&models_per_page={{ models_per_page }}">
                 Next
               </a>
             </td>

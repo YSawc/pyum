@@ -16,7 +16,7 @@ pub struct ListDevices {
 #[derive(Deserialize)]
 pub struct ListParams {
     pub page: Option<u64>,
-    pub devices_per_page: Option<u64>,
+    pub models_per_page: Option<u64>,
 }
 
 pub async fn list_devices(
@@ -26,8 +26,8 @@ pub async fn list_devices(
 ) -> Result<Json<ListDevices>, Json<SimpleRes>> {
     let uid = session.get("uid").await.unwrap().unwrap();
     let page = params.page.unwrap_or(1);
-    let devices_per_page = params.devices_per_page.unwrap_or(5);
-    let (devices, _num_pages) = DeviceQuery::find_in_page(&state.conn, uid, page, devices_per_page)
+    let models_per_page = params.models_per_page.unwrap_or(5);
+    let (devices, _num_pages) = DeviceQuery::find_in_page(&state.conn, uid, page, models_per_page)
         .await
         .map_err(|_| {
             Json(SimpleRes {

@@ -28,7 +28,7 @@ const Page = ({ data }: PageProps<Props>) => {
 
   return (
     <div class="container">
-      <Title title="Device detail" />
+      <Title title="Detail sensor purpose" />
       <ConfirmButton
         text="delete"
         confirmText="really delete?"
@@ -49,7 +49,7 @@ const Page = ({ data }: PageProps<Props>) => {
               {sensorPurpose.description}
             </td>
             <td
-              class={`px-2 border border-4 border-[#${sensorPurpose.color_code}]`}
+              class={`px-2 border-4 border-[#${sensorPurpose.color_code}] rounded`}
             >
               {sensorPurpose.color_code}
             </td>

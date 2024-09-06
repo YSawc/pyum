@@ -42,11 +42,10 @@ const Page = ({ data }: PageProps<Props>) => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td
-              class="px-2"
-              onclick={`window.location='/device/${device.id}/edit'`}
-            >
+          <tr
+            onclick={`window.location='/device/${device.id}/edit'`}
+          >
+            <td class="px-2">
               {device.name}
             </td>
             <td>

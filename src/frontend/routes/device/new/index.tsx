@@ -21,7 +21,7 @@ export const handler: Handlers = {
 const Page = () => {
   return (
     <div class="container">
-      <Title title="Create Device" />
+      <Title title="Create device" />
       <div class="w-full max-w-xs">
         <form
           class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -63,7 +63,7 @@ const Page = () => {
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Create Device
+              Create device
             </button>
           </div>
         </form>

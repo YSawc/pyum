@@ -26,7 +26,7 @@ const Page = ({ data }: PageProps<Props>) => {
 
   return (
     <div class="container">
-      <Title title="Sensor Purposes" />
+      <Title title="Sensor purposes" />
       <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
         <a href="/sensor_purpose/new">
           create sensor purpose
@@ -35,7 +35,7 @@ const Page = ({ data }: PageProps<Props>) => {
       <table class="table-fixed border-separate border-spacing-2">
         <thead>
           <tr>
-            <th>Descripion</th>
+            <th>Description</th>
             <th>Color Code</th>
           </tr>
         </thead>
@@ -50,7 +50,7 @@ const Page = ({ data }: PageProps<Props>) => {
                 {sensorPurpose.description}
               </td>
               <td
-                class={`px-2 border border-4 border-[#${sensorPurpose.color_code}]`}
+                class={`px-2 border-4 border-[#${sensorPurpose.color_code}] rounded`}
               >
                 {sensorPurpose.color_code}
               </td>

@@ -3,28 +3,31 @@ use axum::{
     extract::{Path, Query, State},
     Json,
 };
-use model_entity::models::sensor::{self, query::SensorQuery};
+use model_entity::models::{
+    sensor::{self, query::SensorQuery},
+    sensor_purpose,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
-pub struct ListRelatedDevice {
-    sensors: Vec<sensor::model::Model>,
+pub struct ListRelatedSensor {
+    models: Vec<(sensor::model::Model, sensor_purpose::model::Model)>,
 }
 
 #[derive(Deserialize)]
-pub struct ListRelatedDeviceParams {
+pub struct ListRelatedSensorParams {
     pub page: Option<u64>,
     pub models_per_page: Option<u64>,
 }
 
-pub async fn list_related_device(
+pub async fn list_related_sensor(
     state: State<AppState>,
     Path(device_id): Path<i32>,
-    Query(params): Query<ListRelatedDeviceParams>,
-) -> Result<Json<ListRelatedDevice>, Json<SimpleRes>> {
+    Query(params): Query<ListRelatedSensorParams>,
+) -> Result<Json<ListRelatedSensor>, Json<SimpleRes>> {
     let page = params.page.unwrap_or(1);
     let models_per_page = params.models_per_page.unwrap_or(5);
-    let (sensors, _num_pages) =
+    let sensors_and_relationed_purpose =
         SensorQuery::find_in_page(&state.conn, device_id, page, models_per_page)
             .await
             .map_err(|_| {
@@ -33,7 +36,12 @@ pub async fn list_related_device(
                 })
             })?;
 
-    Ok(Json(ListRelatedDevice { sensors }))
+    let models = sensors_and_relationed_purpose
+        .iter()
+        .map(|rel| (rel.0.to_owned(), rel.1.first().unwrap().to_owned()))
+        .collect::<Vec<_>>();
+
+    Ok(Json(ListRelatedSensor { models }))
 }
 
 pub async fn create(

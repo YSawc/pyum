@@ -15,7 +15,7 @@ pub fn router(state: AppState) -> Router<AppState> {
         .route("/device/:device_id", delete(device::delete_device))
         .route(
             "/device/:device_id/sensor",
-            get(sensor::list_related_device),
+            get(sensor::list_related_sensor),
         )
         .route("/device/:device_id/sensor", post(sensor::create))
         .route("/sensor_purpose", get(sensor_purpose::list))

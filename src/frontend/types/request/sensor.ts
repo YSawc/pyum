@@ -1,4 +1,5 @@
 import { Schema } from "@effect/schema";
+import { SensorPurposeSchema } from "./sensor_purpose.ts";
 
 export const SensorSchema = Schema.Struct({
   id: Schema.Number,
@@ -9,17 +10,23 @@ export const SensorSchema = Schema.Struct({
   created_at: Schema.String,
   updated_at: Schema.String,
 });
+
+export const SensorAndPurposeSchema = Schema.Tuple(
+  SensorSchema,
+  SensorPurposeSchema,
+);
+
 export type Sensor = Schema.Schema.Type<typeof SensorSchema>;
 
-export const SensorsSchema = Schema.Struct({
-  sensors: Schema.Array(SensorSchema),
+export const GetSensorsSchema = Schema.Struct({
+  models: Schema.Array(SensorAndPurposeSchema),
 });
-export type Sensors = Schema.Schema.Type<typeof SensorsSchema>;
 
 export const GetSensorSchema = Schema.Struct({
   sensor: SensorSchema,
 });
 export type GetSensor = Schema.Schema.Type<typeof GetSensorSchema>;
 
-export const GetSensorsSchema = SensorsSchema;
-export type GetSensors = Schema.Schema.Type<typeof GetSensorsSchema>;
+export type GetSensors = Schema.Schema.Type<
+  typeof GetSensorsSchema
+>;

@@ -1,3 +1,5 @@
+use crate::models::sensor_purpose;
+
 use super::{model, model::Entity as Sensor};
 use sea_orm::*;
 
@@ -9,16 +11,14 @@ impl SensorQuery {
         device_id: i32,
         page: u64,
         models_per_page: u64,
-    ) -> Result<(Vec<model::Model>, u64), DbErr> {
+    ) -> Result<Vec<(model::Model, Vec<sensor_purpose::model::Model>)>, DbErr> {
         let paginator = Sensor::find()
             .filter(model::Column::DeviceId.eq(device_id))
+            .find_with_related(sensor_purpose::model::Entity)
             .order_by_asc(model::Column::Id)
-            .paginate(db, models_per_page);
-        let num_pages = paginator.num_pages().await?;
+            .limit(models_per_page)
+            .offset(page);
 
-        paginator
-            .fetch_page(page - 1)
-            .await
-            .map(|sensors| (sensors, num_pages))
+        paginator.all(db).await
     }
 }

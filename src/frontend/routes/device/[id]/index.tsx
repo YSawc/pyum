@@ -39,6 +39,7 @@ const Page = ({ data }: PageProps<Props>) => {
           <tr>
             <th>Name</th>
             <th>Image</th>
+            <th>Other</th>
           </tr>
         </thead>
         <tbody>
@@ -54,6 +55,14 @@ const Page = ({ data }: PageProps<Props>) => {
                 width="128"
                 height="128"
               />
+            </td>
+            <td class="px-2">
+              <a
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                link={`window.location='/device/${device.id}/sensor'`}
+              >
+                Sensors
+              </a>
             </td>
           </tr>
         </tbody>

@@ -56,10 +56,17 @@ const Page = ({ data }: PageProps<Props>) => {
                 height="128"
               />
             </td>
-            <td class="px-2">
+            <td class="px-2 flex flex-col">
               <a
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                link={`window.location='/device/${device.id}/sensor'`}
+                href={`/device/${device.id}/sensor/new`}
+              >
+                Create sensor
+              </a>
+
+              <a
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                href={`/device/${device.id}/sensor`}
               >
                 Sensors
               </a>

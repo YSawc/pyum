@@ -29,9 +29,23 @@ pub async fn list_related_device(
             .await
             .map_err(|_| {
                 Json(SimpleRes {
-                    message: "Cannot find sensor purposes in page".to_string(),
+                    message: "Cannot find sensors in page".to_string(),
                 })
             })?;
 
     Ok(Json(ListRelatedDevice { sensors }))
+}
+
+pub async fn create(
+    state: State<AppState>,
+    Path(device_id): Path<i32>,
+    Json(new_sensor_purpose): Json<sensor::model::Model>,
+) -> Result<Json<SimpleRes>, Json<SimpleRes>> {
+    sensor::mutation::create(&state.conn, new_sensor_purpose, device_id)
+        .await
+        .unwrap();
+
+    Ok(Json(SimpleRes {
+        message: "Successed to create sensor.".to_string(),
+    }))
 }

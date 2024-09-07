@@ -3,9 +3,9 @@ import { Schema } from "@effect/schema";
 export const SensorSchema = Schema.Struct({
   id: Schema.Number,
   device_id: Schema.Number,
-  sensor_purpuse_id: Schema.Number,
-  triger_limit_val: Schema.Number,
-  triger_limit_sequence_count: Schema.Number,
+  sensor_purpose_id: Schema.Number,
+  trigger_limit_val: Schema.Number,
+  trigger_limit_sequence_count: Schema.Number,
   created_at: Schema.String,
   updated_at: Schema.String,
 });

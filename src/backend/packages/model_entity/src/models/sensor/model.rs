@@ -8,9 +8,11 @@ pub struct Model {
     #[sea_orm(primary_key)]
     #[serde(skip_deserializing)]
     pub id: i32,
+    #[serde(skip_deserializing)]
     pub device_id: i32,
     pub sensor_purpose_id: i32,
     pub trigger_limit_val: i32,
+    #[sea_orm(nullable)]
     pub trigger_limit_sequence_count: Option<i32>,
     #[serde(skip_deserializing)]
     pub created_at: DateTime,

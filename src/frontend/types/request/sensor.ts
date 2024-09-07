@@ -18,14 +18,15 @@ export const SensorAndPurposeSchema = Schema.Tuple(
 
 export type Sensor = Schema.Schema.Type<typeof SensorSchema>;
 
+export const GetSensorSchema = Schema.Struct({
+  models: SensorAndPurposeSchema,
+});
+
+export type GetSensor = Schema.Schema.Type<typeof GetSensorSchema>;
+
 export const GetSensorsSchema = Schema.Struct({
   models: Schema.Array(SensorAndPurposeSchema),
 });
-
-export const GetSensorSchema = Schema.Struct({
-  sensor: SensorSchema,
-});
-export type GetSensor = Schema.Schema.Type<typeof GetSensorSchema>;
 
 export type GetSensors = Schema.Schema.Type<
   typeof GetSensorsSchema

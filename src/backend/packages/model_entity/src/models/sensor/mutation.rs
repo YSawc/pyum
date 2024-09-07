@@ -1,6 +1,8 @@
 use sea_orm::*;
 
-use super::model::{self};
+use crate::models::sensor_purpose;
+
+use super::model::{self, Entity as Sensor};
 
 pub async fn create(
     db: &DbConn,
@@ -16,4 +18,18 @@ pub async fn create(
     }
     .save(db)
     .await
+}
+
+pub async fn get_by_id(
+    db: &DbConn,
+    id: i32,
+) -> Result<(model::Model, sensor_purpose::model::Model), DbErr> {
+    let res = Sensor::find_by_id(id)
+        .find_with_related(sensor_purpose::model::Entity)
+        .all(db)
+        .await?;
+    Ok(res
+        .first()
+        .map(|elm| (elm.0.to_owned(), elm.1.first().unwrap().to_owned()))
+        .unwrap())
 }

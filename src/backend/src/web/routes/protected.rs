@@ -32,5 +32,6 @@ pub fn router(state: AppState) -> Router<AppState> {
             "/sensor_purpose/:sensor_purpose_id",
             delete(sensor_purpose::delete),
         )
+        .route("/sensor/:sensor_id", get(sensor::detail))
         .layer(middleware::from_fn_with_state(state, check_session_id))
 }

@@ -7,7 +7,12 @@ import {
 } from "@effect/platform";
 import { ParseError } from "@effect/schema/ParseResult";
 import { getTargetCookieValCombinedAssign } from "../utils/browser/headers/cookie.ts";
-import { GetSensors, GetSensorsSchema } from "../types/request/sensor.ts";
+import {
+  GetSensor,
+  GetSensors,
+  GetSensorSchema,
+  GetSensorsSchema,
+} from "../types/request/sensor.ts";
 import { SimpleRes, SimpleResSchema } from "../types/request/util.ts";
 import { HttpBodyError } from "@effect/platform/HttpBody";
 
@@ -63,6 +68,26 @@ export const createSensor = (
       }),
       Effect.andThen(HttpClient.fetch),
       Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};
+
+export const getSensor = (req: Request, sensorId: string): Effect.Effect<
+  GetSensor,
+  HttpClientError.HttpClientError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .get(
+      `http://localhost:3000/sensor/${sensorId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClient.fetch,
+      Effect.andThen(HttpClientResponse.schemaBodyJson(GetSensorSchema)),
       Effect.scoped,
     );
 };

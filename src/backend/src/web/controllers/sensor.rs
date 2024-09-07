@@ -1,6 +1,7 @@
 use crate::web::{middleware::AppState, SimpleRes};
 use axum::{
     extract::{Path, Query, State},
+    http::StatusCode,
     Json,
 };
 use model_entity::models::{
@@ -56,4 +57,20 @@ pub async fn create(
     Ok(Json(SimpleRes {
         message: "Successed to create sensor.".to_string(),
     }))
+}
+
+#[derive(Serialize)]
+pub struct Detail {
+    models: (sensor::model::Model, sensor_purpose::model::Model),
+}
+
+pub async fn detail(
+    state: State<AppState>,
+    Path(sensor_id): Path<i32>,
+) -> Result<Json<Detail>, (StatusCode, &'static str)> {
+    let models = sensor::mutation::get_by_id(&state.conn, sensor_id)
+        .await
+        .unwrap();
+
+    Ok(Json(Detail { models }))
 }

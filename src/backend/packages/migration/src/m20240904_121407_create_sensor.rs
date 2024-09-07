@@ -38,7 +38,7 @@ impl MigrationTrait for Migration {
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
-                    .col(ColumnDef::new(Sensor::TriggerLimitVal).float().not_null())
+                    .col(ColumnDef::new(Sensor::TriggerLimitVal).integer().not_null())
                     .col(
                         ColumnDef::new(Sensor::TriggerLimitSequenceCount)
                             .integer()
@@ -47,12 +47,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Sensor::CreatedAt)
-                            .timestamp()
+                            .date_time()
                             .default(Expr::current_timestamp()),
                     )
                     .col(
                         ColumnDef::new(Sensor::UpdatedAt)
-                            .timestamp()
+                            .date_time()
                             .default(Expr::current_timestamp())
                             .extra("ON UPDATE CURRENT_TIMESTAMP"),
                     )

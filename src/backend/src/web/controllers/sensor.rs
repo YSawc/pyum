@@ -28,19 +28,13 @@ pub async fn list_related_sensor(
 ) -> Result<Json<ListRelatedSensor>, Json<SimpleRes>> {
     let page = params.page.unwrap_or(1);
     let models_per_page = params.models_per_page.unwrap_or(5);
-    let sensors_and_relationed_purpose =
-        SensorQuery::find_in_page(&state.conn, device_id, page, models_per_page)
-            .await
-            .map_err(|_| {
-                Json(SimpleRes {
-                    message: "Cannot find sensors in page".to_string(),
-                })
-            })?;
-
-    let models = sensors_and_relationed_purpose
-        .iter()
-        .map(|rel| (rel.0.to_owned(), rel.1.first().unwrap().to_owned()))
-        .collect::<Vec<_>>();
+    let models = SensorQuery::find_in_page(&state.conn, device_id, page, models_per_page)
+        .await
+        .map_err(|_| {
+            Json(SimpleRes {
+                message: "Cannot find sensors in page".to_string(),
+            })
+        })?;
 
     Ok(Json(ListRelatedSensor { models }))
 }

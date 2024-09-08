@@ -17,15 +17,16 @@ pub struct ListRelatedSensor {
 
 #[derive(Deserialize)]
 pub struct ListRelatedSensorParams {
+    pub device_id: i32,
     pub page: Option<u64>,
     pub models_per_page: Option<u64>,
 }
 
 pub async fn list_related_sensor(
     state: State<AppState>,
-    Path(device_id): Path<i32>,
     Query(params): Query<ListRelatedSensorParams>,
 ) -> Result<Json<ListRelatedSensor>, Json<SimpleRes>> {
+    let device_id = params.device_id;
     let page = params.page.unwrap_or(1);
     let models_per_page = params.models_per_page.unwrap_or(5);
     let models = SensorQuery::find_in_page(&state.conn, device_id, page, models_per_page)
@@ -41,10 +42,9 @@ pub async fn list_related_sensor(
 
 pub async fn create(
     state: State<AppState>,
-    Path(device_id): Path<i32>,
     Json(new_sensor_purpose): Json<sensor::model::Model>,
 ) -> Result<Json<SimpleRes>, Json<SimpleRes>> {
-    sensor::mutation::create(&state.conn, new_sensor_purpose, device_id)
+    sensor::mutation::create(&state.conn, new_sensor_purpose)
         .await
         .unwrap();
 
@@ -71,10 +71,10 @@ pub async fn detail(
 
 pub async fn edit(
     state: State<AppState>,
-    Path(device_id): Path<i32>,
+    Path(sensor_id): Path<i32>,
     Json(new_sensor_purpose): Json<sensor::model::Model>,
 ) -> Result<Json<SimpleRes>, Json<SimpleRes>> {
-    sensor::mutation::update(&state.conn, new_sensor_purpose, device_id)
+    sensor::mutation::update(&state.conn, new_sensor_purpose, sensor_id)
         .await
         .unwrap();
 

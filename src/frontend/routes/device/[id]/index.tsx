@@ -59,14 +59,14 @@ const Page = ({ data }: PageProps<Props>) => {
             <td class="px-2 flex flex-col">
               <a
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                href={`/device/${device.id}/sensor/new`}
+                href={`/sensor/new?device_id=${device.id}`}
               >
                 Create sensor
               </a>
 
               <a
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                href={`/device/${device.id}/sensor`}
+                href={`/sensor?device_id=${device.id}`}
               >
                 Sensors
               </a>

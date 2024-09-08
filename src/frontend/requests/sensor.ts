@@ -27,7 +27,7 @@ export const getSensorsRelatedDevice = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/device/${deviceId}/sensor`,
+      `http://localhost:3000/sensor?device_id=${deviceId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -53,13 +53,14 @@ export const createSensor = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .post(
-      `http://localhost:3000/device/${deviceId}/sensor`,
+      `http://localhost:3000/sensor`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
         "Cookie": id,
       }),
       HttpClientRequest.jsonBody({
+        device_id: Number(deviceId),
         sensor_purpose_id: Number(formData.get("sensor_purpose_id")),
         trigger_limit_val: Number(formData.get("trigger_limit_val")),
         trigger_limit_sequence_count: Number(formData.get(

@@ -1,66 +1,71 @@
-import Title from "../_title.tsx";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
-import { getDevices } from "../../requests/device.ts";
+import HttpStatusCode from "../../enums/HttpStatusCode.ts";
+import { getSensorsRelatedDevice } from "../../requests/sensor.ts";
+import { GetSensors } from "../../types/request/sensor.ts";
+import Title from "../_title.tsx";
 import { Effect } from "effect";
-import { Sensors } from "../../types/request/sensor.ts";
 
 interface Props {
-  sensors: Sensors;
+  deviceId: string;
+  models: GetSensors;
 }
 
 export const handler: Handlers<Props> = {
   async GET(req: Request, ctx: FreshContext) {
-    const sensors = await Effect.runPromise(
-      getDevices(req),
+    const deviceId = ctx.url.searchParams.get("device_id");
+    if (!deviceId) {
+      return new Response(null, {
+        status: HttpStatusCode.SEE_OTHER,
+        headers: { Location: "/device" },
+      });
+    }
+
+    const models = await Effect.runPromise(
+      getSensorsRelatedDevice(req, deviceId),
     );
-    const pageData: Props = {
-      sensors: sensors,
+    const data: Props = {
+      deviceId,
+      models,
     };
-    const res: Response = await ctx.render(pageData);
+    const res: Response = await ctx.render(data);
     return res;
   },
 };
 
 const Page = ({ data }: PageProps<Props>) => {
-  const { sensors } = data.sensors;
-
   return (
     <div class="container">
-      <Title title="Devices" />
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
-        <a href="/device/new">
-          create device
-        </a>
-      </button>
-      <table class="table-fixed">
+      <Title title="Sensors related device" />
+      <a
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+        href={`/device/${data.deviceId}`}
+      >
+        Back to device detail
+      </a>
+      <table class="table-fixed border-separate border-spacing-2">
         <thead>
           <tr>
-            <th>Device id</th>
+            <th>Sensor purpose</th>
+            <th>Triger limit val</th>
+            <th>Triger limit sequence count</th>
           </tr>
         </thead>
         <tbody>
-          {sensors.map((sensor) => (
+          {data.models.models.map((rels) => (
             <tr
               class="post"
-              onClick={"window.location=" + `'/sensor/${sensor.id}'`}
+              onClick={"window.location=" + `'/sensor/${rels[0].id}'`}
             >
-              <td class="px-2">{sensor.device_id}</td>
+              <td
+                class={`px-2 border-4 border-[#${rels[1].color_code}] rounded`}
+              >
+                {rels[0].sensor_purpose_id}
+              </td>
+              <td class="px-2">{rels[0].trigger_limit_val}</td>
+              <td class="px-2">{rels[0].trigger_limit_sequence_count}</td>
             </tr>
           ))}
         </tbody>
-        <tfoot>
-          <tr>
-            <td></td>
-            <td>
-              <a href="/?page={{ page - 1 }}&models_per_page={{ models_per_page }}">
-                Previous
-              </a>
-              <a href="/?page={{ page + 1 }}&models_per_page ={{ models_per_page }}">
-                Next
-              </a>
-            </td>
-          </tr>
-        </tfoot>
       </table>
     </div>
   );

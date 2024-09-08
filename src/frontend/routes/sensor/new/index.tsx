@@ -1,17 +1,22 @@
 import { Effect } from "effect";
-import HttpStatusCode from "../../../../../enums/HttpStatusCode.ts";
+import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
 import { FreshContext, Handlers } from "$fresh/server.ts";
-import Title from "../../../../_title.tsx";
-import { createSensor } from "../../../../../requests/sensor.ts";
+import Title from "../../_title.tsx";
+import { createSensor } from "../../../requests/sensor.ts";
 
 export const handler: Handlers = {
   async POST(req: Request, ctx: FreshContext) {
     const formData = await req.formData();
-    const deviceId = ctx.params.id;
+    const deviceId = ctx.url.searchParams.get("device_id");
+    if (!deviceId) {
+      return new Response(null, {
+        status: HttpStatusCode.SEE_OTHER,
+        headers: { Location: "/device" },
+      });
+    }
     await Effect.runPromise(
       createSensor(req, formData, deviceId),
     );
-
     return new Response(null, {
       status: HttpStatusCode.SEE_OTHER,
       headers: { Location: `/device/${deviceId}` },

@@ -35,11 +35,13 @@ const Page = ({ data }: PageProps<Props>) => {
         url={`/sensor/${models[0].id}/delete`}
       />
 
-      <table class="table-fixed">
+      <table class="table-fixed border-separate border-spacing-2">
         <thead>
           <tr>
             <th>Device id</th>
             <th>Sensor purpose id</th>
+            <th>Sensor trigger limit val</th>
+            <th>Sensor trigger limit sequence count</th>
           </tr>
         </thead>
         <tbody>
@@ -53,6 +55,8 @@ const Page = ({ data }: PageProps<Props>) => {
             >
               {models[0].sensor_purpose_id}
             </td>
+            <td class="px-2">{models[0].trigger_limit_val}</td>
+            <td class="px-2">{models[0].trigger_limit_sequence_count}</td>
           </tr>
         </tbody>
       </table>

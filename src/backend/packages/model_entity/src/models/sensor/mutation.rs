@@ -24,14 +24,12 @@ pub async fn get_by_id(
     db: &DbConn,
     id: i32,
 ) -> Result<(model::Model, sensor_purpose::model::Model), DbErr> {
-    let res = Sensor::find_by_id(id)
-        .find_with_related(sensor_purpose::model::Entity)
-        .all(db)
-        .await?;
-    Ok(res
-        .first()
-        .map(|elm| (elm.0.to_owned(), elm.1.first().unwrap().to_owned()))
-        .unwrap())
+    let models = Sensor::find_by_id(id)
+        .find_also_related(sensor_purpose::model::Entity)
+        .one(db)
+        .await?
+        .unwrap();
+    Ok((models.0, models.1.unwrap()))
 }
 
 pub async fn update(

@@ -25,7 +25,6 @@ export const handler: Handlers<Props> = {
 };
 
 const Page = ({ data }: PageProps<Props>) => {
-  data.models;
 
   return (
     <div class="container">

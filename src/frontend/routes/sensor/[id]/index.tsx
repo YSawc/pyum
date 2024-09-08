@@ -38,7 +38,7 @@ const Page = ({ data }: PageProps<Props>) => {
         <tbody>
           <tr
             class="post"
-            onclick={"window.location=" + `'/sensor/${models[0].id}'`}
+            onClick={"window.location=" + `'/sensor/${models[0].id}'`}
           >
             <td class="px-2">{models[0].device_id}</td>
             <td

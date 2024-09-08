@@ -48,7 +48,7 @@ const Page = ({ data }: PageProps<Props>) => {
           {data.models.models.map((rels) => (
             <tr
               class="post"
-              onclick={"window.location=" + `'/sensor/${rels[0].id}'`}
+              onClick={"window.location=" + `'/sensor/${rels[0].id}'`}
             >
               <td
                 class={`px-2 border-4 border-[#${rels[1].color_code}] rounded`}

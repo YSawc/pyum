@@ -43,7 +43,7 @@ const Page = ({ data }: PageProps<Props>) => {
           {devices.map((device) => (
             <tr
               class="post"
-              onclick={"window.location=" + `'/device/${device.id}'`}
+              onClick={"window.location=" + `'/device/${device.id}'`}
             >
               <td class="px-2">{device.name}</td>
               <td>

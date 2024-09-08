@@ -44,7 +44,7 @@ const Page = ({ data }: PageProps<Props>) => {
         </thead>
         <tbody>
           <tr
-            onclick={`window.location='/device/${device.id}/edit'`}
+            onClick={`window.location='/device/${device.id}/edit'`}
           >
             <td class="px-2">
               {device.name}

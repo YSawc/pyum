@@ -43,7 +43,7 @@ const Page = ({ data }: PageProps<Props>) => {
         </thead>
         <tbody>
           <tr
-            onclick={`window.location='/sensor_purpose/${sensorPurpose.id}/edit'`}
+            onClick={`window.location='/sensor_purpose/${sensorPurpose.id}/edit'`}
           >
             <td class="px-2">
               {sensorPurpose.description}

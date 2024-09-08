@@ -55,3 +55,13 @@ pub async fn update(
     .update(db)
     .await
 }
+
+pub async fn delete_by_id(db: &DbConn, id: i32) -> Result<DeleteResult, DbErr> {
+    let sensor: model::ActiveModel = Sensor::find_by_id(id)
+        .one(db)
+        .await?
+        .ok_or(DbErr::Custom("Cannot find sensor.".to_owned()))
+        .map(Into::into)?;
+
+    sensor.delete(db).await
+}

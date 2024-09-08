@@ -122,3 +122,26 @@ export const editSensor = (
       Effect.scoped,
     );
 };
+
+export const deleteSensor = (
+  req: Request,
+  sensorId: string,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .del(
+      `http://localhost:3000/sensor/${sensorId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClient.fetch,
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};

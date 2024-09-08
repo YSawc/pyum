@@ -3,6 +3,7 @@ import { Effect } from "effect";
 import { GetSensor } from "../../../types/request/sensor.ts";
 import { getSensor } from "../../../requests/sensor.ts";
 import Title from "../../_title.tsx";
+import { ConfirmButton } from "../../../islands/routes/device/[id]/index/ConfirmButton.tsx";
 
 interface Props {
   models: GetSensor;
@@ -28,6 +29,12 @@ const Page = ({ data }: PageProps<Props>) => {
   return (
     <div class="container">
       <Title title="Sensor detail" />
+      <ConfirmButton
+        text="delete"
+        confirmText="really delete?"
+        url={`/sensor/${models[0].id}/delete`}
+      />
+
       <table class="table-fixed">
         <thead>
           <tr>

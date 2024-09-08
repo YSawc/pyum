@@ -82,3 +82,16 @@ pub async fn edit(
         message: "Successed to create sensor.".to_string(),
     }))
 }
+
+pub async fn delete(
+    state: State<AppState>,
+    Path(sensor_id): Path<i32>,
+) -> Result<Json<SimpleRes>, (StatusCode, &'static str)> {
+    sensor::mutation::delete_by_id(&state.conn, sensor_id)
+        .await
+        .unwrap();
+
+    Ok(Json(SimpleRes {
+        message: "Success to delete sensor".to_string(),
+    }))
+}

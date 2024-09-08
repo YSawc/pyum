@@ -17,7 +17,7 @@ impl SensorQuery {
             .find_with_related(sensor_purpose::model::Entity)
             .order_by_asc(model::Column::Id)
             .limit(models_per_page)
-            .offset(page);
+            .offset(models_per_page * (page - 1));
 
         let res = paginator.all(db).await?;
         Ok(res

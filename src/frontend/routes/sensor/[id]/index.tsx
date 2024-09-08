@@ -38,7 +38,7 @@ const Page = ({ data }: PageProps<Props>) => {
         <tbody>
           <tr
             class="post"
-            onClick={"window.location=" + `'/sensor/${models[0].id}'`}
+            onClick={"window.location=" + `'/sensor/${models[0].id}/edit'`}
           >
             <td class="px-2">{models[0].device_id}</td>
             <td
@@ -48,19 +48,6 @@ const Page = ({ data }: PageProps<Props>) => {
             </td>
           </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <td></td>
-            <td>
-              <a href="/?page={{ page - 1 }}&models_per_page={{ models_per_page }}">
-                Previous
-              </a>
-              <a href="/?page={{ page + 1 }}&models_per_page ={{ models_per_page }}">
-                Next
-              </a>
-            </td>
-          </tr>
-        </tfoot>
       </table>
     </div>
   );

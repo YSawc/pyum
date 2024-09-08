@@ -68,3 +68,17 @@ pub async fn detail(
 
     Ok(Json(Detail { models }))
 }
+
+pub async fn edit(
+    state: State<AppState>,
+    Path(device_id): Path<i32>,
+    Json(new_sensor_purpose): Json<sensor::model::Model>,
+) -> Result<Json<SimpleRes>, Json<SimpleRes>> {
+    sensor::mutation::update(&state.conn, new_sensor_purpose, device_id)
+        .await
+        .unwrap();
+
+    Ok(Json(SimpleRes {
+        message: "Successed to create sensor.".to_string(),
+    }))
+}

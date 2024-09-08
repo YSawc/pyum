@@ -33,3 +33,25 @@ pub async fn get_by_id(
         .map(|elm| (elm.0.to_owned(), elm.1.first().unwrap().to_owned()))
         .unwrap())
 }
+
+pub async fn update(
+    db: &DbConn,
+    form_data: model::Model,
+    sensor_id: i32,
+) -> Result<model::Model, DbErr> {
+    let sensor: model::ActiveModel = Sensor::find_by_id(sensor_id)
+        .one(db)
+        .await?
+        .ok_or(DbErr::Custom("Cannot find sensor.".to_owned()))
+        .map(Into::into)?;
+
+    model::ActiveModel {
+        id: sensor.id,
+        sensor_purpose_id: Set(form_data.sensor_purpose_id),
+        trigger_limit_val: Set(form_data.trigger_limit_val),
+        trigger_limit_sequence_count: Set(form_data.trigger_limit_sequence_count),
+        ..Default::default()
+    }
+    .update(db)
+    .await
+}

@@ -91,3 +91,34 @@ export const getSensor = (req: Request, sensorId: string): Effect.Effect<
       Effect.scoped,
     );
 };
+
+export const editSensor = (
+  req: Request,
+  sensorId: string,
+  formData: FormData,
+): Effect.Effect<
+  SimpleRes,
+  HttpClientError.HttpClientError | HttpBodyError | ParseError,
+  never
+> => {
+  const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  return HttpClientRequest
+    .patch(
+      `http://localhost:3000/sensor/${sensorId}`,
+    ).pipe(
+      HttpClientRequest.setHeaders({
+        "Content-Type": "application/json",
+        "Cookie": id,
+      }),
+      HttpClientRequest.jsonBody({
+        sensor_purpose_id: Number(formData.get("sensor_purpose_id")),
+        trigger_limit_val: Number(formData.get("trigger_limit_val")),
+        trigger_limit_sequence_count: Number(formData.get(
+          "trigger_limit_sequence_count",
+        )),
+      }),
+      Effect.andThen(HttpClient.fetch),
+      Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
+      Effect.scoped,
+    );
+};

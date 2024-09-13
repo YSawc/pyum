@@ -37,6 +37,7 @@ const Page = ({ data }: PageProps<Props>) => {
           <tr>
             <th>Description</th>
             <th>Color Code</th>
+            <th>Image</th>
           </tr>
         </thead>
         <tbody>
@@ -53,6 +54,13 @@ const Page = ({ data }: PageProps<Props>) => {
                 class={`px-2 border-4 border-[#${sensorPurpose.color_code}] rounded`}
               >
                 {sensorPurpose.color_code}
+              </td>
+              <td>
+                <img
+                  src={`${sensorPurpose.image}`}
+                  width="128"
+                  height="128"
+                />
               </td>
             </tr>
           ))}

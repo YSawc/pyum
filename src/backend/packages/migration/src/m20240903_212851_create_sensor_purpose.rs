@@ -43,6 +43,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default("FFFFFF"),
                     )
+                    .col(ColumnDef::new(SensorPurpose::Image).string())
                     .col(
                         ColumnDef::new(SensorPurpose::CreatedAt)
                             .date_time()
@@ -73,6 +74,7 @@ pub enum SensorPurpose {
     AdminUserId,
     Description,
     ColorCode,
+    Image,
     CreatedAt,
     UpdatedAt,
 }

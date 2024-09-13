@@ -4,6 +4,7 @@ export const SensorPurposeSchema = Schema.Struct({
   id: Schema.Number,
   description: Schema.String,
   color_code: Schema.String,
+  image: Schema.String,
 });
 export type SensorPurpose = Schema.Schema.Type<typeof SensorPurposeSchema>;
 

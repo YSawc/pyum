@@ -81,6 +81,7 @@ export const createSensorPurpose = (
       HttpClientRequest.jsonBody({
         description: formData.get("description")?.toString(),
         color_code: formData.get("color_code")?.toString(),
+        image: formData.get("image")?.toString(),
       }),
       Effect.andThen(HttpClient.fetch),
       Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
@@ -109,6 +110,7 @@ export const editSensorPurpose = (
       HttpClientRequest.jsonBody({
         description: formData.get("description")?.toString(),
         color_code: formData.get("color_code")?.toString(),
+        image: formData.get("image")?.toString(),
       }),
       Effect.andThen(HttpClient.fetch),
       Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),

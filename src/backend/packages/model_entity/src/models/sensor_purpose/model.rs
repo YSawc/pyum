@@ -13,6 +13,8 @@ pub struct Model {
     pub admin_user_id: i32,
     pub description: String,
     pub color_code: String,
+    #[sea_orm(nullable)]
+    pub image: String,
     #[serde(skip_deserializing)]
     pub created_at: DateTime,
     #[serde(skip_deserializing)]

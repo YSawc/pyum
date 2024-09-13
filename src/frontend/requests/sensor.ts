@@ -8,6 +8,7 @@ import {
 import { ParseError } from "@effect/schema/ParseResult";
 import { getTargetCookieValCombinedAssign } from "../utils/browser/headers/cookie.ts";
 import {
+  DevicesRelatedSensorAndPurposeScmema,
   GetSensor,
   GetSensors,
   GetSensorSchema,
@@ -18,7 +19,7 @@ import { HttpBodyError } from "@effect/platform/HttpBody";
 
 export const getSensorsRelatedDevice = (
   req: Request,
-  deviceId: string,
+  // deviceId: string,
 ): Effect.Effect<
   GetSensors,
   HttpClientError.HttpClientError | ParseError,
@@ -27,7 +28,7 @@ export const getSensorsRelatedDevice = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/sensor?device_id=${deviceId}`,
+      `http://localhost:3000/sensor`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -35,7 +36,7 @@ export const getSensorsRelatedDevice = (
       }),
       HttpClient.fetch,
       Effect.andThen(
-        HttpClientResponse.schemaBodyJson(GetSensorsSchema),
+        HttpClientResponse.schemaBodyJson(DevicesRelatedSensorAndPurposeScmema),
       ),
       Effect.scoped,
     );

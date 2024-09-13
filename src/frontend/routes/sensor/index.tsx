@@ -1,30 +1,20 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
-import HttpStatusCode from "../../enums/HttpStatusCode.ts";
 import { getSensorsRelatedDevice } from "../../requests/sensor.ts";
 import { GetSensors } from "../../types/request/sensor.ts";
 import Title from "../_title.tsx";
 import { Effect } from "effect";
 
 interface Props {
-  deviceId: string;
+  // deviceId: string;
   models: GetSensors;
 }
 
 export const handler: Handlers<Props> = {
   async GET(req: Request, ctx: FreshContext) {
-    const deviceId = ctx.url.searchParams.get("device_id");
-    if (!deviceId) {
-      return new Response(null, {
-        status: HttpStatusCode.SEE_OTHER,
-        headers: { Location: "/device" },
-      });
-    }
-
     const models = await Effect.runPromise(
-      getSensorsRelatedDevice(req, deviceId),
+      getSensorsRelatedDevice(req),
     );
     const data: Props = {
-      deviceId,
       models,
     };
     const res: Response = await ctx.render(data);

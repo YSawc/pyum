@@ -5,6 +5,7 @@ use axum::{
     Json,
 };
 use model_entity::models::{
+    device,
     sensor::{self, query::SensorQuery},
     sensor_purpose,
 };
@@ -12,12 +13,15 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
 pub struct ListRelatedSensor {
-    models: Vec<(sensor::model::Model, sensor_purpose::model::Model)>,
+    models: Vec<(
+        device::model::Model,
+        Vec<(sensor::model::Model, sensor_purpose::model::Model)>,
+    )>,
 }
 
 #[derive(Deserialize)]
 pub struct ListRelatedSensorParams {
-    pub device_id: i32,
+    // pub device_id: i32,
     pub page: Option<u64>,
     pub models_per_page: Option<u64>,
 }
@@ -26,16 +30,20 @@ pub async fn list_related_sensor(
     state: State<AppState>,
     Query(params): Query<ListRelatedSensorParams>,
 ) -> Result<Json<ListRelatedSensor>, Json<SimpleRes>> {
-    let device_id = params.device_id;
+    // let device_id = params.device_id;
     let page = params.page.unwrap_or(1);
     let models_per_page = params.models_per_page.unwrap_or(5);
-    let models = SensorQuery::find_in_page(&state.conn, device_id, page, models_per_page)
-        .await
-        .map_err(|_| {
-            Json(SimpleRes {
-                message: "Cannot find sensors in page".to_string(),
-            })
-        })?;
+    let models = SensorQuery::find_devices_with_related_sensor_and_purpose(
+        &state.conn,
+        page,
+        models_per_page,
+    )
+    .await
+    .map_err(|_| {
+        Json(SimpleRes {
+            message: "Cannot find sensors in page".to_string(),
+        })
+    })?;
 
     Ok(Json(ListRelatedSensor { models }))
 }

@@ -32,7 +32,7 @@ pub async fn list_related_sensor(
 ) -> Result<Json<ListRelatedSensor>, Json<SimpleRes>> {
     // let device_id = params.device_id;
     let page = params.page.unwrap_or(1);
-    let models_per_page = params.models_per_page.unwrap_or(5);
+    let models_per_page = params.models_per_page.unwrap_or(20);
     let models = SensorQuery::find_devices_with_related_sensor_and_purpose(
         &state.conn,
         page,

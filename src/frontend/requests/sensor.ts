@@ -8,11 +8,9 @@ import {
 import { ParseError } from "@effect/schema/ParseResult";
 import { getTargetCookieValCombinedAssign } from "../utils/browser/headers/cookie.ts";
 import {
-  DevicesRelatedSensorAndPurposeScmema,
-  GetSensor,
-  GetSensors,
+  DevicesWithRelationSchema,
+  GetDevicesWithRelation,
   GetSensorSchema,
-  GetSensorsSchema,
 } from "../types/request/sensor.ts";
 import { SimpleRes, SimpleResSchema } from "../types/request/util.ts";
 import { HttpBodyError } from "@effect/platform/HttpBody";
@@ -21,7 +19,7 @@ export const getSensorsRelatedDevice = (
   req: Request,
   // deviceId: string,
 ): Effect.Effect<
-  GetSensors,
+  GetDevicesWithRelation,
   HttpClientError.HttpClientError | ParseError,
   never
 > => {
@@ -36,7 +34,7 @@ export const getSensorsRelatedDevice = (
       }),
       HttpClient.fetch,
       Effect.andThen(
-        HttpClientResponse.schemaBodyJson(DevicesRelatedSensorAndPurposeScmema),
+        HttpClientResponse.schemaBodyJson(DevicesWithRelationSchema),
       ),
       Effect.scoped,
     );

@@ -17,15 +17,15 @@ export const SensorAndPurposeSchema = Schema.Tuple(
   SensorPurposeSchema,
 );
 
-export const DeviceAndSensorAndPurposeSchema = Schema.Tuple(
+export const DeviceWithRelationSchema = Schema.Tuple(
   DeviceSchema,
   Schema.Array(
     SensorAndPurposeSchema,
   ),
 );
 
-export const DevicesRelatedSensorAndPurposeScmema = Schema.Struct({
-  models: Schema.Array(DeviceAndSensorAndPurposeSchema),
+export const DevicesWithRelationSchema = Schema.Struct({
+  models: Schema.Array(DeviceWithRelationSchema),
 });
 
 export type Sensor = Schema.Schema.Type<typeof SensorSchema>;
@@ -40,6 +40,6 @@ export const GetSensorsSchema = Schema.Struct({
   models: Schema.Array(SensorAndPurposeSchema),
 });
 
-export type GetSensors = Schema.Schema.Type<
-  typeof DevicesRelatedSensorAndPurposeScmema
+export type GetDevicesWithRelation = Schema.Schema.Type<
+  typeof DevicesWithRelationSchema
 >;

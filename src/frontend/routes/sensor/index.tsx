@@ -31,18 +31,22 @@ const Page = ({ data }: PageProps<Props>) => {
       <div class="flex flex-col gap gap-8">
         {devices.models.map((device) => (
           <div class="max-w-[440px] items-center border-4 border-[#65e6fa] rounded-xl py-4 px-4">
-            <div class="text-center">
-              <span class="text-center my-2  text-xl">
-                {device[0].name}
-              </span>
-            </div>
-            <div class="flex justify-center">
-              <img
-                src={device[0].image ? `${device[0].image}` : ""}
-                width="256"
-                height="256"
-              />
-            </div>
+            <a href={`/device/${device[0].id}`}>
+              <div class="text-center">
+                <span class="text-center my-2  text-xl">
+                  {device[0].name}
+                </span>
+              </div>
+              <div class="flex justify-center">
+                <img
+                  src={device[0].image
+                    ? `${device[0].image}`
+                    : asset(`/icons/no_image.jpg`)}
+                  width="256"
+                  height="256"
+                />
+              </div>
+            </a>
             <div class="text-center text-lg mb-2">
               <span>sensors</span>
             </div>

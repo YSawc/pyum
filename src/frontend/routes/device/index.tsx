@@ -1,5 +1,6 @@
 import Title from "../_title.tsx";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { asset } from "$fresh/runtime.ts";
 import { Devices } from "../../types/request/device.ts";
 import { getDevices } from "../../requests/device.ts";
 import { Effect } from "effect";
@@ -48,7 +49,7 @@ const Page = ({ data }: PageProps<Props>) => {
               <td class="px-2">{device.name}</td>
               <td>
                 <img
-                  src={`${device.image}`}
+                  src={device.image ? `${device.image}` : asset(`/icons/no_image.jpg`)}
                   width="128"
                   height="128"
                 />

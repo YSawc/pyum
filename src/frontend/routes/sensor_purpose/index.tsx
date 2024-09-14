@@ -1,5 +1,6 @@
 import Title from "../_title.tsx";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { asset } from "$fresh/runtime.ts";
 import { SensorPurposes } from "../../types/request/sensor_purpose.ts";
 import { getSensorPurposes } from "../../requests/sensor_purpose.ts";
 import { Effect } from "effect";
@@ -57,7 +58,9 @@ const Page = ({ data }: PageProps<Props>) => {
               </td>
               <td>
                 <img
-                  src={`${sensorPurpose.image}`}
+                  src={sensorPurpose.image
+                    ? `${sensorPurpose.image}`
+                    : asset(`/icons/no_image.jpg`)}
                   width="128"
                   height="128"
                 />

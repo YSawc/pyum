@@ -1,4 +1,5 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { asset } from "$fresh/runtime.ts";
 import { getSensorsRelatedDevice } from "../../requests/sensor.ts";
 import { GetDevicesWithRelation } from "../../types/request/sensor.ts";
 import Title from "../_title.tsx";
@@ -37,7 +38,7 @@ const Page = ({ data }: PageProps<Props>) => {
             </div>
             <div class="flex justify-center">
               <img
-                src={`${device[0].image}`}
+                src={device[0].image ? `${device[0].image}` : ""}
                 width="256"
                 height="256"
               />
@@ -55,7 +56,7 @@ const Page = ({ data }: PageProps<Props>) => {
                   >
                     <span>
                       <img
-                        src={`${sensor[1].image}`}
+                        src={sensor[1].image ? `${sensor[1].image}` : asset(`/icons/no_image.jpg`)}
                         width="48"
                         height="48"
                       />

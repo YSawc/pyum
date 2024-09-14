@@ -45,7 +45,7 @@ const Page = ({ data }: PageProps<Props>) => {
           {sensor_purposes.map((sensorPurpose) => (
             <tr
               class="post"
-              onclick={"window.location=" +
+              onClick={"window.location=" +
                 `'/sensor_purpose/${sensorPurpose.id}'`}
             >
               <td class="px-2">

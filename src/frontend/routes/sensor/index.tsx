@@ -16,7 +16,7 @@ export const handler: Handlers<Props> = {
       getSensorsRelatedDevice(req),
     );
     const data: Props = {
-      models: models.models,
+      models: models,
     };
     const res: Response = await ctx.render(data);
     return res;
@@ -29,8 +29,8 @@ const Page = ({ data }: PageProps<Props>) => {
     <div class="container">
       <Title title="Sensors related device" />
       <div class="flex flex-col gap gap-8">
-        {devices.map((device) => (
-          <div class="max-w-[440px] items-center border border-4 border-[#65e6fa] rounded-xl py-4 px-4">
+        {devices.models.map((device) => (
+          <div class="max-w-[440px] items-center border-4 border-[#65e6fa] rounded-xl py-4 px-4">
             <div class="text-center">
               <span class="text-center my-2  text-xl">
                 {device[0].name}
@@ -50,13 +50,16 @@ const Page = ({ data }: PageProps<Props>) => {
               {device[1].map((sensor) => (
                 <a href={`/sensor/${sensor[0].id}`}>
                   <div
-                    class={`flex mx-4 min-h-[56px] border-2 border-[#${sensor[1].color_code
-                      }] rounded align-middle my-auto items-center px-2
+                    class={`flex mx-4 min-h-[56px] border-2 border-[#${
+                      sensor[1].color_code
+                    }] rounded align-middle my-auto items-center px-2
               `}
                   >
                     <span>
                       <img
-                        src={sensor[1].image ? `${sensor[1].image}` : asset(`/icons/no_image.jpg`)}
+                        src={sensor[1].image
+                          ? `${sensor[1].image}`
+                          : asset(`/icons/no_image.jpg`)}
                         width="48"
                         height="48"
                       />

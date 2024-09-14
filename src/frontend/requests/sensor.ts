@@ -10,6 +10,7 @@ import { getTargetCookieValCombinedAssign } from "../utils/browser/headers/cooki
 import {
   DevicesWithRelationSchema,
   GetDevicesWithRelation,
+  GetSensor,
   GetSensorSchema,
 } from "../types/request/sensor.ts";
 import { SimpleRes, SimpleResSchema } from "../types/request/util.ts";

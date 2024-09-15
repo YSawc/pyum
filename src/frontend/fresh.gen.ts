@@ -65,8 +65,6 @@ const manifest = {
     "./islands/Counter.tsx": $Counter,
     "./islands/device/[id]/index/ConfirmButton.tsx":
       $device_id_index_ConfirmButton,
-    "./islands/sensor/[id]/edit/EditSensorPurposeModal.tsx":
-      $sensor_id_edit_EditSensorPurposeModal,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

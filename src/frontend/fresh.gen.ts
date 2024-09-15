@@ -29,7 +29,7 @@ import * as $sensor_purpose_id_index from "./routes/sensor_purpose/[id]/index.ts
 import * as $sensor_purpose_index from "./routes/sensor_purpose/index.tsx";
 import * as $sensor_purpose_new_index from "./routes/sensor_purpose/new/index.tsx";
 import * as $Counter from "./islands/Counter.tsx";
-import * as $routes_device_id_index_ConfirmButton from "./islands/routes/device/[id]/index/ConfirmButton.tsx";
+import * as $device_id_index_ConfirmButton from "./islands/device/[id]/index/ConfirmButton.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -63,8 +63,10 @@ const manifest = {
   },
   islands: {
     "./islands/Counter.tsx": $Counter,
-    "./islands/routes/device/[id]/index/ConfirmButton.tsx":
-      $routes_device_id_index_ConfirmButton,
+    "./islands/device/[id]/index/ConfirmButton.tsx":
+      $device_id_index_ConfirmButton,
+    "./islands/sensor/[id]/edit/EditSensorPurposeModal.tsx":
+      $sensor_id_edit_EditSensorPurposeModal,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

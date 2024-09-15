@@ -1,6 +1,6 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { asset } from "$fresh/runtime.ts";
-import { ConfirmButton } from "../../../islands/routes/device/[id]/index/ConfirmButton.tsx";
+import { ConfirmButton } from "../../../islands/device/[id]/index/ConfirmButton.tsx";
 import { getSensorPurpose } from "../../../requests/sensor_purpose.ts";
 import { SensorPurpose } from "../../../types/request/sensor_purpose.ts";
 import Title from "../../_title.tsx";

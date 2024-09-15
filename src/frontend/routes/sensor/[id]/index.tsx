@@ -3,7 +3,7 @@ import { Effect } from "effect";
 import { GetSensor } from "../../../types/request/sensor.ts";
 import { getSensor } from "../../../requests/sensor.ts";
 import Title from "../../_title.tsx";
-import { ConfirmButton } from "../../../islands/routes/device/[id]/index/ConfirmButton.tsx";
+import { ConfirmButton } from "../../../islands/device/[id]/index/ConfirmButton.tsx";
 import { asset } from "$fresh/runtime.ts";
 
 interface Props {

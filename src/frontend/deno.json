@@ -22,10 +22,11 @@
     "@types/react": "npm:@types/react@^18.3.5",
     "@types/react-dom": "npm:@types/react-dom@^18.3.0",
     "effect": "npm:effect@^3.7.0",
-    "preact": "npm:preact",
+    "preact": "https://esm.sh/preact@10.19.6",
     "tailwindcss": "npm:tailwindcss@3.4.1",
     "tailwindcss/": "npm:/tailwindcss@3.4.1/",
-    "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js"
+    "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js",
+    "preact/": "https://esm.sh/preact@10.19.6/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",

@@ -4,6 +4,7 @@ import { GetSensor } from "../../../types/request/sensor.ts";
 import { getSensor } from "../../../requests/sensor.ts";
 import Title from "../../_title.tsx";
 import { ConfirmButton } from "../../../islands/routes/device/[id]/index/ConfirmButton.tsx";
+import { asset } from "$fresh/runtime.ts";
 
 interface Props {
   models: GetSensor;
@@ -35,13 +36,21 @@ const Page = ({ data }: PageProps<Props>) => {
         url={`/sensor/${models[0].id}/delete`}
       />
 
-      <table class="table-fixed border-separate border-spacing-2">
+      <table class="border-separate border-spacing-2">
         <thead>
           <tr>
-            <th>Device id</th>
-            <th>Sensor purpose id</th>
-            <th>Sensor trigger limit val</th>
-            <th>Sensor trigger limit sequence count</th>
+            <th class="row-span-2">Device id</th>
+            <th colSpan={3}>Sensor purpose</th>
+            <th class="row-span-2">Sensor trigger limit val</th>
+            <th class="row-span-2">Sensor trigger limit sequence count</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>id</th>
+            <th>image</th>
+            <th>description</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -54,6 +63,20 @@ const Page = ({ data }: PageProps<Props>) => {
               class={`px-2 border-4 border-[#${models[1].color_code}] rounded`}
             >
               {models[0].sensor_purpose_id}
+            </td>
+            <td>
+              <img
+                src={models[1].image
+                  ? `${models[1].image}`
+                  : asset(`/icons/no_image.jpg`)}
+                width="48"
+                height="48"
+              />
+            </td>
+            <td
+              class={`px-2 border-4 border-[#${models[1].color_code}] rounded`}
+            >
+              {models[1].description}
             </td>
             <td class="px-2">{models[0].trigger_limit_val}</td>
             <td class="px-2">{models[0].trigger_limit_sequence_count}</td>

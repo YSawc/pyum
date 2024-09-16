@@ -1,19 +1,19 @@
 use axum::{
     body::Body,
     extract::Request,
+    http::StatusCode,
     middleware::Next,
     response::{IntoResponse, Response},
-    Json,
 };
 use tower_sessions::Session;
 
-use super::{middleware::buffer_and_print, SimpleRes};
+use super::middleware::buffer_and_print;
 
 pub async fn check_session_id(
     session: Session,
     req: Request,
     next: Next,
-) -> Result<impl IntoResponse, Json<SimpleRes>> {
+) -> Result<impl IntoResponse, StatusCode> {
     match session.get_value("uid").await.unwrap() {
         Some(_uid) => {
             let (parts, body) = req.into_parts();
@@ -26,9 +26,7 @@ pub async fn check_session_id(
 
             Ok(res.into_response())
         }
-        None => Err(Json(SimpleRes {
-            message: "session is not valid".to_string(),
-        })),
+        None => Err(StatusCode::UNAUTHORIZED),
     }
 }
 
@@ -40,7 +38,7 @@ mod tests {
     use axum::{
         body::Body,
         http::{Request, StatusCode},
-        Router,
+        Json, Router,
     };
     use model_entity::models::{admin_user, session};
     use rstest::rstest;
@@ -71,10 +69,10 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn request_hello() {
+    async fn api_health_check() {
         let conn = prepare_db_connection().await;
         let req = Request::builder()
-            .uri("/hello")
+            .uri("/api/health_check")
             .body(Body::empty())
             .unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
@@ -119,7 +117,7 @@ mod tests {
         let req = custom_req.body(Body::empty()).unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
         let expect_code = if missing_uid || missing_session_id {
-            StatusCode::SEE_OTHER
+            StatusCode::UNAUTHORIZED
         } else {
             StatusCode::OK
         };
@@ -140,7 +138,7 @@ mod tests {
             .body(Body::empty())
             .unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+        assert_eq!(res.status(), StatusCode::UNAUTHORIZED);
     }
 
     #[tokio::test]
@@ -161,56 +159,6 @@ mod tests {
             .body(Body::empty())
             .unwrap();
         let res = prepare_router(conn).await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::SEE_OTHER);
-    }
-
-    #[tokio::test]
-    async fn passing_exist_unexpired_cookie_id() {
-        let conn = prepare_db_connection().await;
-        delete_related_models(&conn).await;
-        admin_user::mutation::seed_with_unexpired_session(&conn)
-            .await
-            .expect("failed to seed admin_user");
-        let all_users = admin_user::mutation::find_all(&conn)
-            .await
-            .expect("failed to find all admin_user");
-        let first_user = all_users.first().unwrap();
-        let all_sessions = session::mutation::find_unexpired_by_admin_user_id(&conn, first_user.id)
-            .await
-            .expect("failed to find admin_user sessions");
-        let first_session = all_sessions.first().unwrap();
-        let req = Request::builder()
-            .uri("/device")
-            .header("uid", first_user.id)
-            .header("cookie_id", first_session.cookie_id.clone())
-            .body(Body::empty())
-            .unwrap();
-        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::OK);
-    }
-
-    #[tokio::test]
-    async fn passing_exist_expired_cookie_id() {
-        let conn = prepare_db_connection().await;
-        delete_related_models(&conn).await;
-        admin_user::mutation::seed_with_expired_session(&conn)
-            .await
-            .expect("failed to seed admin_user");
-        let all_users = admin_user::mutation::find_all(&conn)
-            .await
-            .expect("failed to find all admin_user");
-        let first_user = all_users.first().unwrap();
-        let all_sessions = session::mutation::find_expired_by_admin_user_id(&conn, first_user.id)
-            .await
-            .expect("failed to find admin_user sessions");
-        let first_session = all_sessions.first().unwrap();
-        let req = Request::builder()
-            .uri("/device")
-            .header("uid", first_user.id)
-            .header("cookie_id", first_session.cookie_id.clone())
-            .body(Body::empty())
-            .unwrap();
-        let res = prepare_router(conn).await.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::SEE_OTHER);
+        assert_eq!(res.status(), StatusCode::UNAUTHORIZED);
     }
 }

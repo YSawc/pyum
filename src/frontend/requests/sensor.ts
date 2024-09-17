@@ -18,7 +18,6 @@ import { HttpBodyError } from "@effect/platform/HttpBody";
 
 export const getSensorsRelatedDevice = (
   req: Request,
-  // deviceId: string,
 ): Effect.Effect<
   GetDevicesWithRelation,
   HttpClientError.HttpClientError | ParseError,

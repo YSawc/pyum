@@ -6,7 +6,6 @@ import Title from "../_title.tsx";
 import { Effect } from "effect";
 
 interface Props {
-  // deviceId: string;
   models: GetDevicesWithRelation;
 }
 

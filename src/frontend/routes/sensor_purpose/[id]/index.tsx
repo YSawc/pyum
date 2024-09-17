@@ -41,6 +41,7 @@ const Page = ({ data }: PageProps<Props>) => {
             <th>Description</th>
             <th>Color Code</th>
             <th>Image</th>
+            <th>Other</th>
           </tr>
         </thead>
         <tbody>
@@ -63,6 +64,14 @@ const Page = ({ data }: PageProps<Props>) => {
                 width="128"
                 height="128"
               />
+            </td>
+            <td class="px-2 flex flex-col">
+              <a
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                href={`/capture?sensor_purpose_id=${sensorPurpose.id}`}
+              >
+                capture
+              </a>
             </td>
           </tr>
         </tbody>

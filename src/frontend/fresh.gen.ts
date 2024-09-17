@@ -12,6 +12,7 @@ import * as $_middleware from "./routes/_middleware.ts";
 import * as $_title from "./routes/_title.tsx";
 import * as $admin_user_login_index from "./routes/admin_user/login/index.tsx";
 import * as $admin_user_new_index from "./routes/admin_user/new/index.tsx";
+import * as $capture_index from "./routes/capture/index.tsx";
 import * as $device_id_delete from "./routes/device/[id]/delete.tsx";
 import * as $device_id_edit from "./routes/device/[id]/edit.tsx";
 import * as $device_id_index from "./routes/device/[id]/index.tsx";
@@ -44,6 +45,7 @@ const manifest = {
     "./routes/_title.tsx": $_title,
     "./routes/admin_user/login/index.tsx": $admin_user_login_index,
     "./routes/admin_user/new/index.tsx": $admin_user_new_index,
+    "./routes/capture/index.tsx": $capture_index,
     "./routes/device/[id]/delete.tsx": $device_id_delete,
     "./routes/device/[id]/edit.tsx": $device_id_edit,
     "./routes/device/[id]/index.tsx": $device_id_index,

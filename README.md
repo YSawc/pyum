@@ -1,6 +1,6 @@
 # pyum
 
-Iot device manager for settle of event trigger
+Iot device manager controlling trigger value of each event.
 
 ## Run application
 

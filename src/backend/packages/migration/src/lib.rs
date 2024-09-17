@@ -7,6 +7,7 @@ mod m20240803_221344_create_oauth2_client_secret;
 mod m20240814_125552_create_session;
 mod m20240903_212851_create_sensor_purpose;
 mod m20240904_121407_create_sensor;
+mod m20240916_225926_create_capture;
 
 pub struct Migrator;
 
@@ -21,6 +22,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20240814_125552_create_session::Migration),
             Box::new(m20240903_212851_create_sensor_purpose::Migration),
             Box::new(m20240904_121407_create_sensor::Migration),
+            Box::new(m20240916_225926_create_capture::Migration),
         ]
     }
 }

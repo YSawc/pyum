@@ -1,4 +1,4 @@
-use crate::models::{device, sensor_purpose};
+use crate::models::{capture, device, sensor_purpose};
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -23,6 +23,7 @@ pub struct Model {
 pub enum Relation {
     Device,
     SensorPurpose,
+    Capture,
 }
 
 impl RelationTrait for Relation {
@@ -35,6 +36,10 @@ impl RelationTrait for Relation {
             Self::SensorPurpose => Entity::belongs_to(sensor_purpose::model::Entity)
                 .from(Column::SensorPurposeId)
                 .to(sensor_purpose::model::Column::Id)
+                .into(),
+            Self::Capture => Entity::has_many(capture::model::Entity)
+                .from(Column::Id)
+                .to(capture::model::Column::Id)
                 .into(),
         }
     }
@@ -49,6 +54,12 @@ impl Related<device::model::Entity> for Entity {
 impl Related<sensor_purpose::model::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::SensorPurpose.def()
+    }
+}
+
+impl Related<capture::model::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Capture.def()
     }
 }
 

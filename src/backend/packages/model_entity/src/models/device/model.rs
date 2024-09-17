@@ -34,7 +34,7 @@ impl RelationTrait for Relation {
                 .from(Column::AdminUserId)
                 .to(admin_user::model::Column::Id)
                 .into(),
-            Self::Sensor => Entity::belongs_to(sensor::model::Entity)
+            Self::Sensor => Entity::has_many(sensor::model::Entity)
                 .from(Column::Id)
                 .to(sensor::model::Column::DeviceId)
                 .into(),

@@ -69,7 +69,7 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum Sensor {
+pub enum Sensor {
     Table,
     Id,
     DeviceId,

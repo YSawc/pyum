@@ -1,4 +1,4 @@
-.PHONY: cargo_all_fmt run_api_server run_api_server_verbose run_api_server_with_watch deno_task_start deno_test migrate migrate_rollback_last migrate_refresh create_migrate-
+.PHONY: cargo_all_fmt run_api_server run_api_server_verbose run_api_server_with_watch deno_task_start deno_test migrate migrate_rollback_last migrate_refresh create_migrate- deno_add
 
 cargo_all_fmt:
 	cd ./src/backend && \
@@ -47,3 +47,9 @@ create_migrate-: $(addprefix create_migrate-, $(Filename))
 create_migrate-%:
 	cd ./src/backend/packages/migration && \
 	cargo run -- generate ${@:create_migrate-%=%}
+
+deno_add-: $(addprefix deno_add-, $(Package))
+
+deno_add-%:
+	cd ./src/frontend && \
+	deno add ${@:deno_add-%=%}

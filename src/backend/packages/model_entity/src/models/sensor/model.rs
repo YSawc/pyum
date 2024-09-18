@@ -39,7 +39,7 @@ impl RelationTrait for Relation {
                 .into(),
             Self::Capture => Entity::has_many(capture::model::Entity)
                 .from(Column::Id)
-                .to(capture::model::Column::Id)
+                .to(capture::model::Column::SensorId)
                 .into(),
         }
     }

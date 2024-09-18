@@ -33,7 +33,7 @@ export const handler: Handlers<Props> = {
 
 const Page = ({ data }: PageProps<Props>) => {
   const sensorPurpose = data.models.models[0];
-
+  const models = data.models.models[1];
   return (
     <div>
       <div class="container">
@@ -51,7 +51,6 @@ const Page = ({ data }: PageProps<Props>) => {
           options={{
             devicePixelRatio: 1,
             scales: { y: { beginAtZero: true } },
-            annotation: {},
           }}
           data={{
             labels: [
@@ -84,6 +83,50 @@ const Page = ({ data }: PageProps<Props>) => {
           }}
         />
       </div>
+      {models.map((model) => (
+        <div class="p-4 mx-auto max-w-screen-md">
+          <p>
+            device_id:{model[0].device_id},
+          </p>
+          <p>
+            trigger_limit_val:{model[0].trigger_limit_val},
+          </p>
+          <p>
+            trigger_limit_sequence_count:{" "}
+            {model[0].trigger_limit_sequence_count}
+          </p>
+          <Chart
+            type="line"
+            options={{
+              devicePixelRatio: 1,
+              scales: { y: { beginAtZero: true } },
+            }}
+            data={{
+              labels: model[1].map((elm) => elm.created_at),
+              datasets: [
+                {
+                  label: "Captures",
+                  data: model[1].map((elm) =>
+                    elm.capture_val / (10 ** elm.shift_digit)
+                  ),
+                  borderColor: ChartColors.Red,
+                  backgroundColor: transparentize(ChartColors.Red, 0.5),
+                  borderWidth: 1,
+                },
+                {
+                  label: "Trigger limit value",
+                  data: [...Array(model[1].length)].map(() =>
+                    model[0].trigger_limit_val
+                  ),
+                  borderColor: ChartColors.Grey,
+                  backgroundColor: transparentize(ChartColors.Grey, 0.5),
+                  borderWidth: 4,
+                },
+              ],
+            }}
+          />
+        </div>
+      ))}
     </div>
   );
 };

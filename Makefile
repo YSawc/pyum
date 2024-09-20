@@ -1,4 +1,4 @@
-.PHONY: cargo_all_fmt run_api_server run_api_server_verbose run_api_server_with_watch deno_task_start deno_test migrate migrate_rollback_last migrate_refresh create_migrate- deno_add
+.PHONY: cargo_all_fmt run_api_server run_api_server_verbose run_api_server_with_watch oauth_gen deno_task_start deno_test migrate migrate_rollback_last migrate_refresh migrate_status create_migrate- deno_add
 
 cargo_all_fmt:
 	cd ./src/backend && \
@@ -22,6 +22,12 @@ run_api_server_with_watch:
 	cd ./src/backend && \
 	cargo watch -x run
 
+oauth_gen-: $(addprefix oauth_gen-, $(Uid))
+
+oauth_gen-%:
+	cd ./src/backend/packages/oauth_gen && \
+		cargo run ${@:oauth_gen-%=%}
+
 deno_task_start:
 	cd ./src/frontend && \
 	deno task start
@@ -41,6 +47,10 @@ migrate_rollback_last:
 migrate_refresh:
 	cd ./src/backend/packages/migration && \
 	cargo run refresh
+
+migrate_status:
+	cd ./src/backend/packages/migration && \
+	cargo run status
 
 create_migrate-: $(addprefix create_migrate-, $(Filename))
 

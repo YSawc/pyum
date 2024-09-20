@@ -1,6 +1,5 @@
-use sea_orm_migration::prelude::*;
-
 use crate::m20240803_063030_create_admin_user_table::AdminUser;
+use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;

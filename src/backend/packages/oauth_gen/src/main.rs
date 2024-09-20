@@ -1,5 +1,6 @@
 use model_entity::models::oauth2_client_secret;
 use sea_orm::Database;
+use std::env;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -8,13 +9,21 @@ async fn main() -> anyhow::Result<()> {
         .await
         .expect("database connection failed.");
 
-    oauth2_client_secret::mutation::logic_delete_all(&db)
+    let args: Vec<String> = env::args().collect();
+    let admin_user_id = &args[1];
+    if admin_user_id.is_empty() {
+        panic!("please pass uid.");
+    }
+    oauth2_client_secret::mutation::logic_delete(&db, admin_user_id.parse::<i32>().unwrap())
         .await
         .expect("failed to legic delete all oauth2 client secrets");
 
-    oauth2_client_secret::mutation::create_oauth2_client_secret(&db)
-        .await
-        .expect("failed to create oauth2 client secret");
+    oauth2_client_secret::mutation::create_oauth2_client_secret(
+        &db,
+        admin_user_id.parse::<i32>().unwrap(),
+    )
+    .await
+    .expect("failed to create oauth2 client secret");
 
     let result = oauth2_client_secret::mutation::get_by_id(&db)
         .await

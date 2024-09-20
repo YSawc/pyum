@@ -1,4 +1,4 @@
-use crate::models::{device, sensor_purpose, session};
+use crate::models::{device, oauth2_client_secret, sensor_purpose, session};
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -24,6 +24,7 @@ pub enum Relation {
     Session,
     SensorPurpose,
     Device,
+    Oauth2ClientSecret,
 }
 
 impl RelationTrait for Relation {
@@ -40,6 +41,10 @@ impl RelationTrait for Relation {
             Self::Device => Entity::has_many(device::model::Entity)
                 .from(Column::Id)
                 .to(device::model::Column::AdminUserId)
+                .into(),
+            Self::Oauth2ClientSecret => Entity::has_many(oauth2_client_secret::model::Entity)
+                .from(Column::Id)
+                .to(oauth2_client_secret::model::Column::AdminUserId)
                 .into(),
         }
     }
@@ -60,6 +65,12 @@ impl Related<sensor_purpose::model::Entity> for Entity {
 impl Related<device::model::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Device.def()
+    }
+}
+
+impl Related<oauth2_client_secret::model::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Oauth2ClientSecret.def()
     }
 }
 

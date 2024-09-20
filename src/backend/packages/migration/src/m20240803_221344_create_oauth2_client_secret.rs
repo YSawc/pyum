@@ -1,3 +1,4 @@
+use crate::m20240803_063030_create_admin_user_table::AdminUser;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -17,6 +18,19 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .auto_increment()
                             .primary_key(),
+                    )
+                    .col(
+                        ColumnDef::new(Oauth2ClientSecret::AdminUserId)
+                            .integer()
+                            .not_null(),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("pk_oauth2_client_secret_admin_user_id")
+                            .from(Oauth2ClientSecret::Table, Oauth2ClientSecret::AdminUserId)
+                            .to(AdminUser::Table, AdminUser::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .col(
                         ColumnDef::new(Oauth2ClientSecret::ClientSecret)
@@ -40,6 +54,7 @@ impl MigrationTrait for Migration {
 enum Oauth2ClientSecret {
     Table,
     ClientId,
+    AdminUserId,
     ClientSecret,
     DeletedAt,
 }

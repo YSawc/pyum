@@ -1,10 +1,10 @@
+pub mod api;
+use crate::web::{auth::check_session_id, controllers::*, middleware::AppState};
 use axum::{
     middleware,
     routing::{delete, get, patch, post},
     Router,
 };
-
-use crate::web::{auth::check_session_id, controllers::*, middleware::AppState};
 
 pub fn router(state: AppState) -> Router<AppState> {
     Router::new()

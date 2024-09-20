@@ -1,13 +1,13 @@
+use super::middleware::{buffer_and_print, AppState};
 use axum::{
     body::Body,
-    extract::Request,
+    extract::{Request, State},
     http::StatusCode,
     middleware::Next,
     response::{IntoResponse, Response},
 };
+use model_entity::models::oauth2_client_secret;
 use tower_sessions::Session;
-
-use super::middleware::buffer_and_print;
 
 pub async fn check_session_id(
     session: Session,
@@ -17,6 +17,40 @@ pub async fn check_session_id(
     match session.get_value("uid").await.unwrap() {
         Some(_uid) => {
             let (parts, body) = req.into_parts();
+            let bytes = buffer_and_print("request", body).await?;
+            let req = Request::from_parts(parts, Body::from(bytes));
+            let res = next.run(req).await;
+            let (parts, body) = res.into_parts();
+            let bytes = buffer_and_print("response", body).await?;
+            let res = Response::from_parts(parts, Body::from(bytes));
+
+            Ok(res.into_response())
+        }
+        None => Err(StatusCode::UNAUTHORIZED),
+    }
+}
+
+pub async fn check_oauth_secret(
+    state: State<AppState>,
+    session: Session,
+    req: Request,
+    next: Next,
+) -> Result<impl IntoResponse, StatusCode> {
+    let (parts, body) = req.into_parts();
+    match parts.headers.get("client-secret") {
+        Some(client_secret) => {
+            let client_secret_str = client_secret.to_str().unwrap().to_string();
+            let oauth2_client_secret = oauth2_client_secret::mutation::find_by_oauth_secret(
+                &state.conn,
+                client_secret_str,
+            )
+            .await
+            .unwrap()
+            .unwrap();
+            session
+                .insert("uid", oauth2_client_secret.admin_user_id)
+                .await
+                .unwrap();
             let bytes = buffer_and_print("request", body).await?;
             let req = Request::from_parts(parts, Body::from(bytes));
             let res = next.run(req).await;

@@ -39,12 +39,14 @@ const Page = ({ data }: PageProps<Props>) => {
       <table class="border-separate border-spacing-2">
         <thead>
           <tr>
+            <th class="row-span-2">Sensor id</th>
             <th class="row-span-2">Device id</th>
             <th colSpan={3}>Sensor purpose</th>
             <th class="row-span-2">Sensor trigger limit val</th>
             <th class="row-span-2">Sensor trigger limit sequence count</th>
           </tr>
           <tr>
+            <th></th>
             <th></th>
             <th>id</th>
             <th>image</th>
@@ -58,6 +60,7 @@ const Page = ({ data }: PageProps<Props>) => {
             class="post"
             onClick={"window.location=" + `'/sensor/${models[0].id}/edit'`}
           >
+            <td class="px-2">{models[0].id}</td>
             <td class="px-2">{models[0].device_id}</td>
             <td
               class={`px-2 border-4 border-[#${models[1].color_code}] rounded`}

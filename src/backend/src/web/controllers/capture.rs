@@ -8,6 +8,7 @@ use model_entity::models::{
     sensor_purpose::{self, query::SensorPurposeQuery},
 };
 use serde::{Deserialize, Serialize};
+use tower_sessions::Session;
 
 #[derive(Serialize)]
 pub struct ListRelatedCapture {
@@ -37,4 +38,25 @@ pub async fn list_related_capture(
             })?;
 
     Ok(Json(ListRelatedCapture { models }))
+}
+
+pub async fn create_capture(
+    session: Session,
+    state: State<AppState>,
+    Json(form_data): Json<capture::model::Model>,
+) -> Result<(), Json<SimpleRes>> {
+    let models = sensor::mutation::get_by_id(&state.conn, form_data.sensor_id)
+        .await
+        .unwrap();
+    let uid: i32 = session.get("uid").await.unwrap().unwrap();
+    if models.1.admin_user_id == uid {
+        capture::mutation::create(&state.conn, form_data)
+            .await
+            .unwrap();
+        Ok(())
+    } else {
+        Err(Json(SimpleRes {
+            message: "user id is not match".to_string(),
+        }))
+    }
 }

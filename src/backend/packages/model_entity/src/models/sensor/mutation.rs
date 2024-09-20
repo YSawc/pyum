@@ -1,8 +1,6 @@
-use sea_orm::*;
-
-use crate::models::sensor_purpose;
-
 use super::model::{self, Entity as Sensor};
+use crate::models::sensor_purpose;
+use sea_orm::*;
 
 pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::ActiveModel, DbErr> {
     model::ActiveModel {

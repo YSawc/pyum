@@ -37,3 +37,13 @@ pub async fn logic_delete(db: &DbConn, admin_user_id: i32) -> Result<UpdateResul
         .exec(db)
         .await?)
 }
+
+pub async fn find_by_oauth_secret(
+    db: &DbConn,
+    client_secret: String,
+) -> Result<Option<model::Model>, DbErr> {
+    Oauth2ClientSecret::find()
+        .filter(model::Column::ClientSecret.eq(client_secret))
+        .one(db)
+        .await
+}

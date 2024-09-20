@@ -33,5 +33,9 @@ pub fn router(state: AppState) -> Router<AppState> {
         .route("/sensor/:sensor_id", patch(sensor::edit))
         .route("/sensor/:sensor_id", delete(sensor::delete))
         .route("/capture", get(capture::list_related_capture))
-        .layer(middleware::from_fn_with_state(state, check_session_id))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            check_session_id,
+        ))
+        .merge(api::router(state))
 }

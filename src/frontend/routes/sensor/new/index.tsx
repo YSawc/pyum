@@ -1,10 +1,27 @@
 import { Effect } from "effect";
 import HttpStatusCode from "../../../enums/HttpStatusCode.ts";
-import { FreshContext, Handlers } from "$fresh/server.ts";
+import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import Title from "../../_title.tsx";
 import { createSensor } from "../../../requests/sensor.ts";
+import { GetSensorPurposes } from "../../../types/request/sensor_purpose.ts";
+import { getSensorPurposes } from "../../../requests/sensor_purpose.ts";
+
+interface Props {
+  sensorPurposes: GetSensorPurposes;
+}
 
 export const handler: Handlers = {
+  async GET(req: Request, ctx: FreshContext) {
+    const sensorPurposes = await Effect.runPromise(
+      getSensorPurposes(req),
+    );
+    const pageData: Props = {
+      sensorPurposes: sensorPurposes,
+    };
+    const res: Response = await ctx.render(pageData);
+    return res;
+  },
+
   async POST(req: Request, ctx: FreshContext) {
     const formData = await req.formData();
     const deviceId = ctx.url.searchParams.get("device_id");
@@ -24,7 +41,7 @@ export const handler: Handlers = {
   },
 };
 
-const Page = () => {
+const Page = ({ data }: PageProps<Props>) => {
   return (
     <div class="container">
       <Title title="Create sensor" />
@@ -41,14 +58,18 @@ const Page = () => {
             >
               sensor purpose id
             </label>
-            <input
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            <select
+              class="h-9"
               id="sensor_purpose_id"
               name="sensor_purpose_id"
-              type="number"
-              placeholder="sensor_purpose_id"
               required
-            />
+            >
+              {data.sensorPurposes.sensor_purposes.map((sensorPurpose) => (
+                <option value={sensorPurpose.id}>
+                  {sensorPurpose.description}
+                </option>
+              ))}
+            </select>
             <label
               class="block text-gray-700 text-sm font-bold mb-2"
               for="trigger_limit_val"

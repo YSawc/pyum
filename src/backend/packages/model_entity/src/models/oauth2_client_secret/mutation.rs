@@ -44,6 +44,7 @@ pub async fn find_by_oauth_secret(
 ) -> Result<Option<model::Model>, DbErr> {
     Oauth2ClientSecret::find()
         .filter(model::Column::ClientSecret.eq(client_secret))
+        .filter(model::Column::DeletedAt.is_null())
         .one(db)
         .await
 }

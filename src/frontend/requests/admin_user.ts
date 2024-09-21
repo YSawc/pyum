@@ -23,7 +23,7 @@ export const createAdminUser = (
 > => {
   return HttpClientRequest
     .post(
-      `http://localhost:3000/admin_user`,
+      `${Deno.env.get("API_URL")}/admin_user`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export const loginAdminUser = (
 > => {
   return HttpClientRequest
     .post(
-      `http://localhost:3000/admin_user/login`,
+      `${Deno.env.get("API_URL")}/admin_user/login`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

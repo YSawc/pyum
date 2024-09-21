@@ -15,7 +15,7 @@ export const validateSession = (id: string): Effect.Effect<
 > => {
   return HttpClientRequest
     .post(
-      `http://localhost:3000/session/check_valid`,
+      `${Deno.env.get("API_URL")}/session/check_valid`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

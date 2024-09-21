@@ -23,7 +23,7 @@ export const GetSensorPurposeWithRelation = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/capture?sensor_purpose_id=${sensorPurposeId}`,
+      `${Deno.env.get("API_URL")}/capture?sensor_purpose_id=${sensorPurposeId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

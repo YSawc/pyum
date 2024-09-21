@@ -24,7 +24,7 @@ export const getSensorPurposes = (req: Request): Effect.Effect<
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/sensor_purpose`,
+      `${Deno.env.get("API_URL")}/sensor_purpose`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -49,7 +49,7 @@ export const getSensorPurpose = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/sensor_purpose/${sensorPurposeId}`,
+      `${Deno.env.get("API_URL")}/sensor_purpose/${sensorPurposeId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -72,7 +72,7 @@ export const createSensorPurpose = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .post(
-      `http://localhost:3000/sensor_purpose`,
+      `${Deno.env.get("API_URL")}/sensor_purpose`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export const editSensorPurpose = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .patch(
-      `http://localhost:3000/sensor_purpose/${sensorPurposeId}`,
+      `${Deno.env.get("API_URL")}/sensor_purpose/${sensorPurposeId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -129,7 +129,7 @@ export const deleteSensorPurpose = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .del(
-      `http://localhost:3000/sensor_purpose/${sensorPurposeId}`,
+      `${Deno.env.get("API_URL")}/sensor_purpose/${sensorPurposeId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

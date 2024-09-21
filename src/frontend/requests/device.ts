@@ -24,7 +24,7 @@ export const getDevices = (req: Request): Effect.Effect<
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/device`,
+      `${Deno.env.get("API_URL")}/device`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export const getDevice = (req: Request, deviceId: string): Effect.Effect<
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .get(
-      `http://localhost:3000/device/${deviceId}`,
+      `${Deno.env.get("API_URL")}/device/${deviceId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export const createDevice = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .post(
-      `http://localhost:3000/device`,
+      `${Deno.env.get("API_URL")}/device`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -95,7 +95,7 @@ export const editDevice = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .patch(
-      `http://localhost:3000/device/${deviceId}`,
+      `${Deno.env.get("API_URL")}/device/${deviceId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",
@@ -122,7 +122,7 @@ export const deleteDevice = (
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
   return HttpClientRequest
     .del(
-      `http://localhost:3000/device/${deviceId}`,
+      `${Deno.env.get("API_URL")}/device/${deviceId}`,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

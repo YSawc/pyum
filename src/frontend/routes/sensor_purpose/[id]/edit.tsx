@@ -7,9 +7,12 @@ import {
   getSensorPurpose,
 } from "../../../requests/sensor_purpose.ts";
 import { SensorPurpose } from "../../../types/request/sensor_purpose.ts";
+import { SensorEvents } from "../../../types/request/sensor_event.ts";
+import { getSensorEvents } from "../../../requests/sensor_event.ts";
 
 interface Props {
   sensorPurpose: SensorPurpose;
+  sensorEvents: SensorEvents;
 }
 
 export const handler: Handlers<Props> = {
@@ -18,8 +21,12 @@ export const handler: Handlers<Props> = {
     const res = await Effect.runPromise(
       getSensorPurpose(req, sensorPurposeId),
     );
+    const sensorEvents = await Effect.runPromise(
+      getSensorEvents(req),
+    );
     const data: Props = {
       sensorPurpose: res.sensor_purpose,
+      sensorEvents: sensorEvents,
     };
     const resp: Response = await ctx.render(data);
     return resp;
@@ -40,7 +47,9 @@ export const handler: Handlers<Props> = {
 };
 
 const Page = ({ data }: PageProps<Props>) => {
-  const { sensorPurpose } = data;
+  const { sensorPurpose, sensorEvent } = data;
+  console.log("sensorEvent");
+  console.log(sensorEvent);
 
   return (
     <div class="container">
@@ -70,34 +79,22 @@ const Page = ({ data }: PageProps<Props>) => {
           <div class="mb-4">
             <label
               class="block text-gray-700 text-sm font-bold mb-2"
-              for="color_code"
+              for="sensor_event_id"
             >
-              color code
+              sensor event id
             </label>
-            <input
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="color_code"
-              name="color_code"
-              type="text"
-              placeholder="color_code"
-              value={`${sensorPurpose.color_code}`}
-            />
-          </div>
-          <div class="mb-4">
-            <label
-              class="block text-gray-700 text-sm font-bold mb-2"
-              for="image"
+            <select
+              class="h-9"
+              id="sensor_event_id"
+              name="sensor_event_id"
+              value={`${sensorPurpose.sensor_event_id}`}
             >
-              image path
-            </label>
-            <input
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="image"
-              name="image"
-              type="text"
-              placeholder="image path"
-              value={`${sensorPurpose.image}`}
-            />
+              {data.sensorEvents.sensor_events.map((sensorEvent) => (
+                <option value={sensorEvent.id}>
+                  {sensorEvent.description}
+                </option>
+              ))}
+            </select>
           </div>
           <div class="flex items-center justify-between">
             <button

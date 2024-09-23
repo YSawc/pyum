@@ -7,7 +7,7 @@ use axum::{
 use model_entity::models::{
     device,
     sensor::{self, query::SensorQuery},
-    sensor_purpose,
+    sensor_event, sensor_purpose,
 };
 use serde::{Deserialize, Serialize};
 
@@ -15,13 +15,16 @@ use serde::{Deserialize, Serialize};
 pub struct ListRelatedSensor {
     models: Vec<(
         device::model::Model,
-        Vec<(sensor::model::Model, sensor_purpose::model::Model)>,
+        Vec<(
+            sensor::model::Model,
+            sensor_purpose::model::Model,
+            sensor_event::model::Model,
+        )>,
     )>,
 }
 
 #[derive(Deserialize)]
 pub struct ListRelatedSensorParams {
-    // pub device_id: i32,
     pub page: Option<u64>,
     pub models_per_page: Option<u64>,
 }
@@ -30,7 +33,6 @@ pub async fn list_related_sensor(
     state: State<AppState>,
     Query(params): Query<ListRelatedSensorParams>,
 ) -> Result<Json<ListRelatedSensor>, Json<SimpleRes>> {
-    // let device_id = params.device_id;
     let page = params.page.unwrap_or(1);
     let models_per_page = params.models_per_page.unwrap_or(20);
     let models = SensorQuery::find_devices_with_related_sensor_and_purpose(
@@ -63,7 +65,11 @@ pub async fn create(
 
 #[derive(Serialize)]
 pub struct Detail {
-    models: (sensor::model::Model, sensor_purpose::model::Model),
+    models: (
+        sensor::model::Model,
+        sensor_purpose::model::Model,
+        sensor_event::model::Model,
+    ),
 }
 
 pub async fn detail(

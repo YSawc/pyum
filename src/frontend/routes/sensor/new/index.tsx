@@ -65,8 +65,8 @@ const Page = ({ data }: PageProps<Props>) => {
               required
             >
               {data.sensorPurposes.sensor_purposes.map((sensorPurpose) => (
-                <option value={sensorPurpose.id}>
-                  {sensorPurpose.description}
+                <option value={sensorPurpose[0].id}>
+                  {sensorPurpose[0].description}
                 </option>
               ))}
             </select>

@@ -37,7 +37,6 @@ const Page = ({ data }: PageProps<Props>) => {
         <thead>
           <tr>
             <th>Description</th>
-            <th>Color Code</th>
             <th>Image</th>
           </tr>
         </thead>
@@ -46,20 +45,15 @@ const Page = ({ data }: PageProps<Props>) => {
             <tr
               class="post"
               onClick={"window.location=" +
-                `'/sensor_purpose/${sensorPurpose.id}'`}
+                `'/sensor_purpose/${sensorPurpose[0].id}'`}
             >
               <td class="px-2">
-                {sensorPurpose.description}
-              </td>
-              <td
-                class={`px-2 border-4 border-[#${sensorPurpose.color_code}] rounded`}
-              >
-                {sensorPurpose.color_code}
+                {sensorPurpose[0].description}
               </td>
               <td>
                 <img
-                  src={sensorPurpose.image
-                    ? `${sensorPurpose.image}`
+                  src={sensorPurpose[1].image
+                    ? `${sensorPurpose[1].image}`
                     : asset(`/icons/no_image.jpg`)}
                   width="128"
                   height="128"

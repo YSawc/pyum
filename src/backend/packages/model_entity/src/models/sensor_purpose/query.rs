@@ -1,4 +1,4 @@
-use crate::models::{capture, sensor};
+use crate::models::{capture, sensor, sensor_event};
 
 use super::{model, model::Entity as SensorPurpose};
 use sea_orm::*;
@@ -11,9 +11,10 @@ impl SensorPurposeQuery {
         uid: i32,
         page: u64,
         models_per_page: u64,
-    ) -> Result<(Vec<model::Model>, u64), DbErr> {
+    ) -> Result<(Vec<(model::Model, Option<sensor_event::model::Model>)>, u64), DbErr> {
         let paginator = SensorPurpose::find()
             .filter(model::Column::AdminUserId.eq(uid))
+            .find_also_related(sensor_event::model::Entity)
             .order_by_asc(model::Column::Id)
             .paginate(db, models_per_page);
         let num_pages = paginator.num_pages().await?;

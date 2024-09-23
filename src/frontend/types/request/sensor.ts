@@ -1,6 +1,7 @@
 import { Schema } from "@effect/schema";
 import { SensorPurposeSchema } from "./sensor_purpose.ts";
 import { DeviceSchema } from "./device.ts";
+import { SensorEventSchema } from "./sensor_event.ts";
 
 export const SensorSchema = Schema.Struct({
   id: Schema.Number,
@@ -15,6 +16,7 @@ export const SensorSchema = Schema.Struct({
 export const SensorAndPurposeSchema = Schema.Tuple(
   SensorSchema,
   SensorPurposeSchema,
+  SensorEventSchema,
 );
 
 export const DeviceWithRelationSchema = Schema.Tuple(

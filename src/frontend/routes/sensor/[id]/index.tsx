@@ -41,16 +41,30 @@ const Page = ({ data }: PageProps<Props>) => {
           <tr>
             <th class="row-span-2">Sensor id</th>
             <th class="row-span-2">Device id</th>
-            <th colSpan={3}>Sensor purpose</th>
+            <th colSpan={5}>Sensor purpose</th>
             <th class="row-span-2">Sensor trigger limit val</th>
             <th class="row-span-2">Sensor trigger limit sequence count</th>
+            <th class="row-span-2">other</th>
           </tr>
           <tr>
             <th></th>
             <th></th>
             <th>id</th>
+            <th>description</th>
+            <th colSpan={3}>Sensor event</th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>id</th>
             <th>image</th>
             <th>description</th>
+            <th></th>
             <th></th>
             <th></th>
           </tr>
@@ -62,31 +76,41 @@ const Page = ({ data }: PageProps<Props>) => {
           >
             <td class="px-2">{models[0].id}</td>
             <td class="px-2">{models[0].device_id}</td>
-            <td
-              class={`px-2 border-4 border-[#${models[1].color_code}] rounded`}
-            >
+            <td class="px-2">
               {models[0].sensor_purpose_id}
+            </td>
+            <td class="px-2">
+              {models[1].description}
+            </td>
+            <td class="px-2">
+              {models[2].id}
             </td>
             <td>
               <img
-                src={models[1].image
-                  ? `${models[1].image}`
+                src={models[2].image
+                  ? `${models[2].image}`
                   : asset(`/icons/no_image.jpg`)}
                 width="48"
                 height="48"
               />
             </td>
-            <td
-              class={`px-2 border-4 border-[#${models[1].color_code}] rounded`}
-            >
-              {models[1].description}
+            <td class="px-2">
+              {models[2].description}
             </td>
             <td class="px-2">{models[0].trigger_limit_val}</td>
             <td class="px-2">{models[0].trigger_limit_sequence_count}</td>
+            <td class="px-2 flex flex-col">
+              <a
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                href={`/sensor_purpose/${models[0].sensor_purpose_id}`}
+              >
+                sensor purpose detail
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>
-    </div>
+    </div >
   );
 };
 

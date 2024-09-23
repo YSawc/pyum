@@ -4,5 +4,6 @@ pub mod assets;
 pub mod capture;
 pub mod device;
 pub mod sensor;
+pub mod sensor_event;
 pub mod sensor_purpose;
 pub mod session;

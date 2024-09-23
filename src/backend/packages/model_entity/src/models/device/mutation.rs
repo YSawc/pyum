@@ -56,6 +56,6 @@ pub async fn delete_by_id(db: &DbConn, id: i32) -> Result<model::Model, DbErr> {
     device.update(db).await
 }
 
-pub async fn delete_all_devices(db: &DbConn) -> Result<DeleteResult, DbErr> {
+pub async fn delete_all(db: &DbConn) -> Result<DeleteResult, DbErr> {
     Device::delete_many().exec(db).await
 }

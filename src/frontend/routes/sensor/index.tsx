@@ -53,15 +53,14 @@ const Page = ({ data }: PageProps<Props>) => {
               {device[1].map((sensor) => (
                 <a href={`/sensor/${sensor[0].id}`}>
                   <div
-                    class={`flex mx-4 min-h-[56px] border-2 border-[#${
-                      sensor[1].color_code
-                    }] rounded align-middle my-auto items-center px-2
+                    class={`flex mx-4 min-h-[56px] border-2 border-[#${sensor[1].color_code
+                      }] rounded align-middle my-auto items-center px-2
               `}
                   >
                     <span>
                       <img
-                        src={sensor[1].image
-                          ? `${sensor[1].image}`
+                        src={sensor[2].image
+                          ? `${sensor[2].image}`
                           : asset(`/icons/no_image.jpg`)}
                         width="48"
                         height="48"

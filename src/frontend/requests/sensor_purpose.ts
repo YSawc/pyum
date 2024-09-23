@@ -70,6 +70,10 @@ export const createSensorPurpose = (
   never
 > => {
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  console.log("formData");
+  console.log(formData);
+  console.log(`Number(formData.get("sensor_event_id"))`);
+  console.log(Number(formData.get("sensor_event_id")));
   return HttpClientRequest
     .post(
       `${Deno.env.get("API_URL")}/sensor_purpose`,
@@ -80,8 +84,7 @@ export const createSensorPurpose = (
       }),
       HttpClientRequest.jsonBody({
         description: formData.get("description")?.toString(),
-        color_code: formData.get("color_code")?.toString(),
-        image: formData.get("image")?.toString(),
+        sensor_event_id: Number(formData.get("sensor_event_id")),
       }),
       Effect.andThen(HttpClient.fetch),
       Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),
@@ -99,6 +102,8 @@ export const editSensorPurpose = (
   never
 > => {
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  console.log("formData");
+  console.log(formData);
   return HttpClientRequest
     .patch(
       `${Deno.env.get("API_URL")}/sensor_purpose/${sensorPurposeId}`,
@@ -109,8 +114,7 @@ export const editSensorPurpose = (
       }),
       HttpClientRequest.jsonBody({
         description: formData.get("description")?.toString(),
-        color_code: formData.get("color_code")?.toString(),
-        image: formData.get("image")?.toString(),
+        sensor_event_id: Number(formData.get("sensor_event_id")),
       }),
       Effect.andThen(HttpClient.fetch),
       Effect.andThen(HttpClientResponse.schemaBodyJson(SimpleResSchema)),

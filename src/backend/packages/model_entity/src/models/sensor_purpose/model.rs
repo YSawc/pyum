@@ -1,4 +1,4 @@
-use crate::models::{admin_user, sensor};
+use crate::models::{admin_user, sensor, sensor_event};
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -11,10 +11,8 @@ pub struct Model {
     #[serde(skip_serializing)]
     #[serde(skip_deserializing)]
     pub admin_user_id: i32,
+    pub sensor_event_id: i32,
     pub description: String,
-    pub color_code: String,
-    #[sea_orm(nullable)]
-    pub image: String,
     #[serde(skip_deserializing)]
     pub created_at: DateTime,
     #[serde(skip_deserializing)]
@@ -24,6 +22,7 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
     AdminUser,
+    SensorEvent,
     Sensor,
 }
 
@@ -33,6 +32,10 @@ impl RelationTrait for Relation {
             Self::AdminUser => Entity::belongs_to(admin_user::model::Entity)
                 .from(Column::AdminUserId)
                 .to(admin_user::model::Column::Id)
+                .into(),
+            Self::SensorEvent => Entity::belongs_to(sensor_event::model::Entity)
+                .from(Column::SensorEventId)
+                .to(sensor_event::model::Column::Id)
                 .into(),
             Self::Sensor => Entity::has_many(sensor::model::Entity)
                 .from(Column::Id)
@@ -45,6 +48,12 @@ impl RelationTrait for Relation {
 impl Related<admin_user::model::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::AdminUser.def()
+    }
+}
+
+impl Related<sensor_event::model::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::SensorEvent.def()
     }
 }
 

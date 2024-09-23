@@ -1,0 +1,15 @@
+[package]
+name = "seed"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+sea-orm = { version = "1.1.0-rc.1", features = [
+  "sqlx-mysql",
+  "runtime-tokio-native-tls",
+  "debug-print",
+]}
+anyhow = "1.0.75"
+tokio = { version = "1.39.2", features = ["fs", "macros", "rt-multi-thread"] }
+model_entity = { path = "../model_entity" }

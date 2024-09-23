@@ -4,13 +4,19 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use model_entity::models::sensor_purpose::{self, query::SensorPurposeQuery};
+use model_entity::models::{
+    sensor_event,
+    sensor_purpose::{self, query::SensorPurposeQuery},
+};
 use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
 #[derive(Serialize)]
 pub struct List {
-    sensor_purposes: Vec<sensor_purpose::model::Model>,
+    sensor_purposes: Vec<(
+        sensor_purpose::model::Model,
+        Option<sensor_event::model::Model>,
+    )>,
 }
 
 #[derive(Deserialize)]
@@ -30,7 +36,8 @@ pub async fn list(
     let (sensor_purposes, _num_pages) =
         SensorPurposeQuery::find_in_page(&state.conn, uid, page, models_per_page)
             .await
-            .map_err(|_| {
+            .map_err(|e| {
+                println!("error: {e:?}");
                 Json(SimpleRes {
                     message: "Cannot find sensor purposes in page".to_string(),
                 })
@@ -44,7 +51,9 @@ pub async fn create(
     state: State<AppState>,
     Json(new_sensor_purpose): Json<sensor_purpose::model::Model>,
 ) -> Result<Json<SimpleRes>, Json<SimpleRes>> {
+    println!("hello");
     let uid = session.get("uid").await.unwrap().unwrap();
+    println!("uid: {uid:?}");
     sensor_purpose::mutation::create(&state.conn, new_sensor_purpose, uid)
         .await
         .unwrap();
@@ -57,18 +66,21 @@ pub async fn create(
 #[derive(Serialize)]
 pub struct Detail {
     sensor_purpose: sensor_purpose::model::Model,
+    sensor_event: sensor_event::model::Model,
 }
 
 pub async fn detail(
     state: State<AppState>,
     Path(sensor_purpose_id): Path<i32>,
 ) -> Result<Json<Detail>, (StatusCode, &'static str)> {
-    let sensor_purpose = sensor_purpose::mutation::get_by_id(&state.conn, sensor_purpose_id)
+    let models = sensor_purpose::mutation::get_by_id(&state.conn, sensor_purpose_id)
         .await
-        .unwrap()
         .unwrap();
 
-    Ok(Json(Detail { sensor_purpose }))
+    Ok(Json(Detail {
+        sensor_purpose: models.0,
+        sensor_event: models.1,
+    }))
 }
 
 pub async fn edit(

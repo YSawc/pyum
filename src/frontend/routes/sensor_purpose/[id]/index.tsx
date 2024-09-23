@@ -5,9 +5,11 @@ import { getSensorPurpose } from "../../../requests/sensor_purpose.ts";
 import { SensorPurpose } from "../../../types/request/sensor_purpose.ts";
 import Title from "../../_title.tsx";
 import { Effect } from "effect";
+import { SensorEvent } from "../../../types/request/sensor_event.ts";
 
 interface Props {
   sensorPurpose: SensorPurpose;
+  sensorEvent: SensorEvent;
 }
 
 export const handler: Handlers<Props> = {
@@ -18,6 +20,7 @@ export const handler: Handlers<Props> = {
     );
     const data: Props = {
       sensorPurpose: res.sensor_purpose,
+      sensorEvent: res.sensor_event,
     };
     const resp: Response = await ctx.render(data);
     return resp;
@@ -25,8 +28,7 @@ export const handler: Handlers<Props> = {
 };
 
 const Page = ({ data }: PageProps<Props>) => {
-  const { sensorPurpose } = data;
-
+  const { sensorPurpose, sensorEvent } = data;
   return (
     <div class="container">
       <Title title="Detail sensor purpose" />
@@ -39,9 +41,15 @@ const Page = ({ data }: PageProps<Props>) => {
         <thead>
           <tr>
             <th>Description</th>
-            <th>Color Code</th>
-            <th>Image</th>
+            <th colSpan={3}>Sensor event</th>
             <th>Other</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>id</th>
+            <th>image</th>
+            <th>description</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -51,19 +59,20 @@ const Page = ({ data }: PageProps<Props>) => {
             <td class="px-2">
               {sensorPurpose.description}
             </td>
-            <td
-              class={`px-2 border-4 border-[#${sensorPurpose.color_code}] rounded`}
-            >
-              {sensorPurpose.color_code}
+            <td class="px-2">
+              {sensorEvent.id}
             </td>
             <td>
               <img
-                src={sensorPurpose.image
-                  ? `${sensorPurpose.image}`
+                src={sensorEvent.image
+                  ? `${sensorEvent.image}`
                   : asset(`/icons/no_image.jpg`)}
-                width="128"
-                height="128"
+                width="48"
+                height="48"
               />
+            </td>
+            <td class="px-2">
+              {sensorEvent.description}
             </td>
             <td class="px-2 flex flex-col">
               <a

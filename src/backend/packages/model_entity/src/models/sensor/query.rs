@@ -1,5 +1,5 @@
 use super::{model, model::Entity as Sensor};
-use crate::models::{device, sensor_purpose};
+use crate::models::{device, sensor_event, sensor_purpose};
 use sea_orm::*;
 
 pub struct SensorQuery;
@@ -32,7 +32,11 @@ impl SensorQuery {
     ) -> Result<
         Vec<(
             device::model::Model,
-            Vec<(super::model::Model, sensor_purpose::model::Model)>,
+            Vec<(
+                super::model::Model,
+                sensor_purpose::model::Model,
+                sensor_event::model::Model,
+            )>,
         )>,
         DbErr,
     > {
@@ -48,13 +52,20 @@ impl SensorQuery {
             let sensors = device_with_sensor.1;
             let mut sensors_and_purposes = Vec::new();
             for sensor in sensors {
-                let purpose = sensor
+                let sensor_purpose = sensor
                     .find_related(sensor_purpose::model::Entity)
                     .one(db)
                     .await
                     .unwrap()
                     .unwrap();
-                sensors_and_purposes.push((sensor, purpose));
+                let sensor_event = sensor_purpose
+                    .find_related(sensor_event::model::Entity)
+                    .one(db)
+                    .await
+                    .unwrap()
+                    .unwrap();
+
+                sensors_and_purposes.push((sensor, sensor_purpose, sensor_event));
             }
             devices_and_related_sensors_and_purposes
                 .push((device_with_sensor.0, sensors_and_purposes))

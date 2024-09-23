@@ -1,4 +1,7 @@
-use crate::m20240803_063030_create_admin_user_table::AdminUser;
+use crate::{
+    m20240803_063030_create_admin_user_table::AdminUser,
+    m20240903_202700_create_sensor_event::SensorEvent,
+};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -33,17 +36,23 @@ impl MigrationTrait for Migration {
                             .on_update(ForeignKeyAction::Cascade),
                     )
                     .col(
+                        ColumnDef::new(SensorPurpose::SensorEventId)
+                            .integer()
+                            .not_null(),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("pk_sensor_purpose_sensor_event_id")
+                            .from(SensorPurpose::Table, SensorPurpose::SensorEventId)
+                            .to(SensorEvent::Table, SensorEvent::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .col(
                         ColumnDef::new(SensorPurpose::Description)
                             .string()
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(SensorPurpose::ColorCode)
-                            .string_len(6)
-                            .not_null()
-                            .default("FFFFFF"),
-                    )
-                    .col(ColumnDef::new(SensorPurpose::Image).string())
                     .col(
                         ColumnDef::new(SensorPurpose::CreatedAt)
                             .date_time()
@@ -72,9 +81,8 @@ pub enum SensorPurpose {
     Table,
     Id,
     AdminUserId,
+    SensorEventId,
     Description,
-    ColorCode,
-    Image,
     CreatedAt,
     UpdatedAt,
 }

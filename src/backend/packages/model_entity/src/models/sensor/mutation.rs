@@ -1,5 +1,5 @@
 use super::model::{self, Entity as Sensor};
-use crate::models::sensor_purpose;
+use crate::models::{sensor_event, sensor_purpose};
 use sea_orm::*;
 
 pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::ActiveModel, DbErr> {
@@ -17,13 +17,26 @@ pub async fn create(db: &DbConn, form_data: model::Model) -> Result<model::Activ
 pub async fn get_by_id(
     db: &DbConn,
     id: i32,
-) -> Result<(model::Model, sensor_purpose::model::Model), DbErr> {
+) -> Result<
+    (
+        model::Model,
+        sensor_purpose::model::Model,
+        sensor_event::model::Model,
+    ),
+    DbErr,
+> {
     let models = Sensor::find_by_id(id)
         .find_also_related(sensor_purpose::model::Entity)
         .one(db)
         .await?
         .unwrap();
-    Ok((models.0, models.1.unwrap()))
+    let sensor_purpose = models.1.unwrap();
+    let sensor_event = sensor_purpose
+        .find_related(sensor_event::model::Entity)
+        .one(db)
+        .await?
+        .unwrap();
+    Ok((models.0, sensor_purpose, sensor_event))
 }
 
 pub async fn update(

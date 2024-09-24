@@ -51,7 +51,6 @@ pub async fn create(
     state: State<AppState>,
     Json(new_sensor_purpose): Json<sensor_purpose::model::Model>,
 ) -> Result<Json<SimpleRes>, Json<SimpleRes>> {
-    println!("hello");
     let uid = session.get("uid").await.unwrap().unwrap();
     println!("uid: {uid:?}");
     sensor_purpose::mutation::create(&state.conn, new_sensor_purpose, uid)

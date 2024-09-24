@@ -24,22 +24,49 @@ export const handler: Handlers<Props> = {
 
 const Page = ({ data }: PageProps<Props>) => {
   const devices: GetDevicesWithRelation = data.models;
+  const custom_devices = devices.models.map((device) => {
+    const sensor_ids = device.sensor_ids.split(",");
+    const sensor_purpose_ids = device.sensor_purpose_ids.split(",");
+    const trigger_limit_vals = device.trigger_limit_vals.split(",");
+    const trigger_limit_sequence_counts = device.trigger_limit_sequence_counts
+      .split(",");
+    const sensor_event_ids = device.sensor_event_ids.split(",");
+    const sensor_event_descriptions = device.sensor_event_descriptions.split(
+      ",",
+    );
+    const sensor_event_images = device.sensor_event_images.split(
+      ",",
+    );
+    return {
+      device_id: device.device_id,
+      device_name: device.device_name,
+      device_image: device.device_image,
+      sensor_ids,
+      sensor_purpose_ids,
+      trigger_limit_vals,
+      trigger_limit_sequence_counts,
+      sensor_event_ids,
+      sensor_event_descriptions,
+      sensor_event_images,
+    };
+  });
+
   return (
     <div class="container">
       <Title title="Sensors related device" />
       <div class="flex flex-col gap gap-8">
-        {devices.models.map((device) => (
+        {custom_devices.map((device) => (
           <div class="max-w-[440px] items-center border-4 border-[#65e6fa] rounded-xl py-4 px-4">
-            <a href={`/device/${device[0].id}`}>
+            <a href={`/device/${device.device_id}`}>
               <div class="text-center">
                 <span class="text-center my-2  text-xl">
-                  {device[0].name}
+                  {device.device_name}
                 </span>
               </div>
               <div class="flex justify-center">
                 <img
-                  src={device[0].image
-                    ? `${device[0].image}`
+                  src={device.device_image
+                    ? `${device.device_image}`
                     : asset(`/icons/no_image.jpg`)}
                   width="256"
                   height="256"
@@ -50,27 +77,26 @@ const Page = ({ data }: PageProps<Props>) => {
               <span>sensors</span>
             </div>
             <div class="flex flex-col gap gap-y-8 text-lg">
-              {device[1].map((sensor) => (
-                <a href={`/sensor/${sensor[0].id}`}>
+              {device.sensor_ids.map((_, index) => (
+                <a href={`/sensor/${device.sensor_ids[0]}`}>
                   <div
-                    class={`flex mx-4 min-h-[56px] border-2 border-[#${sensor[1].color_code
-                      }] rounded align-middle my-auto items-center px-2
+                    class={`flex mx-4 min-h-[56px] rounded align-middle my-auto items-center px-2
               `}
                   >
                     <span>
                       <img
-                        src={sensor[2].image
-                          ? `${sensor[2].image}`
+                        src={device.sensor_event_images[index]
+                          ? `${device.sensor_event_images[index]}`
                           : asset(`/icons/no_image.jpg`)}
                         width="48"
                         height="48"
                       />
                     </span>
                     <span class="ml-2">
-                      {sensor[1].description}
+                      {device.sensor_event_descriptions[index]}
                     </span>
                     <span class="ml-2">
-                      {sensor[0].trigger_limit_val}
+                      {device.trigger_limit_vals[index]}
                     </span>
                     <span>
                       <img
@@ -80,7 +106,7 @@ const Page = ({ data }: PageProps<Props>) => {
                       />
                     </span>
                     <span>
-                      {sensor[0].trigger_limit_sequence_count}
+                      {device.trigger_limit_sequence_counts[index]}
                     </span>
                     <span>
                       <img

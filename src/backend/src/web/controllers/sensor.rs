@@ -5,22 +5,17 @@ use axum::{
     Json,
 };
 use model_entity::models::{
-    device,
-    sensor::{self, query::SensorQuery},
+    sensor::{
+        self,
+        query::{FindInPageResult, SensorQuery},
+    },
     sensor_event, sensor_purpose,
 };
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
 pub struct ListRelatedSensor {
-    models: Vec<(
-        device::model::Model,
-        Vec<(
-            sensor::model::Model,
-            sensor_purpose::model::Model,
-            sensor_event::model::Model,
-        )>,
-    )>,
+    models: Vec<FindInPageResult>,
 }
 
 #[derive(Deserialize)]

@@ -1,6 +1,5 @@
 import { Schema } from "@effect/schema";
 import { SensorPurposeSchema } from "./sensor_purpose.ts";
-import { DeviceSchema } from "./device.ts";
 import { SensorEventSchema } from "./sensor_event.ts";
 
 export const SensorSchema = Schema.Struct({
@@ -19,12 +18,18 @@ export const SensorAndPurposeSchema = Schema.Tuple(
   SensorEventSchema,
 );
 
-export const DeviceWithRelationSchema = Schema.Tuple(
-  DeviceSchema,
-  Schema.Array(
-    SensorAndPurposeSchema,
-  ),
-);
+export const DeviceWithRelationSchema = Schema.Struct({
+  device_id: Schema.Number,
+  device_name: Schema.String,
+  device_image: Schema.String,
+  sensor_ids: Schema.String,
+  sensor_purpose_ids: Schema.String,
+  trigger_limit_vals: Schema.String,
+  trigger_limit_sequence_counts: Schema.String,
+  sensor_event_ids: Schema.String,
+  sensor_event_descriptions: Schema.String,
+  sensor_event_images: Schema.String,
+});
 
 export const DevicesWithRelationSchema = Schema.Struct({
   models: Schema.Array(DeviceWithRelationSchema),

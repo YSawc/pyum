@@ -1,0 +1,13 @@
+###
+GET http://localhost:3000/api/health_check
+
+###
+POST http://localhost:3000/api/capture
+Content-Type: application/json
+Client-Secret: oauth_secret
+
+{
+    "sensor_id": 1,
+    "capture_val": 14,
+    "shift_digit": 1,
+}

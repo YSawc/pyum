@@ -20,8 +20,9 @@ export const handler: Handlers<Props> = {
         headers: { Location: "/sensor_purpose" },
       });
     }
+    const limit: string | null = ctx.url.searchParams.get("limit");
     const models = await Effect.runPromise(
-      GetSensorPurposeWithRelation(req, sensorPurposeId),
+      GetSensorPurposeWithRelation(req, sensorPurposeId, limit),
     );
     const data: Props = {
       models: models,

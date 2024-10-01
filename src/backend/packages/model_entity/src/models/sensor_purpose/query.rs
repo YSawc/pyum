@@ -28,6 +28,7 @@ impl SensorPurposeQuery {
     pub async fn find_with_related_sensor_and_capture(
         db: &DbConn,
         sensor_purpose_id: i32,
+        limit: Option<i32>,
     ) -> Result<
         (
             super::model::Model,
@@ -45,11 +46,11 @@ impl SensorPurposeQuery {
         let mut sensors_with_captures: Vec<(sensor::model::Model, Vec<capture::model::Model>)> =
             Vec::new();
         for sensor in &sensor_purpose_with_sensor.1 {
-            let captures = sensor
-                .find_related(capture::model::Entity)
-                .all(db)
-                .await
-                .unwrap();
+            let mut query = sensor.find_related(capture::model::Entity);
+            if limit.is_some() {
+                query = query.limit(Option::Some(limit.unwrap() as u64));
+            }
+            let captures = query.all(db).await.unwrap();
             sensors_with_captures.push((sensor.to_owned(), captures));
         }
 

@@ -9,7 +9,7 @@ export const check_protected_route = (url: string): boolean =>
   match(url)
     .with(
       P.string.regex(
-        /^(?=.*\/device|.*\/sensor_purpose|.*\/sensor).*$/,
+        /^(?=.*\/device|.*\/sensor_purpose|.*\/sensor|.*\/capture).*$/,
       ),
       () => true,
     )

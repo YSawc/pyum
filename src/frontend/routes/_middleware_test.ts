@@ -7,6 +7,7 @@ Deno.test("checking of protected route", async (t) => {
     assert(check_protected_route("/device"));
     assert(check_protected_route("/sensor_purpose"));
     assert(check_protected_route("/sensor"));
+    assert(check_protected_route("/capture"));
   });
 
   await t.step("passing unprotected url", () => {

@@ -21,6 +21,7 @@ pub struct ListRelatedCapture {
 #[derive(Deserialize)]
 pub struct ListRelatedCaptureParams {
     sensor_purpose_id: i32,
+    limit: Option<i32>,
 }
 
 pub async fn list_related_capture(
@@ -28,14 +29,18 @@ pub async fn list_related_capture(
     Query(params): Query<ListRelatedCaptureParams>,
 ) -> Result<Json<ListRelatedCapture>, Json<SimpleRes>> {
     let sensor_purpose_id = params.sensor_purpose_id;
-    let models =
-        SensorPurposeQuery::find_with_related_sensor_and_capture(&state.conn, sensor_purpose_id)
-            .await
-            .map_err(|_| {
-                Json(SimpleRes {
-                    message: "Cannot find sensors in page".to_string(),
-                })
-            })?;
+    let limit = params.limit;
+    let models = SensorPurposeQuery::find_with_related_sensor_and_capture(
+        &state.conn,
+        sensor_purpose_id,
+        limit,
+    )
+    .await
+    .map_err(|_| {
+        Json(SimpleRes {
+            message: "Cannot find sensors in page".to_string(),
+        })
+    })?;
 
     Ok(Json(ListRelatedCapture { models }))
 }

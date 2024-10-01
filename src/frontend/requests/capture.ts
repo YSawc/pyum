@@ -15,15 +15,21 @@ import {
 export const GetSensorPurposeWithRelation = (
   req: Request,
   sensorPurposeId: string,
+  limit: string | null,
 ): Effect.Effect<
   SensorPurposesWithRelation,
   HttpClientError.HttpClientError | ParseError,
   never
 > => {
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  let url = `${Deno.env.get("API_URL")
+    }/capture?sensor_purpose_id=${sensorPurposeId}`;
+  if (limit !== null) {
+    url = url.concat(`&limit=${limit}`);
+  }
   return HttpClientRequest
     .get(
-      `${Deno.env.get("API_URL")}/capture?sensor_purpose_id=${sensorPurposeId}`,
+      url,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

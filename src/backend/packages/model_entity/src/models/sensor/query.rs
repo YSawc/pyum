@@ -51,24 +51,34 @@ impl SensorQuery {
             format!(
                 r#"
 SELECT
-    device.id AS device_id,
-    device.name AS device_name,
-    device.image AS device_image,
-    GROUP_CONCAT(sensor.id) AS sensor_ids,
-    GROUP_CONCAT(sensor.sensor_purpose_id) AS sensor_purpose_ids,
-    GROUP_CONCAT(sensor.trigger_limit_val) AS trigger_limit_vals,
-    GROUP_CONCAT(sensor.trigger_limit_sequence_count) AS trigger_limit_sequence_counts,
-    GROUP_CONCAT(sensor_purpose.sensor_event_id) AS sensor_event_ids,
-    GROUP_CONCAT(sensor_event.description) AS sensor_event_descriptions,
-    GROUP_CONCAT(sensor_event.image) AS sensor_event_images
+        device.id AS device_id,
+        device.name AS device_name,
+        device.image AS device_image,
+        sensors.*
 FROM
-    device
-LEFT JOIN sensor
-    ON sensor.device_id = device.id
-LEFT JOIN sensor_purpose
-    ON sensor_purpose.id = sensor.sensor_purpose_id
-LEFT JOIN sensor_event
-ON sensor_event.id = sensor_purpose.sensor_event_id
+        device
+LEFT JOIN (
+        SELECT
+                sensor.device_id,
+                GROUP_CONCAT(sensor.id) AS sensor_ids,
+                GROUP_CONCAT(sensor.sensor_purpose_id) AS sensor_purpose_ids,
+                GROUP_CONCAT(sensor.trigger_limit_val) AS trigger_limit_vals,
+                GROUP_CONCAT(sensor.trigger_limit_sequence_count) AS trigger_limit_sequence_counts,
+                GROUP_CONCAT(sensor_purpose.sensor_event_id) AS sensor_event_ids,
+                GROUP_CONCAT(sensor_event.description) AS sensor_event_descriptions,
+                GROUP_CONCAT(sensor_event.image) AS sensor_event_images
+        FROM
+                sensor
+        LEFT JOIN sensor_purpose
+                ON sensor.sensor_purpose_id = sensor_purpose.id
+        LEFT JOIN sensor_event
+                ON sensor_purpose.sensor_event_id = sensor_event.id
+        GROUP BY
+                sensor.device_id
+        ORDER BY
+                sensor.id
+) AS sensors
+        ON sensors.device_id = device.id
 LIMIT {} OFFSET {}"#,
                 models_per_page, offset_str
             ),

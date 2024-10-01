@@ -76,9 +76,9 @@ const Page = ({ data }: PageProps<Props>) => {
             <div class="text-center text-lg mb-2">
               <span>sensors</span>
             </div>
-            <div class="flex flex-col gap gap-y-8 text-lg">
+            <div class="flex flex-col text-lg">
               {device.sensor_ids.map((_, index) => (
-                <a href={`/sensor/${device.sensor_ids[0]}`}>
+                <a href={`/sensor/${device.sensor_ids[index]}`}>
                   <div
                     class={`flex mx-4 min-h-[56px] rounded align-middle my-auto items-center px-2
               `}

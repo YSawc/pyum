@@ -18,15 +18,20 @@ import { HttpBodyError } from "@effect/platform/HttpBody";
 
 export const getSensorsRelatedDevice = (
   req: Request,
+  device_id: string | null,
 ): Effect.Effect<
   GetDevicesWithRelation,
   HttpClientError.HttpClientError | ParseError,
   never
 > => {
   const id = getTargetCookieValCombinedAssign(req.headers, "id");
+  let url = `${Deno.env.get("API_URL")}/sensor`;
+  if (device_id !== null) {
+    url = url.concat(`?device_id=${device_id}`);
+  }
   return HttpClientRequest
     .get(
-      `${Deno.env.get("API_URL")}/sensor`,
+      url,
     ).pipe(
       HttpClientRequest.setHeaders({
         "Content-Type": "application/json",

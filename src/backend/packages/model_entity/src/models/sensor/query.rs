@@ -44,12 +44,11 @@ impl SensorQuery {
         db: &DbConn,
         page: u64,
         models_per_page: u64,
+        device_id: Option<i32>,
     ) -> Result<Vec<FindInPageResult>, DbErr> {
         let offset_str = models_per_page * (page - 1);
-        let custom_res = FindInPageResult::find_by_statement(Statement::from_sql_and_values(
-            db.get_database_backend(),
-            format!(
-                r#"
+        let sql_str = format!(
+            r#"
 SELECT
         device.id AS device_id,
         device.name AS device_name,
@@ -73,15 +72,31 @@ LEFT JOIN (
                 ON sensor.sensor_purpose_id = sensor_purpose.id
         LEFT JOIN sensor_event
                 ON sensor_purpose.sensor_event_id = sensor_event.id
+        {}
         GROUP BY
                 sensor.device_id
         ORDER BY
                 sensor.id
 ) AS sensors
         ON sensors.device_id = device.id
+{}
 LIMIT {} OFFSET {}"#,
-                models_per_page, offset_str
-            ),
+            if device_id.is_some() {
+                format!("WHERE sensor.device_id = {:?}", device_id.unwrap())
+            } else {
+                "".to_string()
+            },
+            if device_id.is_some() {
+                format!("WHERE device.id = {:?}", device_id.unwrap())
+            } else {
+                "".to_string()
+            },
+            models_per_page,
+            offset_str
+        );
+        let custom_res = FindInPageResult::find_by_statement(Statement::from_sql_and_values(
+            db.get_database_backend(),
+            sql_str.clone(),
             [],
         ))
         .all(db)

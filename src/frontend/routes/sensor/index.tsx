@@ -11,8 +11,9 @@ interface Props {
 
 export const handler: Handlers<Props> = {
   async GET(req: Request, ctx: FreshContext) {
+    const device_id: string | null = ctx.url.searchParams.get("device_id");
     const models = await Effect.runPromise(
-      getSensorsRelatedDevice(req),
+      getSensorsRelatedDevice(req, device_id),
     );
     const data: Props = {
       models: models,

@@ -22,6 +22,7 @@ pub struct ListRelatedSensor {
 pub struct ListRelatedSensorParams {
     pub page: Option<u64>,
     pub models_per_page: Option<u64>,
+    pub device_id: Option<i32>,
 }
 
 pub async fn list_related_sensor(
@@ -34,6 +35,7 @@ pub async fn list_related_sensor(
         &state.conn,
         page,
         models_per_page,
+        params.device_id,
     )
     .await
     .map_err(|_| {

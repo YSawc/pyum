@@ -48,9 +48,14 @@ impl SensorPurposeQuery {
         for sensor in &sensor_purpose_with_sensor.1 {
             let mut query = sensor.find_related(capture::model::Entity);
             if limit.is_some() {
-                query = query.limit(Option::Some(limit.unwrap() as u64));
+                query = query
+                    .order_by_desc(capture::model::Column::Id)
+                    .limit(Option::Some(limit.unwrap() as u64))
             }
-            let captures = query.all(db).await.unwrap();
+            let mut captures = query.all(db).await.unwrap();
+            if limit.is_some() {
+                captures.reverse();
+            }
             sensors_with_captures.push((sensor.to_owned(), captures));
         }
 

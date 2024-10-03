@@ -30,7 +30,7 @@ import * as $sensor_purpose_id_index from "./routes/sensor_purpose/[id]/index.ts
 import * as $sensor_purpose_index from "./routes/sensor_purpose/index.tsx";
 import * as $sensor_purpose_new_index from "./routes/sensor_purpose/new/index.tsx";
 import * as $Counter from "./islands/Counter.tsx";
-import * as $capture_limitationButton from "./islands/capture/limitationButton.tsx";
+import * as $capture_LimitationButton from "./islands/capture/LimitationButton.tsx";
 import * as $device_id_index_ConfirmButton from "./islands/device/[id]/index/ConfirmButton.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
@@ -66,7 +66,7 @@ const manifest = {
   },
   islands: {
     "./islands/Counter.tsx": $Counter,
-    "./islands/capture/limitationButton.tsx": $capture_limitationButton,
+    "./islands/capture/LimitationButton.tsx": $capture_LimitationButton,
     "./islands/device/[id]/index/ConfirmButton.tsx":
       $device_id_index_ConfirmButton,
   },

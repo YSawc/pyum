@@ -6,6 +6,7 @@ import { Effect } from "effect";
 import HttpStatusCode from "../../enums/HttpStatusCode.ts";
 import { Chart } from "$fresh_charts/mod.ts";
 import { ChartColors, transparentize } from "$fresh_charts/utils.ts";
+import { LimitationButton } from "../../islands/capture/limitationButton.tsx";
 
 interface Props {
   models: SensorPurposesWithRelation;
@@ -35,6 +36,7 @@ export const handler: Handlers<Props> = {
 const Page = ({ data }: PageProps<Props>) => {
   const sensorPurpose = data.models.models[0];
   const models = data.models.models[1];
+
   return (
     <div>
       <div class="container">
@@ -46,6 +48,16 @@ const Page = ({ data }: PageProps<Props>) => {
       >
         Back to sensor purpose
       </a>
+      <div class="flex my-4 py-2 align-middle justify-center ">
+        <p class="mr-4 my-auto">limit number</p>
+        {[100, 200, 300, 400, 500].map((elm) => {
+          return (
+            <LimitationButton
+              limit_num={elm}
+            />
+          );
+        })}
+      </div>
       {models.map((model) => (
         <div class="p-4 mx-auto max-w-screen-md">
           <p>

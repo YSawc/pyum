@@ -16,6 +16,8 @@ export const GetSensorPurposeWithRelation = (
   req: Request,
   sensorPurposeId: string,
   limit: string | null,
+  start_date: string | null,
+  end_date: string | null,
 ): Effect.Effect<
   SensorPurposesWithRelation,
   HttpClientError.HttpClientError | ParseError,
@@ -26,6 +28,9 @@ export const GetSensorPurposeWithRelation = (
     }/capture?sensor_purpose_id=${sensorPurposeId}`;
   if (limit !== null) {
     url = url.concat(`&limit=${limit}`);
+  }
+  if (start_date !== null && end_date !== null) {
+    url = url.concat(`&start_date=${start_date}&end_date=${end_date}`);
   }
   return HttpClientRequest
     .get(

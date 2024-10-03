@@ -8,6 +8,8 @@ import { Chart } from "$fresh_charts/mod.ts";
 import { ChartColors, transparentize } from "$fresh_charts/utils.ts";
 import { LimitationButton } from "../../islands/capture/LimitationButton.tsx";
 import { LimitationClearButton } from "../../islands/capture/LimitationClearButton.tsx";
+import { LimitationDataForm } from "../../islands/capture/LimitationDataForm.tsx";
+import { DateClearButton } from "../../islands/capture/DateClearButton.tsx";
 
 interface Props {
   models: SensorPurposesWithRelation;
@@ -23,8 +25,16 @@ export const handler: Handlers<Props> = {
       });
     }
     const limit: string | null = ctx.url.searchParams.get("limit");
+    const start_date: string | null = ctx.url.searchParams.get("start_date");
+    const end_date: string | null = ctx.url.searchParams.get("end_date");
     const models = await Effect.runPromise(
-      GetSensorPurposeWithRelation(req, sensorPurposeId, limit),
+      GetSensorPurposeWithRelation(
+        req,
+        sensorPurposeId,
+        limit,
+        start_date,
+        end_date,
+      ),
     );
     const data: Props = {
       models: models,
@@ -59,6 +69,11 @@ const Page = ({ data }: PageProps<Props>) => {
           );
         })}
         <LimitationClearButton />
+      </div>
+      <div class="flex my-4 py-2 align-middle justify-center ">
+        <p class="mr-4 my-auto">limit data</p>
+        <LimitationDataForm />
+        <DateClearButton />
       </div>
       {models.map((model) => (
         <div class="p-4 mx-auto max-w-screen-md">

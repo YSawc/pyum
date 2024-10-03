@@ -22,6 +22,8 @@ pub struct ListRelatedCapture {
 pub struct ListRelatedCaptureParams {
     sensor_purpose_id: i32,
     limit: Option<i32>,
+    start_date: Option<String>,
+    end_date: Option<String>,
 }
 
 pub async fn list_related_capture(
@@ -30,10 +32,14 @@ pub async fn list_related_capture(
 ) -> Result<Json<ListRelatedCapture>, Json<SimpleRes>> {
     let sensor_purpose_id = params.sensor_purpose_id;
     let limit = params.limit;
+    let start_date = params.start_date;
+    let end_date = params.end_date;
     let models = SensorPurposeQuery::find_with_related_sensor_and_capture(
         &state.conn,
         sensor_purpose_id,
         limit,
+        start_date,
+        end_date,
     )
     .await
     .map_err(|_| {

@@ -29,6 +29,8 @@ impl SensorPurposeQuery {
         db: &DbConn,
         sensor_purpose_id: i32,
         limit: Option<i32>,
+        start_date: Option<String>,
+        end_date: Option<String>,
     ) -> Result<
         (
             super::model::Model,
@@ -45,8 +47,15 @@ impl SensorPurposeQuery {
         let sensor_purpose_with_sensor = sensors_purpose_with_sensor.first().unwrap();
         let mut sensors_with_captures: Vec<(sensor::model::Model, Vec<capture::model::Model>)> =
             Vec::new();
+        let needs_for_limitation_date =
+            start_date.to_owned().is_some() && end_date.to_owned().is_some();
         for sensor in &sensor_purpose_with_sensor.1 {
             let mut query = sensor.find_related(capture::model::Entity);
+            if needs_for_limitation_date {
+                query = query
+                    .filter(capture::model::Column::CreatedAt.gte(start_date.as_ref().unwrap()))
+                    .filter(capture::model::Column::CreatedAt.lte(end_date.as_ref().unwrap()))
+            }
             if limit.is_some() {
                 query = query
                     .order_by_desc(capture::model::Column::Id)

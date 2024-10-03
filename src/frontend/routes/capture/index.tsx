@@ -7,6 +7,7 @@ import HttpStatusCode from "../../enums/HttpStatusCode.ts";
 import { Chart } from "$fresh_charts/mod.ts";
 import { ChartColors, transparentize } from "$fresh_charts/utils.ts";
 import { LimitationButton } from "../../islands/capture/LimitationButton.tsx";
+import { LimitationClearButton } from "../../islands/capture/LimitationClearButton.tsx";
 
 interface Props {
   models: SensorPurposesWithRelation;
@@ -57,6 +58,7 @@ const Page = ({ data }: PageProps<Props>) => {
             />
           );
         })}
+        <LimitationClearButton />
       </div>
       {models.map((model) => (
         <div class="p-4 mx-auto max-w-screen-md">
